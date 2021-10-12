@@ -100,9 +100,8 @@
                                                         <a class="dropdown-item"
                                                            href="/data-import/from-ubr-csv/{{ import.id }}/review">Review Import</a>
                                                         {% if import.batchDuplicates > 0 %}
-                                                            {# ({{ import.batchDuplicates | numberformat("#,###") }}) #}
                                                             <a class="dropdown-item"
-                                                               href="/data-import/from-ubr-csv/{{ import.id }}/duplicates">Duplicates</a>
+                                                               href="/data-import/from-ubr-csv/{{ import.id }}/duplicates">Duplicates ({{ import.batchDuplicates | numberformat("#,###") }})</a>
                                                         {% endif %}
                                                     {% endif %}
                                                 {% endif %}

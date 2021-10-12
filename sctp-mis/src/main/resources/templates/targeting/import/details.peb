@@ -48,6 +48,11 @@
                             </div>
 
                             <div class="info-row">
+                                <div class="item-label">Data Source</div>
+                                <div class="item-value">{{ import.dataSource.title }}</div>
+                            </div>
+
+                            <div class="info-row">
                                 <div class="item-label">Imported By</div>
                                 <div class="item-value">{{ import.importedBy }}</div>
                             </div>
@@ -72,11 +77,6 @@
                     <div class="column">
                         <div class="info-list">
                             <div class="info-row">
-                                <div class="item-label">Data Source</div>
-                                <div class="item-value">{{ import.dataSource.title }}</div>
-                            </div>
-
-                            <div class="info-row">
                                 <div class="item-label">Number Of Households</div>
                                 <div class="item-value">{{ import.households | numberformat("#,###") }}</div>
                             </div>
@@ -89,6 +89,16 @@
                             <div class="info-row">
                                 <div class="item-label">Duplicates</div>
                                 <div class="item-value">{{ isEmpty(import.batchDuplicates) ? 0 : import.batchDuplicates | numberformat("#,###") }}</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="item-label">New Households</div>
+                                <div class="item-value">{{ isEmpty(import.newHouseholds) ? 0 : import.newHouseholds | numberformat("#,###") }}</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="item-label">Returning Households</div>
+                                <div class="item-value">{{ isEmpty(import.oldHouseholds) ? 0 : import.oldHouseholds | numberformat("#,###") }}</div>
                             </div>
 
                             {#

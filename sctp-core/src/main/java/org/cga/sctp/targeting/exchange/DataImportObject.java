@@ -84,6 +84,8 @@ public class DataImportObject {
     private Long populationDuplicates;
     private LocalDateTime importDate;
     private LocalDateTime completionDate;
+    private Long newHouseholds;
+    private Long oldHouseholds;
 
     public void setSourceFile(String sourceFile) {
         this.sourceFile = sourceFile;
@@ -187,6 +189,22 @@ public class DataImportObject {
 
     public void setCompletionDate(LocalDateTime completionDate) {
         this.completionDate = completionDate;
+    }
+
+    public Long getNewHouseholds() {
+        return newHouseholds;
+    }
+
+    public void setNewHouseholds(Long newHouseholds) {
+        this.newHouseholds = newHouseholds;
+    }
+
+    public Long getOldHouseholds() {
+        return oldHouseholds;
+    }
+
+    public void setOldHouseholds(Long oldHouseholds) {
+        this.oldHouseholds = oldHouseholds;
     }
 
     @Override
