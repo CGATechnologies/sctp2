@@ -69,8 +69,9 @@
                     <table class="table dataTable is-narrow is-striped is-hoverable">
                         <thead>
                         <tr>
-                            <th>Household</th>
+                            <th>ML Code</th>
                             <th>Ranking</th>
+                            <th># of Members</th>
                             <th>Head of Household</th>
                             <th>TA</th>
                             <th>GVH Name</th>
@@ -86,8 +87,9 @@
                                 {# @pebvariable name="ranks" type="java.util.List<org.cga.sctp.targeting.CbtRanking>" #}
                                 {# @pebvariable name="ranking" type="org.cga.sctp.targeting.CbtRanking" #}
                             <tr>
-                                <td>{{ ranking.householdId }}</td>
+                                <td>ML-{{ ranking.mlCode }}</td>
                                 <td>{{ ranking.rank }}</td>
+                                <td>{{ ranking.memberCount | numberformat("#,###") }}</td>
                                 <td>{{ ranking.householdHead }}</td>
                                 <td>{{ ranking.taName }}</td>
                                 <td>{{ ranking.gvhName }}</td>
@@ -96,45 +98,47 @@
                                 <td>{{ ranking.formNumber }}</td>
                                 <td>{{ ranking.status }}</td>
                                 <td>
-                                    {% if canModify %}
-                                        <div class="dropdown is-hoverable is-right">
-                                            <div class="dropdown-trigger">
-                                                <button class="button is-info is-inverted is-options"
-                                                        aria-haspopup="true" aria-controls="dropdown-menu2">
-                                                    <span>Options</span>
-                                                    <span class="icon is-small">
+                                    <div class="dropdown is-hoverable is-right">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-info is-inverted is-options"
+                                                    aria-haspopup="true" aria-controls="dropdown-menu2">
+                                                <span>Options</span>
+                                                <span class="icon is-small">
                                                         <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                 </span>
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                                                <div class="dropdown-content">
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                            <div class="dropdown-content">
+                                                <a href="/targeting/community/composition?session={{ ranking.cbtSessionId }}&amp;id={{ ranking.householdId }}"
+                                                   class="dropdown-item">View Composition</a>
+                                                {% if canModify %}
                                                     <form method="post"
                                                           id="rhfrm{{ ranking.householdId }}"
                                                           action="/targeting/community/remove-household"
                                                           enctype="application/x-www-form-urlencoded">
                                                         {{ csrf(_csrf) }}
-                                                        {{ hiddenField('session', targetingSession.id) }}
-                                                        {{ hiddenField('household', ranking.householdId) }}
+                                                            {{ hiddenField('session', targetingSession.id) }}
+                                                            {{ hiddenField('household', ranking.householdId) }}
                                                     </form>
                                                     <form method="post"
                                                           id="edit{{ ranking.householdId }}"
                                                           action="/targeting/community/change-rank"
                                                           enctype="application/x-www-form-urlencoded">
                                                         {{ csrf(_csrf) }}
-                                                        {{ hiddenField('session', targetingSession.id) }}
-                                                        {{ hiddenField('household', ranking.householdId) }}
-                                                        {{ hiddenField('rank', ranking.rank) }}
+                                                            {{ hiddenField('session', targetingSession.id) }}
+                                                            {{ hiddenField('household', ranking.householdId) }}
+                                                            {{ hiddenField('rank', ranking.rank) }}
                                                     </form>
                                                     <a onclick="changeRank({{ ranking.householdId }}, {{ ranking.rank }})"
                                                        class="dropdown-item">Edit Rank</a>
                                                     <hr class="dropdown-divider" />
                                                     <a onclick="removeHH(rhfrm{{ ranking.householdId }})"
                                                        class="dropdown-item">Mark As Ineligible</a>
-                                                </div>
+                                                {% endif %}
                                             </div>
                                         </div>
-                                    {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                                 {% endfor %}

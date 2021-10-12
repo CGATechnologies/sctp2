@@ -32,15 +32,18 @@
 
 package org.cga.sctp.targeting;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 interface TargetingSessionViewRepository extends JpaRepository<TargetingSessionView, Long> {
-    @Query(value = "CALL getCbtRankingResults(:sessionId)", nativeQuery = true)
-    List<CbtRanking> getCbtRankingResults(@Param("sessionId") Long id);
+    @Query(value = "CALL getCbtRankingResults(:sessionId, :page, :pageSize)", nativeQuery = true)
+    Slice<CbtRanking> getCbtRankingResults(
+            @Param("sessionId") Long id,
+            @Param("page") int page,
+            @Param("pageSize") int pageSize
+    );
 }

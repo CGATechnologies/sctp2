@@ -35,6 +35,7 @@ package org.cga.sctp.targeting;
 import org.cga.sctp.core.TransactionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -67,8 +68,8 @@ public class TargetingService extends TransactionalService {
         return sessionRepository.findById(sessionId).orElse(null);
     }
 
-    public List<CbtRanking> getCbtRanking(TargetingSessionView session, Pageable pageable) {
-        return viewRepository.getCbtRankingResults(session.getId());
+    public Slice<CbtRanking> getCbtRanking(TargetingSessionView session, Pageable pageable) {
+        return viewRepository.getCbtRankingResults(session.getId(), pageable.getPageNumber(), pageable.getPageSize());
     }
 
     public TargetingSessionView findSessionViewById(Long sessionId) {

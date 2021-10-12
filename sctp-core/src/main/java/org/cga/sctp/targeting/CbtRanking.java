@@ -59,9 +59,9 @@ public interface CbtRanking {
 
     public Long getHouseholdId();
 
-    public String getTaName() ;
+    public String getTaName();
 
-    public String getClusterName() ;
+    public String getClusterName();
 
     public String getVillageName();
 
@@ -71,17 +71,26 @@ public interface CbtRanking {
 
     public Integer getRank();
 
-    public LocalDateTime getCreatedAt() ;
+    public LocalDateTime getCreatedAt();
 
     public String getZoneName();
 
-    public String getFormNumber() ;
+    public String getFormNumber();
 
     public BigDecimal getPmtScore();
 
     public Long getCbtSessionId();
 
-    public Boolean getCbtSelection() ;
+    public Boolean getCbtSelection();
+
+    Long getMemberCount();
+
+    /**
+     * Household ML code
+     *
+     * @return
+     */
+    Long getMlCode();
 
     @Convert(converter = CbtStatus.Converter.class)
     public CbtStatus getStatus();

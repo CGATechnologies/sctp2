@@ -97,8 +97,8 @@ public class ImportTaskService extends TransactionalService {
         }
     }
 
-    public List<UbrHouseholdImport> getImportsByDataImportId(Long dataImportId, Pageable pageable) {
-        return householdImportRepository.findByDataImportId(dataImportId, pageable);
+    public List<UbrHouseholdImport> getImportsBySessionIdForReview(Long dataImportId, Pageable pageable) {
+        return householdImportRepository.findByDataImportIdAndArchived(dataImportId, false, pageable);
     }
 
     public void deleteHouseholdImport(UbrHouseholdImport householdImport) {
@@ -111,5 +111,9 @@ public class ImportTaskService extends TransactionalService {
 
     public List<UbrHouseholdImport> getDataImportDuplicates(Long id, Pageable pageable) {
         return householdImportRepository.getDataImportDuplicates(id, pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    public void saveHouseholdImport(UbrHouseholdImport householdImport) {
+        householdImportRepository.save(householdImport);
     }
 }

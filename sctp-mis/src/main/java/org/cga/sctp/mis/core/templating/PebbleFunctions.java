@@ -98,6 +98,11 @@ public class PebbleFunctions {
     }
 
     @Bean
+    public PebbleFunctionImpl age() {
+        return new Age();
+    }
+
+    @Bean
     public Function inputText() {
         return new InputText();
     }
@@ -113,7 +118,7 @@ public class PebbleFunctions {
     }
 
     @Bean
-    public Function formMultiSelect(){
+    public Function formMultiSelect() {
         return new FormSelect(selectOptionRegistry(), true);
     }
 

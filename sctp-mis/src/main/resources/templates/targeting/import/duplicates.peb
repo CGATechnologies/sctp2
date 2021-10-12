@@ -39,6 +39,7 @@
                     <thead>
                     <tr>
                         <th>Form Number</th>
+                        <th>ML-Code</th>
                         <th>National ID</th>
                         <th>Name</th>
                         <th>Head of Household</th>
@@ -51,8 +52,10 @@
                     </thead>
                     <tbody>
                         {% for import in imports %}
+                        {# @pebvariable name="import" type="org.cga.sctp.targeting.importation.UbrHouseholdImport" #}
                         <tr>
                             <td>UBR-{{ import.formNumber }}</td>
+                            <td>{{ import.householdCode != null ? 'ML-' ~ import.householdCode : '' }}</td>
                             <td>{{ import.nationalId }}</td>
                             <td>{{ import.firstName }} {{ import.lastName }}</td>
                             <td>{{ import.householdHeadName }}</td>

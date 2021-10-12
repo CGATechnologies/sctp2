@@ -67,6 +67,7 @@ public class Individual {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private LocalDateTime deletedAt;
+    private Long householdId;
     private boolean deleted;
     private String phoneNumber;
     @Convert(converter = DisabilityParameterValueConverter.class)
@@ -324,5 +325,13 @@ public class Individual {
 
     public void setUrbMemberId(Long urbMemberId) {
         this.urbMemberId = urbMemberId;
+    }
+
+    public Long getHouseholdId() {
+        return householdId;
+    }
+
+    public void setHouseholdId(Long householdId) {
+        this.householdId = householdId;
     }
 }

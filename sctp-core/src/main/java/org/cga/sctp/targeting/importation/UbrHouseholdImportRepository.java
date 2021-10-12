@@ -42,7 +42,6 @@ import java.util.List;
 
 @Repository
 interface UbrHouseholdImportRepository extends JpaRepository<UbrHouseholdImport, Long> {
-    List<UbrHouseholdImport> findByDataImportId(Long dataImportId, Pageable pageable);
 
     UbrHouseholdImport findByIdAndDataImportId(Long id, Long dataImportId);
 
@@ -52,4 +51,6 @@ interface UbrHouseholdImportRepository extends JpaRepository<UbrHouseholdImport,
             @Param("page") int page,
             @Param("pageSize") int pageSize
     );
+
+    List<UbrHouseholdImport> findByDataImportIdAndArchived(Long dataImportId, boolean archived, Pageable pageable);
 }

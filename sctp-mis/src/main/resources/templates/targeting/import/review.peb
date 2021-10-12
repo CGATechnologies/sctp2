@@ -3,7 +3,7 @@
     {% block head %}<link rel="stylesheet" type="text/css" href="/assets/css/info-list.css"/>{% endblock %}
 
     {% block title %}
-        {{ parent() }} | {{ importSession.title }} | Review
+        {{ parent() }} | UBR Data Import | {{ importSession.title }} | Review
     {% endblock %}
 
     {% set canModify = hasRole("ADMINISTRATOR") %}
@@ -41,7 +41,7 @@
     <div>
     <div class="card no-overlap">
         <header class="card-header">
-            <p class="card-header-title">{{ importSession.title }}</p>
+            <p class="card-header-title">{{ importSession.title }} | Data Import Review</p>
         </header>
         <div class="card-content">
             {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
@@ -50,7 +50,7 @@
                     <thead>
                     <tr>
                         <th>Form Number</th>
-                        <th>Name</th>
+                        <th>Member Name</th>
                         <th>Head of Household</th>
                         <th>TA</th>
                         <th>GVH Name</th>
@@ -90,7 +90,7 @@
                                                 <input name="id" value="{{ import.id }}" type="hidden"/>
                                             </form>
                                             <a class="dropdown-item has-text-danger"
-                                               onclick="deleteRecord(frm{{ import.id }})">Delete Record</a>
+                                               onclick="deleteRecord(frm{{ import.id }})">Archive Record</a>
                                         </div>
                                     </div>
                                 </div>
@@ -108,7 +108,7 @@
     <script>
         (function(){
             window.deleteRecord = function(targetForm){
-                if(confirm('Are you sure you want to delete this record?')){
+                if(confirm('Are you sure you want to archive this record?')){
                     targetForm.submit();
                 }
             };

@@ -1,6 +1,6 @@
 package org.cga.sctp.mis.targeting;
 
-import org.cga.sctp.mis.core.BaseController;
+import org.cga.sctp.mis.core.SecuredBaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/targeting/criteria")
-public class CriteriaController extends BaseController {
+public class CriteriaController extends SecuredBaseController {
 
     private static final List<Criteria> FORMULAS = new LinkedList<>() {{
         add(new Criteria("SCTP Criteria", "formula 1goes here", true));

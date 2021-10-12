@@ -2,6 +2,7 @@ package org.cga.sctp.mis.targeting;
 
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Household;
+import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.location.Location;
 import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.location.LocationService;
@@ -15,6 +16,7 @@ import org.cga.sctp.user.AuthenticatedUser;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -141,11 +143,6 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
         return redirect("/targeting/community");
     }
 
-    /*@GetMapping("/review")
-    public ModelAndView reviewEligibilityList() {
-        return view("targeting/community/review", "results", completedResults);
-    }*/
-
     @GetMapping
     public ModelAndView community() {
         return view("targeting/community/sessions",
@@ -161,10 +158,36 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
             return redirect("/targeting/community");
         }
         // TODO Add pagination controls to view
-        List<CbtRanking> rankedList = targetingService.getCbtRanking(session, pageable);
+        Slice<CbtRanking> rankedList = targetingService.getCbtRanking(session, pageable);
         return view("targeting/community/details")
                 .addObject("isSessionOpen", session.isOpen())
                 .addObject("ranks", rankedList)
+                .addObject("targetingSession", session);
+    }
+
+    @GetMapping("/composition")
+    ModelAndView householdComposition(
+            @RequestParam("session") Long sessionId,
+            @RequestParam("id") Long householdId,
+            RedirectAttributes attributes,
+            Pageable pageable) {
+
+        TargetingSessionView session = targetingService.findSessionViewById(sessionId);
+        if (session == null) {
+            setDangerFlashMessage("Community based targeting session not found.", attributes);
+            return redirect("/targeting/community");
+        }
+
+        Household household = beneficiaryService.findHouseholdByTargetingSessionIdAndHouseholdId(sessionId, householdId);
+        if (household == null) {
+            setDangerFlashMessage("Household not found.", attributes);
+            return redirect("/targeting/community");
+        }
+
+        Slice<Individual> individuals = beneficiaryService.getIndividualsForCommunityReview(householdId, pageable);
+        return view("targeting/community/composition")
+                .addObject("individuals", individuals)
+                .addObject("household", household)
                 .addObject("targetingSession", session);
     }
 

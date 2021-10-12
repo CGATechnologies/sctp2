@@ -23,18 +23,21 @@
                         <tr>
                             <th>Program</th>
                             <th>District</th>
+                            <th># of Households</th>
                             <th>T.A</th>
                             <th>Date</th>
                             <th>Done By</th>
                             <th>Status</th>
-                            <th data-sortable="false" width="20%">Options</th>
+                            <th data-sortable="false" width="5%">Options</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for s in sessions %}
+                        {# @pebvariable name="s" type="org.cga.sctp.targeting.TargetingSessionView" #}
                         <tr>
                             <td>{{ s.programName }}</td>
                             <td>{{ s.districtName }}</td>
+                            <td>{{ s.householdCount | numberformat("#,###") }}</td>
                             <td>{{ s.taName }}</td>
                             <td>{{ printDate(s.createdAt) }}</td>
                             <td>{{ s.creatorName }}</td>

@@ -41,6 +41,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "target_sessions_view")
 public class TargetingSessionView extends TargetingSessionBase {
+    private Long householdCount;
     private String creatorName;
     private String closerName;
     private String programName;
@@ -85,5 +86,13 @@ public class TargetingSessionView extends TargetingSessionBase {
 
     public void setCloserName(String closerName) {
         this.closerName = closerName;
+    }
+
+    public Long getHouseholdCount() {
+        return householdCount;
+    }
+
+    public void setHouseholdCount(Long householdCount) {
+        this.householdCount = householdCount;
     }
 }

@@ -67,13 +67,19 @@ public class UbrHouseholdImport extends CommonHouseholdAttributes {
         Error
     }
 
+    public UbrHouseholdImport(){
+        archived = false;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long dataImportId;
     private LocalDateTime createdAt;
 
-    @Enumerated
+    private boolean archived;
+
+    @Enumerated(value = EnumType.STRING)
     private ValidationStatus validationStatus;
 
     @Convert(converter = ListAttributeConverter.class)
@@ -310,6 +316,14 @@ public class UbrHouseholdImport extends CommonHouseholdAttributes {
     @Parsed(field = "livelihood_sources")
     @com.univocity.parsers.annotations.Convert(conversionClass = CollectionConversion.class, args = "Set")
     private Set<String> livelihoodSources;
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 
     public Orphanhood getOrphanStatus() {
         return orphanStatus;

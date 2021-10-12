@@ -1,0 +1,60 @@
+    {% extends "targeting/community/base" %}
+
+    {% block title %}
+        {{ parent() }} | ML-{{ household.mlCode }} | Household Composition
+    {% endblock %}
+
+    {% block contextMenu %}
+    {#{% set useWideContainer = true %}#}
+    <div class="container context-nav-container">
+        <div class="buttons is-left">
+            <a href="/targeting/community/review?session={{ targetingSession.id }}" class="button is-danger">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fa fa-chevron-left"></i>
+                    </span>
+                    <span>Back</span>
+                </span>
+            </a>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block content %}
+    <div>
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">ML-{{ household.mlCode }} | Household Composition</p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <table class="table dataTable is-narrow is-striped is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>Individual Id</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>D.O.B</th>
+                            <th>Age</th>
+                            <th>Relationship To Head of Household</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for individual in individuals %}
+                        {# @pebvariable name="individual" type="org.cga.sctp.beneficiaries.Individual" #}
+                        <tr>
+                            <td>{{ individual.individualId }}</td>
+                            <td>{{ individual.firstName ~ ' ' ~ individual.lastName }}</td>
+                            <td>{{ individual.gender }}</td>
+                            <td>{{ printDate(individual.dateOfBirth) }}</td>
+                            <td>{{ age(individual.dateOfBirth) }}</td>
+                            <td>{{ individual.relationshipToHead.description }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -30,36 +30,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.mis.core.templating.functions;
 
-import org.cga.sctp.core.TransactionalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
+import com.mitchellbosecke.pebble.template.EvaluationContext;
+import com.mitchellbosecke.pebble.template.PebbleTemplate;
+import org.cga.sctp.mis.core.templating.PebbleFunctionImpl;
 
-@Service
-public class BeneficiaryService extends TransactionalService {
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-    @Autowired
-    private IndividualRepository individualRepository;
+public class Age extends PebbleFunctionImpl {
 
-    @Autowired
-    private HouseholdRepository householdRepository;
-
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
+    public Age() {
+        super("age", List.of("dob"));
     }
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
+    @Override
+    public Object execute(Map<String, Object> args, PebbleTemplate self, EvaluationContext context, int lineNumber) {
+        final Object dob = args.get("dob");
+        if (dob == null) {
+            return "N/A";
+        }
+        if (dob instanceof LocalDate localDate) {
+            LocalDate now = LocalDate.now();
+            Period period = Period.between(localDate, now);
+            if (period.getYears() == 0) {
+                return pluralize(period.getMonths(), "%,d %s", "month", null);
+            } else {
+                return period.getYears() + " yrs";
+            }
+        }
+        return "N/A";
     }
 
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
-    }
-
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
+    @SuppressWarnings({"unused"})
+    private String pluralize(int qty, String format, String single, String plural) {
+        if (qty == 1) {
+            return String.format(Locale.US, format, qty, single);
+        } else {
+            String units = single;
+            if (plural == null) {
+                units += 's';
+            } else {
+                units = plural;
+            }
+            return String.format(Locale.US, format, qty, units);
+        }
     }
 }

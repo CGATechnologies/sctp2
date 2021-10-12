@@ -79,7 +79,7 @@ public class UbrCsvImportReviewController extends SecuredBaseController {
         if (dataImport == null) {
             return redirect("/data-import");
         }
-        List<UbrHouseholdImport> imports = taskService.getImportsByDataImportId(dataImport.getId(), pageable);
+        List<UbrHouseholdImport> imports = taskService.getImportsBySessionIdForReview(dataImport.getId(), pageable);
         return view("targeting/import/review")
                 .addObject("importSession", dataImport)
                 .addObject("imports", imports);
@@ -123,18 +123,19 @@ public class UbrCsvImportReviewController extends SecuredBaseController {
             return redirect("/data-import");
         }
         if (bindingResult.hasErrors()) {
-            setDangerFlashMessage("Cannot delete record at the moment.", attributes);
+            setDangerFlashMessage("Cannot archive record at the moment.", attributes);
             return redirectToReview(id);
         }
         UbrHouseholdImport householdImport = taskService.getHouseholdImportByIdAndDataImportId(form.getId(), dataImport.getId());
         if (householdImport == null) {
-            setDangerFlashMessage("Could not delete the selected record.", attributes);
+            setDangerFlashMessage("Could not archive the selected record.", attributes);
         } else {
-            taskService.deleteHouseholdImport(householdImport);
+            householdImport.setArchived(true);
+            taskService.saveHouseholdImport(householdImport);
             dataImportService.calculateImportSessionDuplicates(dataImport);
-            publishGeneralEvent("%s removed record %s from import session %s.",
+            publishGeneralEvent("%s archived record %s from import session %s.",
                     username, householdImport.toString(), dataImport.getTitle());
-            setSuccessFlashMessage("Import record deleted.", attributes);
+            setSuccessFlashMessage("Import record archived.", attributes);
         }
         return redirectToReview(id);
     }

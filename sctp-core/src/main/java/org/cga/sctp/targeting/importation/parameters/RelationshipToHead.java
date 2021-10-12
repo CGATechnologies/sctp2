@@ -35,20 +35,22 @@ package org.cga.sctp.targeting.importation.parameters;
 public enum RelationshipToHead implements UbrParameterValue {
     // We can't rely on the intrinsic ordinal because the structure of the enum could be rearranged
     // So we define a code property
-    Head(1),
-    Spouse(2),
-    OwnChild(3),
-    BrotherOrSister(4),
-    GrandChild(5),
-    Parent(6),
-    OtherRelative(7),
-    NotRelated(8);
+    Head(1, "Head"),
+    Spouse(2, "Spouse"),
+    OwnChild(3, "Own child"),
+    BrotherOrSister(4, "Brother/Sister"),
+    GrandChild(5, "Grandchild"),
+    Parent(6, "Parent"),
+    OtherRelative(7, "Other relative"),
+    NotRelated(8, "Not related");
 
     public final int code;
-    public static final RelationshipToHead[] VALUES =values();
+    public static final RelationshipToHead[] VALUES = values();
+    public final String description;
 
-    RelationshipToHead(int code) {
+    RelationshipToHead(int code, String description) {
         this.code = code;
+        this.description = description;
     }
 
     @Override
