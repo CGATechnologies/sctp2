@@ -160,6 +160,11 @@ public class UbrHouseholdImport extends CommonHouseholdAttributes {
     @Parsed(field = "village_code")
     protected Integer villageCode;
 
+    @Parsed(field = "village_name")
+    protected String villageName;
+
+
+
     @Validate(validators = LocationValidators.LatitudeValidator.class)
     @Parsed(field = "gps_latitude")
     protected BigDecimal gpsLatitude;
@@ -179,6 +184,9 @@ public class UbrHouseholdImport extends CommonHouseholdAttributes {
 
     @Parsed(field = "group_village_head_name")
     private String groupVillageHeadName;
+
+    @Parsed(field = "group_village_head_code")
+    private Long groupVillageHeadCode;
 
     @Parsed(field = "cluster_name")
     private String clusterName;
@@ -469,6 +477,14 @@ public class UbrHouseholdImport extends CommonHouseholdAttributes {
         this.villageCode = villageCode;
     }
 
+    public String getVillageName() {
+        return villageName;
+    }
+
+    public void setVillageName(String villageName) {
+        this.villageName = villageName;
+    }
+
     public BigDecimal getGpsLatitude() {
         return gpsLatitude;
     }
@@ -728,6 +744,14 @@ public class UbrHouseholdImport extends CommonHouseholdAttributes {
 
     public void setGroupVillageHeadName(String groupVillageHeadName) {
         this.groupVillageHeadName = groupVillageHeadName;
+    }
+
+    public Long getGroupVillageHeadCode() {
+        return groupVillageHeadCode;
+    }
+
+    public void setGroupVillageHeadCode(Long groupVillageHeadCode) {
+        this.groupVillageHeadCode = groupVillageHeadCode;
     }
 
     public String getClusterName() {

@@ -57,6 +57,9 @@ public class Household extends CommonHouseholdAttributes {
     private Integer clusterCode;
     private Integer zoneCode;
     private Integer villageCode;
+    private String villageName;
+    private Long groupVillageHeadCode;
+    private String groupVillageHeadName;
     private String mlCode;
     private String ubrCode;
     private String accountNumber;
@@ -306,6 +309,30 @@ public class Household extends CommonHouseholdAttributes {
 
     public void setVillageCode(Integer villageCode) {
         this.villageCode = villageCode;
+    }
+
+    public String getVillageName() {
+        return villageName;
+    }
+
+    public void setVillageName(String villageName) {
+        this.villageName = villageName;
+    }
+
+    public Long getGroupVillageHeadCode() {
+        return groupVillageHeadCode;
+    }
+
+    public void setGroupVillageHeadCode(Long groupVillageHeadCode) {
+        this.groupVillageHeadCode = groupVillageHeadCode;
+    }
+
+    public String getGroupVillageHeadName() {
+        return groupVillageHeadName;
+    }
+
+    public void setGroupVillageHeadName(String groupVillageHeadName) {
+        this.groupVillageHeadName = groupVillageHeadName;
     }
 
     public Integer getCbtRank() {

@@ -96,18 +96,18 @@ public class UbrCsvImportDuplicateController extends SecuredBaseController {
             return redirect("/data-import");
         }
         if (bindingResult.hasErrors()) {
-            setDangerFlashMessage("Cannot delete record at the moment.", attributes);
+            setDangerFlashMessage("Cannot archive record at the moment.", attributes);
             return redirectToReview(id);
         }
         UbrHouseholdImport householdImport = taskService.getHouseholdImportByIdAndDataImportId(form.getId(), dataImport.getId());
         if (householdImport == null) {
-            setDangerFlashMessage("Could not delete the selected record.", attributes);
+            setDangerFlashMessage("Could not archive the selected record.", attributes);
         } else {
             taskService.deleteHouseholdImport(householdImport);
             dataImportService.calculateImportSessionDuplicates(dataImport);
-            publishGeneralEvent("%s removed record %s from import session %s.",
+            publishGeneralEvent("%s archived record %s from import session %s.",
                     username, householdImport.toString(), dataImport.getTitle());
-            setSuccessFlashMessage("Import record deleted.", attributes);
+            setSuccessFlashMessage("Import record archived.", attributes);
         }
         return redirectToReview(id);
     }

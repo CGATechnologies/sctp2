@@ -85,6 +85,8 @@ public interface CbtRanking {
 
     Long getMemberCount();
 
+    String getVillageHeadName();
+
     /**
      * Household ML code
      *

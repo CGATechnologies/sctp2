@@ -92,7 +92,7 @@
                                 <td>{{ ranking.memberCount | numberformat("#,###") }}</td>
                                 <td>{{ ranking.householdHead }}</td>
                                 <td>{{ ranking.taName }}</td>
-                                <td>{{ ranking.gvhName }}</td>
+                                <td>{{ ranking.villageHeadName }}</td>
                                 <td>{{ ranking.clusterName }}</td>
                                 <td>{{ ranking.zoneName }}</td>
                                 <td>{{ ranking.formNumber }}</td>
