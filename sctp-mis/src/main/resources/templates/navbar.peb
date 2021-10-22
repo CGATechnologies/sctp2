@@ -38,6 +38,7 @@
                     <a href="/targeting/criteria" class="navbar-item">Create Targeting Criteria</a>
                     <a href="/targeting/verification" class="navbar-item">Pre-Eligibility Verification</a>
                     <a href="/targeting/community" class="navbar-item">Community Based Targeting</a>
+                    <a href="/targeting/enrolment" class="navbar-item">Enrolment</a>
                 </div>
             </div>
             {% endif %}

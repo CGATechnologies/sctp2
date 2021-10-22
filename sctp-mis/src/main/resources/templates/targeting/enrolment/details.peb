@@ -1,0 +1,326 @@
+    {% extends "./base" %}
+
+        {% block head %}<link rel="stylesheet" type="text/css" href="/assets/css/info-list.css"/>{% endblock %}
+
+    {% block content %}
+    <div>
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">Enrolled / Household - ML-300002</p>
+            </header>
+            <div class="card-content">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">General Information</p>
+                    </header>
+                    <div class="card-content">
+                        <div class="columns">
+                            <div class="column">
+                                <div class="info-list">
+
+                                    <div class="info-row">
+                                        <div class="item-label">TA</div>
+                                        <div class="item-value">Mkumpha III</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Village Cluster</div>
+                                        <div class="item-value">Likoma</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Pre-Printed Num</div>
+                                        <div class="item-value">90053846</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="info-list">
+
+                                    <div class="info-row">
+                                        <div class="item-label">Household Code</div>
+                                        <div class="item-value">ML-300002</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Household Name</div>
+                                        <div class="item-value">Alice Kulumbo</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">National ID Number</div>
+                                        <div class="item-value">WYD90053846</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="info-list">
+
+                                    <div class="info-row">
+                                        <div class="item-label">Total Household Members</div>
+                                        <div class="item-value">2</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Total Children in Primary</div>
+                                        <div class="item-value">0</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Total Children in Secondary</div>
+                                        <div class="item-value">0</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="info-list">
+
+                                    <div class="info-row">
+                                        <div class="item-label">Total Enrolled Children Age 6-15</div>
+                                        <div class="item-value">0</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Amount Household Members</div>
+                                        <div class="item-value">5000</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Amount Primary Bonus</div>
+                                        <div class="item-value">0</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="info-list">
+
+                                    <div class="info-row">
+                                        <div class="item-label">Amount Secondary Bonus</div>
+                                        <div class="item-value">ML-300002</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Amount Primary Education incentive</div>
+                                        <div class="item-value">0</div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <div class="item-label">Total Monthly Amount</div>
+                                        <div class="item-value">5000</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!--main receiver-->
+                <div class="card mt-5">
+                    <header class="card-header">
+                        <p class="card-header-title">Main Receiver</p>
+                    </header>
+                    <div class="columns">
+                        <div class="column is-5">
+                            <div class="card-image">
+                                <figure class="image is-4by3">
+                                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="card-content">
+
+{#                                <div class="field is-horizontal">#}
+{#                                    <div class="field-label">#}
+{#                                        <label class="label is-required">HouseHold Member</label>#}
+{#                                    </div>#}
+{#                                    <div class="field-body">#}
+{#                                        <div class="field">#}
+{#                                            <div class="control">#}
+{#                                                    <input class="input" type="text" value="John Doe" disabled>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="field is-horizontal">#}
+{#                                    <div class="field-label is-normal">#}
+{#                                        <label class="label">Gender</label>#}
+{#                                    </div>#}
+{#                                    <div class="field-body">#}
+{#                                        <div class="field">#}
+{#                                            <p class="control">#}
+{#                                                <input class="input" type="text" placeholder="Male" disabled>#}
+{#                                            </p>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="field is-horizontal">#}
+{#                                    <div class="field-label is-normal">#}
+{#                                        <label class="label">Date of Birth</label>#}
+{#                                    </div>#}
+{#                                    <div class="field-body">#}
+{#                                        <div class="field">#}
+{#                                            <p class="control">#}
+{#                                                <input class="input" type="text" value="01-Jan" disabled>#}
+{#                                            </p>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="field is-horizontal">#}
+{#                                    <div class="field-label is-normal">#}
+{#                                        <label class="label">National ID</label>#}
+{#                                    </div>#}
+{#                                    <div class="field-body">#}
+{#                                        <div class="field">#}
+{#                                            <p class="control">#}
+{#                                                <input class="input" type="text" value="" disabled>#}
+{#                                            </p>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">HouseHold Member</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="John Doe" disabled>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">Gender</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="Male" disabled>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">Date of Birth</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="01-Jan" disabled>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">National ID</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="W9SNA5510"  disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--alternative receiver-->
+                <div class="card mt-5">
+                    <header class="card-header">
+                        <p class="card-header-title">Alternative Receiver</p>
+                    </header>
+                    <div class="columns">
+                        <div class="column is-5">
+                            <div class="card-image">
+                                <figure class="image is-4by3">
+                                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="card-content">
+
+                            {#                                <div class="field is-horizontal">#}
+                            {#                                    <div class="field-label">#}
+                            {#                                        <label class="label is-required">HouseHold Member</label>#}
+                            {#                                    </div>#}
+                            {#                                    <div class="field-body">#}
+                            {#                                        <div class="field">#}
+                            {#                                            <div class="control">#}
+                            {#                                                    <input class="input" type="text" value="John Doe" disabled>#}
+                            {#                                            </div>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                                <div class="field is-horizontal">#}
+                            {#                                    <div class="field-label is-normal">#}
+                            {#                                        <label class="label">Gender</label>#}
+                            {#                                    </div>#}
+                            {#                                    <div class="field-body">#}
+                            {#                                        <div class="field">#}
+                            {#                                            <p class="control">#}
+                            {#                                                <input class="input" type="text" placeholder="Male" disabled>#}
+                            {#                                            </p>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                                <div class="field is-horizontal">#}
+                            {#                                    <div class="field-label is-normal">#}
+                            {#                                        <label class="label">Date of Birth</label>#}
+                            {#                                    </div>#}
+                            {#                                    <div class="field-body">#}
+                            {#                                        <div class="field">#}
+                            {#                                            <p class="control">#}
+                            {#                                                <input class="input" type="text" value="01-Jan" disabled>#}
+                            {#                                            </p>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                                <div class="field is-horizontal">#}
+                            {#                                    <div class="field-label is-normal">#}
+                            {#                                        <label class="label">National ID</label>#}
+                            {#                                    </div>#}
+                            {#                                    <div class="field-body">#}
+                            {#                                        <div class="field">#}
+                            {#                                            <p class="control">#}
+                            {#                                                <input class="input" type="text" value="" disabled>#}
+                            {#                                            </p>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">HouseHold Member</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="John Doe" disabled>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">Gender</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="Male" disabled>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">Date of Birth</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="01-Jan" disabled>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-6">
+                                    <label class="label">National ID</label>
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input" type="text" value="W9SNA5510" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

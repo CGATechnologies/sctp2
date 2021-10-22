@@ -1,0 +1,71 @@
+    {% extends "./base" %}
+
+    {% block contextMenu %}
+    {% set useWideContainer = true %}
+    <div class="context-nav-container">
+        <div class="buttons is-right">
+            <a href="{{ href('enrolment/new') }}" class="button is-primary">Perform New Enrolment</a>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block content %}
+    <div>
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">Enrolment</p>
+            </header>
+            <div class="card-content">
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                <div class="content">
+                    <table class="table dataTable is-narrow is-striped is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>Program</th>
+                            <th>District</th>
+                            <th># of Households</th>
+                            <th>T.A</th>
+                            <th>Date</th>
+                            <th>Done By</th>
+{#                            <th>Status</th>#}
+                            <th data-sortable="false" width="5%">Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td>SCTP</td>
+                            <td>Likoma</td>
+                            <td>11</td>
+                            <td>Mkumpha III</td>
+                            <td>Wed, Oct 20 2021 14:32</td>
+                            <td>William Nasoni</td>
+{#                            <td>Review</td>#}
+                            <td>
+                                <div class="dropdown is-hoverable is-right">
+                                    <div class="dropdown-trigger">
+                                        <button class="button button is-info is-inverted is-options"
+                                                aria-haspopup="true" aria-controls="ddm5">
+                                            <span>Options</span>
+                                            <span class="icon is-small">
+                                                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                             </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="ddm5" role="menu">
+                                        <div class="dropdown-content">
+                                            <a href="/targeting/enrolment/households?session=5"
+                                               class="dropdown-item">View Households</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
