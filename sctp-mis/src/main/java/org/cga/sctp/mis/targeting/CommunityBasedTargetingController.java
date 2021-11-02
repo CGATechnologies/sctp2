@@ -7,11 +7,13 @@ import org.cga.sctp.location.Location;
 import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.location.LocationService;
 import org.cga.sctp.location.LocationType;
-import org.cga.sctp.mis.core.SecuredBaseController;
+import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
 import org.cga.sctp.targeting.*;
+import org.cga.sctp.user.AdminAccessOnly;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.cga.sctp.user.AuthenticatedUser;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/targeting/community")
-public class CommunityBasedTargetingController extends SecuredBaseController {
+public class CommunityBasedTargetingController extends BaseController {
 
     @Autowired
     private ProgramService programService;
@@ -54,6 +56,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
                 .collect(Collectors.toList());
     }
 
+    @AdminAccessOnly
     @GetMapping("/new")
     public ModelAndView form(@ModelAttribute("form") NewTargetingSessionForm form) {
         return view("targeting/community/new")
@@ -63,6 +66,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
                 .addObject("districts", toSelectOptions(locationService.getActiveDistrictCodes()));
     }
 
+    @AdminAccessOnly
     @GetMapping(value = "/get-child-locations", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<SelectOptionItem>> getSubLocations(@RequestParam("id") Long parentId) {
         List<LocationCode> subLocations = locationService.getLocationCodesByParent(parentId);
@@ -84,6 +88,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
         return location;
     }
 
+    @AdminAccessOnly
     @PostMapping("/new-session")
     ModelAndView newSession(
             @AuthenticatedUserDetails AuthenticatedUser user,
@@ -144,6 +149,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
     }
 
     @GetMapping
+    @AdminAndStandardAccessOnly
     public ModelAndView community() {
         return view("targeting/community/sessions",
                 "sessions", targetingService.targetingSessionViewList());
@@ -151,6 +157,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
 
 
     @GetMapping("/review")
+    @AdminAndStandardAccessOnly
     ModelAndView details(@RequestParam("session") Long sessionId, RedirectAttributes attributes, Pageable pageable) {
         TargetingSessionView session = targetingService.findSessionViewById(sessionId);
         if (session == null) {
@@ -166,6 +173,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
     }
 
     @GetMapping("/composition")
+    @AdminAndStandardAccessOnly
     ModelAndView householdComposition(
             @RequestParam("session") Long sessionId,
             @RequestParam("id") Long householdId,
@@ -192,6 +200,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
     }
 
     @PostMapping("/close")
+    @AdminAccessOnly
     ModelAndView closeSession(
             @AuthenticatedUserDetails AuthenticatedUser user,
             @Valid @ModelAttribute CloseCbtSessionForm form,
@@ -223,6 +232,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
     }
 
     @PostMapping("/remove-household")
+    @AdminAccessOnly
     ModelAndView removeHousehold(
             @AuthenticatedUserDetails AuthenticatedUser user,
             @Valid @ModelAttribute RemoveHouseholdFromCbtSessionForm form,
@@ -266,6 +276,7 @@ public class CommunityBasedTargetingController extends SecuredBaseController {
     }
 
     @PostMapping("/change-rank")
+    @AdminAccessOnly
     ModelAndView changeHouseholdRank(
             @AuthenticatedUserDetails AuthenticatedUser user,
             @Valid @ModelAttribute ChangeHouseholdRankForm form,

@@ -30,24 +30,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting.criteria;
+package org.cga.sctp.targeting;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @MappedSuperclass
-public abstract class CriterionObject {
+public class EligibilityVerificationSessionBase {
+
+    public enum Status {
+        Review,
+        Closed
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
-    protected String name;
-    private Long createdBy;
-    private Boolean active;
+    private Long id;
+    private Long taCode;
+    private Long userId;
+    private Long programId;
+    private Long criterionId;
+    private Long districtCode;
+    private Long households;
     private LocalDateTime createdAt;
+
+    @Enumerated(value = EnumType.STRING)
+    private Status status;
+
+    @Convert(converter = LongSetConverter.class)
+    private Set<Long> clusters;
 
     public Long getId() {
         return id;
@@ -57,28 +69,44 @@ public abstract class CriterionObject {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Long getProgramId() {
+        return programId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProgramId(Long programId) {
+        this.programId = programId;
     }
 
-    public Long getCreatedBy() {
-        return createdBy;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Long getDistrictCode() {
+        return districtCode;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setDistrictCode(Long districtCode) {
+        this.districtCode = districtCode;
+    }
+
+    public Long getCriterionId() {
+        return criterionId;
+    }
+
+    public void setCriterionId(Long criterionId) {
+        this.criterionId = criterionId;
+    }
+
+    public Long getTaCode() {
+        return taCode;
+    }
+
+    public void setTaCode(Long taCode) {
+        this.taCode = taCode;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -87,5 +115,29 @@ public abstract class CriterionObject {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Set<Long> getClusters() {
+        return clusters;
+    }
+
+    public void setClusters(Set<Long> clusters) {
+        this.clusters = clusters;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Long getHouseholds() {
+        return households;
+    }
+
+    public void setHouseholds(Long households) {
+        this.households = households;
     }
 }

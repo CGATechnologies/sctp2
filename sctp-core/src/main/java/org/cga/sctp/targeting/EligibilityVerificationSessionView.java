@@ -30,14 +30,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting.criteria;
+package org.cga.sctp.targeting;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.hibernate.annotations.Immutable;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Repository
-public interface CriterionRepository extends JpaRepository<Criterion, Long> {
-    List<Criterion> findByActive(boolean active);
+@Entity
+@Table(name = "eligibility_verification_sessions_v")
+@Immutable
+public class EligibilityVerificationSessionView extends EligibilityVerificationSessionBase {
+    private String taName;
+    private String createdBy;
+    private String programName;
+    private String districtName;
+    private String criterionName;
+
+    public String getTaName() {
+        return taName;
+    }
+
+    public void setTaName(String taName) {
+        this.taName = taName;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getCriterionName() {
+        return criterionName;
+    }
+
+    public void setCriterionName(String criterionName) {
+        this.criterionName = criterionName;
+    }
 }

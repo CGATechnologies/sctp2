@@ -30,14 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting.criteria;
+package org.cga.sctp.targeting;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import java.util.List;
-
-@Repository
-public interface CriterionRepository extends JpaRepository<Criterion, Long> {
-    List<Criterion> findByActive(boolean active);
+@Entity
+@Table(name = "eligibility_verification_sessions")
+public class EligibilityVerificationSession extends EligibilityVerificationSessionBase {
 }

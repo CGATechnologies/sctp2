@@ -30,14 +30,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting.criteria;
+package org.cga.sctp.user;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.security.access.annotation.Secured;
 
-import java.util.List;
+import java.lang.annotation.*;
 
-@Repository
-public interface CriterionRepository extends JpaRepository<Criterion, Long> {
-    List<Criterion> findByActive(boolean active);
+/**
+ * Annotation to mark a class or method for administrator and standard user access only
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Secured({RoleConstants.ROLE_ADMINISTRATOR, RoleConstants.ROLE_STANDARD})
+public @interface AdminAndStandardAccessOnly {
 }

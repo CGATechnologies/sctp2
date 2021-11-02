@@ -1,15 +1,15 @@
-{% extends "base" %}
+{% extends "targeting/verification/base" %}
 
     {% block contextMenu %}
     <div class="container context-nav-container">
         <div class="buttons is-left">
-            <a href="{{ href('/targeting/verification') }}" class="button is-danger">
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fa fa-chevron-left"></i>
-                        </span>
-                        <span>Back</span>
+            <a href="/verification" class="button is-danger">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fa fa-chevron-left"></i>
                     </span>
+                    <span>Back</span>
+                </span>
             </a>
         </div>
     </div>
@@ -22,119 +22,143 @@
                 <p class="card-header-title">Pre-Eligibility Verification</p>
             </header>
             <div class="card-content">
-                <div class="content">
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Program</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                        <select>
-                                            <option disabled selected>Select Program</option>
-                                            <option>SCTP</option>
-                                            <option>Program 2</option>
-                                        </select>
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                <form method="post"
+                      enctype="application/x-www-form-urlencoded"
+                      action="/verification">
+                    {{ csrf(_csrf) }}
+                    <div class="content">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Program</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            {{ selectField('program', programs, form.program, true) }}
+                                        </div>
                                     </div>
+                                    {{ printFieldErrors(getFieldErrors('form', 'program')) }}
                                 </div>
                             </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                        <select>
-                                            <option disabled selected>Select Data Source</option>
-                                            <option>UBR</option>
-                                            <option>National Data Set</option>
-                                        </select>
+                        </div>
+
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Location</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                                {{ selectField('district', districts, form.district, true) }}
+                                        </div>
+                                    </div>
+                                    {{ printFieldErrors(getFieldErrors('form', 'district')) }}
+                                </div>
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                             {{ selectField('traditionalAuthority', traditionalAuthorities, form.traditionalAuthority, true) }}
+                                        </div>
+                                    </div>
+                                    {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Village Cluster</label>
+                            </div>
+
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-multiple is-fullwidth">
+                                            {{ multiSelectField('clusters', clusters, form.clusters, true, 4) }}
+                                        </div>
+                                    </div>
+                                    {{ printFieldErrors(getFieldErrors('form', 'clusters')) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Targeting Criteria</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                                {{ selectField('criterion', criteria, form.criterion, true) }}
+                                        </div>
+                                    </div>
+                                    {{ printFieldErrors(getFieldErrors('form', 'criterion')) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                            <div class="field-label">
+                                <!-- Left empty for spacing -->
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="buttons is-right">
+                                            <button class="button is-primary">Apply</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Location</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                        <select>
-                                            <option disabled selected>Select District</option>
-                                            <option>Dowa</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                        <select>
-                                            <option disabled selected>Select TA</option>
-                                            <option>Dzoole</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Village Cluster</label>
-                        </div>
-
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-multiple is-fullwidth">
-                                        <select multiple size="4">
-                                            <option>Kachitsa</option>
-                                            <option>Chimwetsero</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Targeting Criteria</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                        <select>
-                                            <option>Criteria 1</option>
-                                            <option>Criteria 2</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label">
-                            <!-- Left empty for spacing -->
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="buttons is-right">
-                                        <a href="{{ href('/targeting/verification/review') }}" class="button is-primary">Apply</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
     {% endblock %}
-
+    {% block footerScripts %}
+    <script>
+        (function(){
+            let disabledOpt = new Option('Select Option', -1);
+            disabledOpt.disable = true;
+            window.renderOptions = function(list, promise, prepend, useExtraField){
+                list.length = 0;
+                if(prepend){
+                    list.options.add(disabledOpt);
+                }
+                promise.json().then(items => items.forEach(item => list
+                    .options.add(new Option(item.text, useExtraField ? item.extra : item.id))));
+            };
+            window.getOptions = function(url, onSuccess, onError){
+                var params = { method: 'GET' };
+                try {
+                    fetch(url, params)
+                    .then(r => onSuccess(r))
+                    .catch(e => onError(e));
+                }catch(e){
+                    onError(e);
+                }
+            };
+            window.loadLocations = function(target, sender, prepend, useExtraField){
+                getOptions(
+                    '/targeting/community/get-child-locations?id=' + sender.selectedOptions[0].value,
+                    function(data){
+                        renderOptions(target, data, prepend, useExtraField);
+                    },
+                    function(error){
+                        console.log(error);
+                        alert('There was an error getting locations from the server.');
+                    }
+                 );
+            };
+            district.onchange = function(){ clusters.length = 0;
+            loadLocations(traditionalAuthority, this, true, true); };
+            traditionalAuthority.onchange = function(){ loadLocations(clusters, this, false, true); };
+        })();
+        </script>
+{% endblock %}

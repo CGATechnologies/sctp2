@@ -2,11 +2,15 @@
 
     {% block contextMenu %}
     {% set useWideContainer = true %}
-    <div class="context-nav-container">
-        <div class="buttons is-right">
-            <a href="{{ href('community/new') }}" class="button is-primary">Perform New Community-Based Targeting</a>
-        </div>
-    </div>
+    {% set canModify = hasRole('ADMINISTRATOR') %}
+        {% if canModify %}
+            <div class="context-nav-container">
+                <div class="buttons is-right">
+                    <a href="{{ href('community/new') }}"
+                       class="button is-primary">Perform New Community-Based Targeting</a>
+                </div>
+            </div>
+        {% endif %}
     {% endblock %}
 
     {% block content %}

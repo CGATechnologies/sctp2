@@ -40,6 +40,7 @@ import org.cga.sctp.program.ProgramUserCandidate;
 import org.cga.sctp.security.permission.UserRole;
 import org.cga.sctp.targeting.criteria.CriteriaFilterObject;
 import org.cga.sctp.targeting.criteria.CriteriaFilterTemplate;
+import org.cga.sctp.targeting.criteria.Criterion;
 import org.cga.sctp.user.AccessLevel;
 import org.cga.sctp.user.Permission;
 import org.cga.sctp.user.SystemRole;
@@ -107,5 +108,10 @@ public class SelectOptionConfigs {
     @Bean
     public SelectOptionEntry userPermissionSelectOption() {
         return new SelectOptionEntry(Permission.class, "name()", "title");
+    }
+
+    @Bean
+    public SelectOptionEntry criterionSelectOption() {
+        return new SelectOptionEntry(Criterion.class, "getId()", "getName()");
     }
 }

@@ -1,121 +1,77 @@
-    {% extends "base" %}
+    {% extends "targeting/verification/base" %}
 
-        {% block contextMenu %}
-        <div class="container context-nav-container">
-            <div class="buttons is-right">
-                <a href="{{ href('verification/new') }}" class="button is-primary">Perform New Pre-Eligibility Verification</a>
+    {% block contextMenu %}
+        {% set useWideContainer = true %}
+        {% set canModify = hasRole('ADMINISTRATOR') %}
+        {% if canModify %}
+            <div class="context-nav-container">
+                <div class="buttons is-right">
+                    <a href="/verification/new" class="button is-primary">Perform New Pre-Eligibility Verification</a>
+                </div>
             </div>
-        </div>
-        {% endblock %}
+        {% endif %}
+    {% endblock %}
 
     {% block content %}
-
-    <div class="container">
-        <div class="card no-overlap">
-            <header class="card-header">
-                <p class="card-header-title">Pre-Eligibility Verification</p>
-            </header>
-            <div class="card-content">
-                <div class="content">
-                    <table class="table dataTable is-narrow is-striped is-hoverable">
-                        <thead>
+    <div>
+    <div class="card no-overlap">
+        <header class="card-header">
+            <p class="card-header-title">Pre-Eligibility Verification</p>
+        </header>
+        <div class="card-content">
+            {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+            <div class="content">
+                <table class="table dataTable is-narrow is-striped is-hoverable">
+                    <thead>
                         <tr>
                             <th>Program</th>
                             <th>District</th>
                             <th>T.A</th>
+                            <th>Households</th>
                             <th>Criteria</th>
                             <th>Date</th>
                             <th>Done By</th>
                             <th>Status</th>
                             <th>Options</th>
                         </tr>
-                        </thead>
-                        <tbody>
+                    </thead>
+                    <tbody>
+                        {% for verification in verifications %}
                         <tr>
-                            <td>SCTP</td>
-                            <td>Dowa</td>
-                            <td>Kamwendo</td>
-                            <td>Criteria 1</td>
-                            <td>Jun 15 2021 10:10</td>
-                            <td>Jonathan Doe</td>
-                            <td>Pending review</td>
+                            <td>{{ verification.programName }}</td>
+                            <td>{{ verification.districtName }}</td>
+                            <td>{{ verification.taName }}</td>
+                            <td>{{ verification.households | numberformat("#,###") }}</td>
+                            <td>{{ verification.criterionName }}</td>
+                            <td>{{ printDate(verification.createdAt) }}</td>
+                            <td>{{ verification.createdBy }}</td>
+                            <td>{{ verification.status }}</td>
                             <td>
-                                <div class="dropdown is-hoverable">
+                                <div class="dropdown is-hoverable is-right">
                                     <div class="dropdown-trigger">
-                                        <button class="button button is-info is-inverted"
-                                                aria-haspopup="true" aria-controls="dropdown-menu2">
+                                        <button class="button button is-info is-inverted is-options"
+                                                aria-haspopup="true"
+                                                aria-controls="ddm{{ verification.id }}">
                                             <span>Options</span>
-                                            <span class="icon is-small">
-                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                <span class="icon is-small">
+                                                  <i class="fas fa-angle-down" aria-hidden="true"></i>
                                             </span>
                                         </button>
                                     </div>
-                                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                    <div class="dropdown-menu" id="ddm{{ verification.id }}" role="menu">
                                         <div class="dropdown-content">
-                                            <a href="{{ href('verification/review') }}" class="dropdown-item">Review</a>
+                                            <a href="/verification/review?id={{ verification.id }}"
+                                               class="dropdown-item">Review</a>
                                         </div>
                                     </div>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>SCTP</td>
-                            <td>Dowa</td>
-                            <td>Kamwendo</td>
-                            <td>Criteria 1</td>
-                            <td>Jun 15 2021 10:10</td>
-                            <td>Jonathan Doe</td>
-                            <td>Pending review</td>
-                            <td>
-                                <div class="dropdown is-hoverable">
-                                    <div class="dropdown-trigger">
-                                        <button class="button button is-info is-inverted"
-                                                aria-haspopup="true" aria-controls="dropdown-menu2">
-                                            <span>Options</span>
-                                            <span class="icon is-small">
-                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                            </span>
-                                        </button>
-                                    </div>
-                                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                                        <div class="dropdown-content">
-                                            <a href="{{ href('verification/review') }}" class="dropdown-item">Review</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>SCTP</td>
-                            <td>Dowa</td>
-                            <td>Kamwendo</td>
-                            <td>Criteria 1</td>
-                            <td>Jun 15 2021 10:10</td>
-                            <td>Jonathan Doe</td>
-                            <td>Pending review</td>
-                            <td>
-                                <div class="dropdown is-hoverable">
-                                    <div class="dropdown-trigger">
-                                        <button class="button button is-info is-inverted"
-                                                aria-haspopup="true" aria-controls="dropdown-menu2">
-                                            <span>Options</span>
-                                            <span class="icon is-small">
-                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                            </span>
-                                        </button>
-                                    </div>
-                                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                                        <div class="dropdown-content">
-                                            <a href="{{ href('verification/review') }}" class="dropdown-item">Review</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
     </div>
     {% endblock %}

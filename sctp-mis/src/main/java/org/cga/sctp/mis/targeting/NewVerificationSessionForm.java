@@ -30,14 +30,69 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting.criteria;
+package org.cga.sctp.mis.targeting;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Set;
 
-@Repository
-public interface CriterionRepository extends JpaRepository<Criterion, Long> {
-    List<Criterion> findByActive(boolean active);
+@Validated
+public class NewVerificationSessionForm {
+    @NotNull(message = "At least one cluster must be selected")
+    @Size(min = 1, max = 2048, message = "Min {min}-{max}")
+    private Set<Long> clusters;
+
+    @NotNull(message = "Program is required")
+    private Long program;
+
+    @NotNull(message = "Criterion is required")
+    private Long criterion;
+
+    @NotNull(message = "District is required")
+    private Long district;
+
+    @NotNull(message = "Traditional authority is required")
+    private Long traditionalAuthority;
+
+    public Long getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(Long district) {
+        this.district = district;
+    }
+
+    public Long getTraditionalAuthority() {
+        return traditionalAuthority;
+    }
+
+    public void setTraditionalAuthority(Long traditionalAuthority) {
+        this.traditionalAuthority = traditionalAuthority;
+    }
+
+    public Long getProgram() {
+        return program;
+    }
+
+    public void setProgram(Long program) {
+        this.program = program;
+    }
+
+    public Long getCriterion() {
+        return criterion;
+    }
+
+    public void setCriterion(Long criterion) {
+        this.criterion = criterion;
+    }
+
+    public Set<Long> getClusters() {
+        return clusters;
+    }
+
+    public void setClusters(Set<Long> clusters) {
+        this.clusters = clusters;
+    }
 }

@@ -1,20 +1,2 @@
 {% extends "../../base" %}
 {% import "../../utils/form" %}
-
-{% block headerStyles %}
-    .is-bold { font-weight: 500 }
-{% endblock %}
-
-{% macro importStatusTag(status) %}
-    {% set color = '' %}
-    {% if status == "Processing" %}
-            {% set color = 'is-info' %}
-        {% elseif status == "Review" %}
-            {% set color = 'is-primary' %}
-        {% elseif status == "Error" %}
-            {% set color = 'is-danger' %}
-        {% elseif status == "Merged" %}
-            {% set color = 'is-success' %}
-    {% endif %}
-    <span class="tag is-bold {{ color }} is-light">{{ status.title }}</span>
-{% endmacro %}

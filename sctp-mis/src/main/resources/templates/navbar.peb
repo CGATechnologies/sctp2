@@ -36,7 +36,7 @@
                 <div class="navbar-dropdown">
                     <a href="/data-import" class="navbar-item">Import Data From Sources</a>
                     <a href="/criteria" class="navbar-item">Create Targeting Criteria</a>
-                    <a href="/targeting/verification" class="navbar-item">Pre-Eligibility Verification</a>
+                    <a href="/verification" class="navbar-item">Pre-Eligibility Verification</a>
                     <a href="/targeting/community" class="navbar-item">Community Based Targeting</a>
                 </div>
             </div>

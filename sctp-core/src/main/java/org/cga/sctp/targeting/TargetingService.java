@@ -69,6 +69,12 @@ public class TargetingService extends TransactionalService {
     @Autowired
     private FilterTemplateListOptionRepository filterTemplateListOptionRepository;
 
+    @Autowired
+    private EligibilityVerificationSessionRepository verificationSessionRepository;
+
+    @Autowired
+    private EligibilityVerificationSessionViewRepository verificationSessionViewRepository;
+
     public void saveTargetingSession(TargetingSession targetingSession) {
         sessionRepository.save(targetingSession);
     }
@@ -112,8 +118,12 @@ public class TargetingService extends TransactionalService {
         return criterionViewRepository.findAll();
     }
 
-    public List<CriterionView> getActiveTargetingCriteria() {
+    public List<CriterionView> getActiveTargetingCriteriaViews() {
         return criterionViewRepository.findByActive(true);
+    }
+
+    public List<Criterion> getActiveTargetingCriteria() {
+        return criterionRepository.findByActive(true);
     }
 
     public Criterion findCriterionById(Long id) {
@@ -161,11 +171,27 @@ public class TargetingService extends TransactionalService {
     }
 
     public void compileFilterQuery(Criterion criterion) {
-        // TODO Compile query in the database
+        // TODO Compile query in the database(?)
 
     }
 
     public long getCriterionFilterCount(Criterion criterion) {
         return criteriaFilterRepository.countByCriterionId(criterion.getId());
+    }
+
+    public EligibilityVerificationSessionView findVerificationViewById(Long id) {
+        return verificationSessionViewRepository.findById(id).orElse(null);
+    }
+
+    public void saveEligibilityVerificationSession(EligibilityVerificationSession session) {
+        verificationSessionRepository.save(session);
+    }
+
+    public List<EligibilityVerificationSessionView> getVerificationSessionViews() {
+        return verificationSessionViewRepository.findAll();
+    }
+
+    public Criterion getActiveTargetingCriterionById(Long criterion) {
+        return criterionRepository.findById(criterion).orElse(null);
     }
 }
