@@ -1,95 +1,140 @@
-    {% extends "base" %}
+    {% extends "targeting/verification/base" %}
 
-        {% block contextMenu %}
-        <div class="container context-nav-container">
-            <div class="buttons level">
-                <a href="{{ href('/targeting/verification') }}" class="button is-danger">
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fa fa-chevron-left"></i>
-                        </span>
-                        <span>Back</span>
+    {% block title %}
+        {{ parent() }} | Pre-Eligibility Verification Review - {{ verification.programName }} | {{ verification.districtName }} | {{ verification.criterionName }}
+    {% endblock %}
+
+    {% block contextMenu %}
+    {% set useWideContainer = true %}
+    {% set canModify = hasRole('ADMINISTRATOR') %}
+    <div class="context-nav-container">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <a href="/verification" class="button is-danger">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fa fa-chevron-left"></i>
                     </span>
-                </a>
-
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <button class="button button is-success"
-                                aria-haspopup="true" aria-controls="dropdown-menu2">
-                            <span>Finish And Send To</span>
-                            <span class="icon is-small">
+                    <span>Back</span>
+                </span>
+                    </a>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <div class="dropdown is-hoverable is-right">
+                        <div class="dropdown-trigger">
+                            <button class="button is-primary" aria-haspopup="true" aria-controls="ibd">
+                                <span>Export Options</span>
+                                <span class="icon is-small">
                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                             </span>
-                        </button>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                        <div class="dropdown-content">
-                            <a href="{{ href('/enrolment') }}" class="dropdown-item">Enrolment</a>
-                            <a href="{{ href('/targeting/community') }}" class="dropdown-item">Community Based Targeting</a>
+                            </button>
+                        </div>
+                        <div class="dropdown-menu" id="ibd" role="menu">
+                            <div class="dropdown-content">
+                                <a onclick="downloadTableToCsv('{{ verification.districtName }}-pre-eligibility-verification-results', [1,7])"
+                                   class="dropdown-item">Save As CSV</a>
+                                <a onclick="firstDataTable.print()" class="dropdown-item">Print</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {% if canModify and verification.status == 'Review' %}
+                    <div class="level-item">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
+                                <button class="button button is-success"
+                                        aria-haspopup="true" aria-controls="dropdown-menu2">
+                                    <span>Finish And Send To</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                <div class="dropdown-content">
+                                    <form id="frmToEnrolment" action="/verification/close" method="post">
+                                        {{ hiddenField('id', verification.id) }}
+                                        {{ hiddenField('destination', 'enrolment') }}
+                                        {{ csrf(_csrf) }}
+                                    </form>
+                                    <form id="frmToCbt" action="/verification/close" method="post">
+                                        {{ hiddenField('id', verification.id) }}
+                                        {{ hiddenField('destination', 'targeting') }}
+                                        {{ csrf(_csrf) }}
+                                    </form>
+                                    <a onclick="frmToEnrolment.submit()" class="dropdown-item">Enrolment</a>
+                                    <a onclick="frmToCbt.submit()" class="dropdown-item">Community Based Targeting</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        {% endblock %}
+    </div>
+    {% endblock %}
 
     {% block content %}
-
-    <div class="container">
         <div class="card no-overlap">
             <header class="card-header">
-                <p class="card-header-title">Pre-Eligibility Verification Review - SCTP / Dowa / Criteria 1</p>
+                <p class="card-header-title">Pre-Eligibility Verification Review - {{ verification.programName }} / {{ verification.districtName }} / {{ verification.criterionName }}</p>
             </header>
             <div class="card-content">
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
                 <div class="content">
                     <div class="table-container">
-                        <div class="buttons has-addons">
-                            <button class="button is-small" onclick="t2.exportable.toCSV()">
-                                <span class="icon-text">
-                                    <span class="icon"><i class="fas fa-file-csv"></i></span>
-                                    <span>DOWNLOAD AS EXCEL</span>
-                                </span>
-                            </button>
-                            <button class="button is-small" onclick="t2.exportable.print()">
-                                <span class="icon-text">
-                                    <span class="icon"><i class="fas fa-print"></i></span>
-                                    <span>PRINT</span>
-                                </span>
-                            </button>
-                        </div>
                         <table id="results" class="table dataTable is-narrow is-striped is-hoverable">
                             <thead>
                             <tr>
-                                <th>Household</th>
-                                <th>Head of Household</th>
+                                <th>Form ID</th>
                                 <th>TA</th>
                                 <th>GVH Name</th>
                                 <th>VG Cluster</th>
                                 <th>Zone</th>
-                                <th>Pre-Printed Num</th>
-                                <th>ID Form</th>
+                                <th>Head of Household</th>
+                                <th>No. of Members</th>
+                                <th data-sortable="false" style="width:15%">Options</th>
                             </tr>
                             </thead>
                             <tbody>
-                                    {% for result in results %}
-    {# @pebvariable name="result" type="org.cga.sctp.mis.targeting.VerificationResult" #}
-                                        <tr>
-                                            <td>{{ result.householdCode }}</td>
-                                            <td>{{ result.householdHead }}</td>
-                                            {# <td>{{ result.district }}</td> #}
-                                            <td>{{ result.ta }}</td>
-                                            <td>{{ result.gvhName }}</td>
-                                            <td>{{ result.villageCluster }}</td>
-                                            <td>{{ result.zone }}</td>
-                                            <td>{{ result.printedNumber }}</td>
-                                            <td>{{ result.idForm }}</td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for result in results %}
+                                    {# @pebvariable name="result" type="org.cga.sctp.mis.targeting.VerificationResult" #}
+                                    <tr>
+                                        <td>{{ result.householdCode }}</td>
+                                        <td>{{ result.householdHead }}</td>
+                                        {# <td>{{ result.district }}</td> #}
+                                        <td>{{ result.taName }}</td>
+                                        <td>{{ result.gvhName }}</td>
+                                        <td>{{ result.villageCluster }}</td>
+                                        <td>{{ result.zone }}</td>
+                                        <td>{{ result.printedNumber }}</td>
+                                        <div class="dropdown is-hoverable is-right">
+                                            <div class="dropdown-trigger">
+                                                <button class="button button is-info is-inverted is-options"
+                                                        aria-haspopup="true"
+                                                        aria-controls="ddm{{ result.id }}">
+                                                    <span>Options</span>
+                                                    <span class="icon is-small">
+                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" id="ddm{{ result.id }}" role="menu">
+                                                <div class="dropdown-content">
+                                                    <a href="/verification/hh-composition?session={{ verification.id }}&amp;household_id={{ result.id }}"
+                                                       class="dropdown-item">View Composition</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     {% endblock %}

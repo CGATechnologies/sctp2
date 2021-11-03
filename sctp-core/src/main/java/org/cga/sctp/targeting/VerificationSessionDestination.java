@@ -30,23 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.targeting;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-@Repository
-interface IndividualRepository extends JpaRepository<Individual, Long> {
-
-    @Query(nativeQuery = true, value = "select * from dashboard_stats_v")
-    DashboardStats getDashboardStats();
-
-    Slice<Individual> findByHouseholdId(Long householdId, Pageable pageable);
-
-    List<Individual> findByHouseholdId(Long householdId);
+public enum VerificationSessionDestination {
+    enrolment,
+    targeting
 }

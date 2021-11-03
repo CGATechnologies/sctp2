@@ -30,23 +30,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.mis.targeting;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.cga.sctp.targeting.VerificationSessionDestination;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
-@Repository
-interface IndividualRepository extends JpaRepository<Individual, Long> {
+public class CloseVerificationSessionForm {
 
-    @Query(nativeQuery = true, value = "select * from dashboard_stats_v")
-    DashboardStats getDashboardStats();
+    @NotNull(message = "Session id is required")
+    private Long id;
 
-    Slice<Individual> findByHouseholdId(Long householdId, Pageable pageable);
+    @NotNull(message = "Destination is required")
+    private VerificationSessionDestination destination;
 
-    List<Individual> findByHouseholdId(Long householdId);
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public VerificationSessionDestination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(VerificationSessionDestination destination) {
+        this.destination = destination;
+    }
 }

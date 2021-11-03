@@ -9,6 +9,13 @@
             menu.classList.toggle('is-active');
         });
     }
+    window.meta = function(name){
+        var m = query(`meta[name='${name}']`);
+        if(m != null){
+            return m.getAttribute('content');
+        }
+        return null;
+    }
     window.replaceClass = function(el, a, b){
       if(el.dataset.class == a){
         el.dataset.class = b;

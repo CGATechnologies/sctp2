@@ -38,6 +38,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BeneficiaryService extends TransactionalService {
 
@@ -61,5 +63,13 @@ public class BeneficiaryService extends TransactionalService {
 
     public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
         return individualRepository.findByHouseholdId(householdId, pageable);
+    }
+
+    public Household findHouseholdById(Long householdId) {
+        return householdRepository.findById(householdId).orElse(null);
+    }
+
+    public List<Individual> getHouseholdMembers(Long householdId) {
+        return individualRepository.findByHouseholdId(householdId);
     }
 }

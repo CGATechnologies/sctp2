@@ -1,5 +1,8 @@
 package org.cga.sctp.mis.targeting;
 
+import org.cga.sctp.beneficiaries.BeneficiaryService;
+import org.cga.sctp.beneficiaries.Household;
+import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.location.Location;
 import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.location.LocationService;
@@ -42,17 +45,15 @@ public class EligibilityVerificationController extends BaseController {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private BeneficiaryService beneficiaryService;
+
     @AdminAndStandardAccessOnly
     @GetMapping
     public ModelAndView verification() {
         List<EligibilityVerificationSessionView> verificationList = targetingService.getVerificationSessionViews();
         return view("targeting/verification/history", "verifications", verificationList);
     }
-
-    /*@GetMapping("/verification")
-    public ModelAndView verification() {
-        return view("targeting/verification", "results", completedResults);
-    }*/
 
     private List<SelectOptionItem> toSelectOptions(List<LocationCode> codes) {
         return codes.stream()
@@ -128,7 +129,74 @@ public class EligibilityVerificationController extends BaseController {
 
     @AdminAndStandardAccessOnly
     @GetMapping("/review")
-    public ModelAndView reviewEligibilityList(@RequestParam Long id) {
-        return view("targeting/verification/review", "results", List.of());
+    public ModelAndView reviewEligibilityList(@RequestParam Long id, RedirectAttributes attributes) {
+        EligibilityVerificationSessionView verificationSessionView = targetingService.findVerificationViewById(id);
+        if (verificationSessionView == null) {
+            setDangerFlashMessage("Cannot find verification session.", attributes);
+            return redirect("/verification");
+        }
+        return view("targeting/verification/review", "households", List.of())
+                .addObject("verification", verificationSessionView);
+    }
+
+    @AdminAndStandardAccessOnly
+    @GetMapping("/hh-composition")
+    public ModelAndView householdComposition(@RequestParam Long session, @RequestParam(name = "household_id") Long householdId, RedirectAttributes attributes) {
+        Household household;
+        List<Individual> individuals;
+        EligibilityVerificationSessionView verificationSessionView;
+
+        verificationSessionView = targetingService.findVerificationViewById(session);
+
+        if (verificationSessionView == null) {
+            setDangerFlashMessage("Cannot find verification session.", attributes);
+            return redirect("/verification");
+        }
+
+        if ((household = beneficiaryService.findHouseholdById(householdId)) == null) {
+            setDangerFlashMessage("Cannot find household", attributes);
+            return redirect("/verification/review?id=" + session);
+        }
+
+        individuals = beneficiaryService.getHouseholdMembers(household.getHouseholdId());
+
+        return view("targeting/verification/composition")
+                .addObject("individuals", individuals)
+                .addObject("verification", verificationSessionView)
+                .addObject("household", household);
+    }
+
+    @AdminAccessOnly
+    @PostMapping("/close")
+    ModelAndView closeSession(
+            @AuthenticatedUserDetails AuthenticatedUser user,
+            @Valid @ModelAttribute("form") CloseVerificationSessionForm form,
+            BindingResult result,
+            RedirectAttributes attributes) {
+
+        if (result.hasErrors()) {
+            setDangerFlashMessage("Something went wrong. Please try again.", attributes);
+            return redirect("/verification");
+        }
+
+        EligibilityVerificationSession session = targetingService.getVerificationSessionById(form.getId());
+        if (session == null) {
+            setDangerFlashMessage("Cannot find pre-eligibility verification session.", attributes);
+            return redirect("/verification");
+        }
+        if (!session.isOpen()) {
+            setDangerFlashMessage("Cannot close this pre-eligibility verification session because it is already closed.", attributes);
+            return redirect("/verification");
+        }
+
+        targetingService.closeVerificationSession(session, form.getDestination());
+
+        if (session.getHouseholds() == 0) {
+            setWarningFlashMessage("Pre-Eligibility verification session closed. However, there were no households that matched the targeting criteria.", attributes);
+        } else {
+            setSuccessFlashMessage(format("Pre-Eligibility verification closed and sent to %s", form.getDestination()), attributes);
+        }
+        publishGeneralEvent("%s closed pre-eligibility verification session with id %d", user.username(), session.getId());
+        return redirect("/verification");
     }
 }

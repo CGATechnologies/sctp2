@@ -194,4 +194,15 @@ public class TargetingService extends TransactionalService {
     public Criterion getActiveTargetingCriterionById(Long criterion) {
         return criterionRepository.findById(criterion).orElse(null);
     }
+
+    public EligibilityVerificationSession getVerificationSessionById(Long id) {
+        return verificationSessionRepository.findById(id).orElse(null);
+    }
+
+    public void closeVerificationSession(EligibilityVerificationSession session, VerificationSessionDestination destination) {
+        // TODO Run filters
+
+        session.setStatus(EligibilityVerificationSessionBase.Status.Closed);
+        verificationSessionRepository.save(session);
+    }
 }

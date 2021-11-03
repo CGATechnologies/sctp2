@@ -140,4 +140,9 @@ public class EligibilityVerificationSessionBase {
     public void setHouseholds(Long households) {
         this.households = households;
     }
+
+    @Transient
+    public boolean isOpen() {
+        return status == Status.Review;
+    }
 }
