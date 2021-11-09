@@ -32,21 +32,18 @@
 
 package org.cga.sctp.targeting.criteria;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+public interface CriteriaFilterInfo {
+    Long getId();
 
-import java.util.List;
+    String getTableName();
 
-@Repository
-public interface CriteriaFilterRepository extends JpaRepository<CriteriaFilter, Long> {
-    List<CriteriaFilter> findByCriterionId(Long criterionId);
+    String getColumnName();
 
-    CriteriaFilter findByIdAndCriterionId(Long id, Long criterionId);
+    CriteriaFilterObject.Conjunction getConjunction();
 
-    long countByCriterionId(Long id);
+    String getFilterValue();
 
-    @Query(nativeQuery = true, value = "{CALL getFilterValuesForCriterion(:criterion_id)}")
-    List<CriteriaFilterInfo> getFilterValuesForCriterion(@Param("criterion_id") Long criterionId);
+    FilterTemplate.FieldType getFieldType();
+
+    String getLabel();
 }

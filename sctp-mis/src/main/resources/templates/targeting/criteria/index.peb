@@ -19,13 +19,14 @@
             <p class="card-header-title">Targeting Criteria</p>
         </header>
         <div class="card-content">
-            {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+            {{ showMessages(successMessage, message('targeting.criteria.info'), dangerMessage, warningMessage) }}
             <div class="content">
                 <table class="table dataTable is-narrow is-striped is-hoverable">
                     <thead>
                     <tr>
                         <th>Criteria Name</th>
                         <th>Number of Filters</th>
+                        <th>Usage Count</th>
                         <th>Created By</th>
                         <th>Created On</th>
                         <th>Active</th>
@@ -38,6 +39,7 @@
                         <tr>
                             <td>{{ criterion.name }}</td>
                             <td>{{ criterion.filters | numberformat("#,###") }}</td>
+                            <td>{{ criterion.verifications | numberformat("#,###") }}</td>
                             <td>{{ criterion.creatorName }}</td>
                             <td>{{ printDate(criterion.createdAt) }}</td>
                             <td>{{ yesOrNo(criterion.active) }}</td>

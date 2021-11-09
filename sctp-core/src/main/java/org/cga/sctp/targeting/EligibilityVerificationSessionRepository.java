@@ -33,8 +33,19 @@
 package org.cga.sctp.targeting;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 interface EligibilityVerificationSessionRepository extends JpaRepository<EligibilityVerificationSession, Long> {
+
+    @Procedure(procedureName = "calculateVerificationSessionHouseholdCount")
+    void calculateHouseholdCount(@Param("session_id") Long id);
+
+    @Query(nativeQuery = true, value = "{CALL getEligibleHouseholds(:session_id)}")
+    List<EligibleHousehold> getEligibleHouseholds(@Param("session_id") Long id);
 }

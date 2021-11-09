@@ -11,10 +11,7 @@ import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
-import org.cga.sctp.targeting.EligibilityVerificationSession;
-import org.cga.sctp.targeting.EligibilityVerificationSessionBase;
-import org.cga.sctp.targeting.EligibilityVerificationSessionView;
-import org.cga.sctp.targeting.TargetingService;
+import org.cga.sctp.targeting.*;
 import org.cga.sctp.targeting.criteria.Criterion;
 import org.cga.sctp.user.AdminAccessOnly;
 import org.cga.sctp.user.AdminAndStandardAccessOnly;
@@ -109,6 +106,14 @@ public class EligibilityVerificationController extends BaseController {
                     "Invalid location selection. Selected traditional authority does not belong to the selected district,.");
         }
 
+        if (criterion == null) {
+            return setDangerMessage(newModel(), "Selected criteria cannot be found.");
+        }
+
+        if (!criterion.isApplicable()) {
+            return setDangerMessage(newModel(), "Selected criterion cannot be used because it does not contain filters.");
+        }
+
         EligibilityVerificationSession session = new EligibilityVerificationSession();
         session.setHouseholds(0L);
         session.setUserId(user.id());
@@ -120,7 +125,8 @@ public class EligibilityVerificationController extends BaseController {
         session.setDistrictCode(district.getCode());
         session.setStatus(EligibilityVerificationSessionBase.Status.Review);
 
-        targetingService.saveEligibilityVerificationSession(session);
+        // Run
+        targetingService.addEligibilityVerificationSession(session, criterion, user.id());
 
         setSuccessFlashMessage("Pre-eligibility verification created", attributes);
 
@@ -135,7 +141,8 @@ public class EligibilityVerificationController extends BaseController {
             setDangerFlashMessage("Cannot find verification session.", attributes);
             return redirect("/verification");
         }
-        return view("targeting/verification/review", "households", List.of())
+        List<EligibleHousehold> households = targetingService.getEligibleHouseholds(verificationSessionView);
+        return view("targeting/verification/review", "households", households)
                 .addObject("verification", verificationSessionView);
     }
 
@@ -184,6 +191,7 @@ public class EligibilityVerificationController extends BaseController {
             setDangerFlashMessage("Cannot find pre-eligibility verification session.", attributes);
             return redirect("/verification");
         }
+
         if (!session.isOpen()) {
             setDangerFlashMessage("Cannot close this pre-eligibility verification session because it is already closed.", attributes);
             return redirect("/verification");
@@ -194,9 +202,12 @@ public class EligibilityVerificationController extends BaseController {
         if (session.getHouseholds() == 0) {
             setWarningFlashMessage("Pre-Eligibility verification session closed. However, there were no households that matched the targeting criteria.", attributes);
         } else {
-            setSuccessFlashMessage(format("Pre-Eligibility verification closed and sent to %s", form.getDestination()), attributes);
+            setSuccessFlashMessage(format("Pre-Eligibility verification closed and sent to %s",
+                    form.getDestination()), attributes);
         }
-        publishGeneralEvent("%s closed pre-eligibility verification session with id %d", user.username(), session.getId());
+        publishGeneralEvent("%s closed pre-eligibility verification session with id %d",
+                user.username(), session.getId());
+
         return redirect("/verification");
     }
 }

@@ -12,12 +12,12 @@
             <div class="level-left">
                 <div class="level-item">
                     <a href="/verification" class="button is-danger">
-                <span class="icon-text">
-                    <span class="icon">
-                        <i class="fa fa-chevron-left"></i>
-                    </span>
-                    <span>Back</span>
-                </span>
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i class="fa fa-chevron-left"></i>
+                            </span>
+                            <span>Back</span>
+                        </span>
                     </a>
                 </div>
             </div>
@@ -28,8 +28,8 @@
                             <button class="button is-primary" aria-haspopup="true" aria-controls="ibd">
                                 <span>Export Options</span>
                                 <span class="icon is-small">
-                                <i class="fas fa-angle-down" aria-hidden="true"></i>
-                            </span>
+                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
                             </button>
                         </div>
                         <div class="dropdown-menu" id="ibd" role="menu">
@@ -89,7 +89,7 @@
                         <table id="results" class="table dataTable is-narrow is-striped is-hoverable">
                             <thead>
                             <tr>
-                                <th>Form ID</th>
+                                <th>Form Number</th>
                                 <th>TA</th>
                                 <th>GVH Name</th>
                                 <th>VG Cluster</th>
@@ -100,35 +100,37 @@
                             </tr>
                             </thead>
                             <tbody>
-                                {% for result in results %}
-                                    {# @pebvariable name="result" type="org.cga.sctp.mis.targeting.VerificationResult" #}
+                                {% for household in households %}
+                                    {# @pebvariable name="household" type="org.cga.sctp.targeting.EligibleHousehold" #}
                                     <tr>
-                                        <td>{{ result.householdCode }}</td>
-                                        <td>{{ result.householdHead }}</td>
+                                        <td>ML-{{ household.formNumber }}</td>
+                                        <td>{{ household.ta }}</td>
                                         {# <td>{{ result.district }}</td> #}
-                                        <td>{{ result.taName }}</td>
-                                        <td>{{ result.gvhName }}</td>
-                                        <td>{{ result.villageCluster }}</td>
-                                        <td>{{ result.zone }}</td>
-                                        <td>{{ result.printedNumber }}</td>
-                                        <div class="dropdown is-hoverable is-right">
-                                            <div class="dropdown-trigger">
-                                                <button class="button button is-info is-inverted is-options"
-                                                        aria-haspopup="true"
-                                                        aria-controls="ddm{{ result.id }}">
-                                                    <span>Options</span>
-                                                    <span class="icon is-small">
-                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                                    </span>
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" id="ddm{{ result.id }}" role="menu">
-                                                <div class="dropdown-content">
-                                                    <a href="/verification/hh-composition?session={{ verification.id }}&amp;household_id={{ result.id }}"
-                                                       class="dropdown-item">View Composition</a>
+                                        <td>{{ household.villageHead }}</td>
+                                        <td>{{ household.cluster }}</td>
+                                        <td>{{ household.zone }}</td>
+                                        <td>{{ household.householdHead }}</td>
+                                        <td>{{ household.members | numberformat("#,###") }}</td>
+                                        <td>
+                                            <div class="dropdown is-hoverable is-right">
+                                                <div class="dropdown-trigger">
+                                                    <button class="button button is-info is-inverted is-options"
+                                                            aria-haspopup="true"
+                                                            aria-controls="ddm{{ household.householdId }}">
+                                                        <span>Options</span>
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                                <div class="dropdown-menu" id="ddm{{ household.householdId }}" role="menu">
+                                                    <div class="dropdown-content">
+                                                        <a href="/verification/hh-composition?session={{ verification.id }}&amp;household_id={{ household.householdId }}"
+                                                           class="dropdown-item">View Composition</a>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

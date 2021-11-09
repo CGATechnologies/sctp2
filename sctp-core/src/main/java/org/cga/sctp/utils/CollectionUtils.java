@@ -30,23 +30,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting.criteria;
+package org.cga.sctp.utils;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.StringJoiner;
 
-import java.util.List;
+public final class CollectionUtils {
 
-@Repository
-public interface CriteriaFilterRepository extends JpaRepository<CriteriaFilter, Long> {
-    List<CriteriaFilter> findByCriterionId(Long criterionId);
+    public static String join(Collection<?> collection) {
+        return join(collection, ",");
+    }
 
-    CriteriaFilter findByIdAndCriterionId(Long id, Long criterionId);
-
-    long countByCriterionId(Long id);
-
-    @Query(nativeQuery = true, value = "{CALL getFilterValuesForCriterion(:criterion_id)}")
-    List<CriteriaFilterInfo> getFilterValuesForCriterion(@Param("criterion_id") Long criterionId);
+    public static String join(Collection<?> collection, String glue) {
+        if (glue == null || glue.isEmpty()) {
+            return "";
+        }
+        StringJoiner joiner = new StringJoiner(glue);
+        for (Object o : collection) {
+            joiner.add(Objects.toString(o));
+        }
+        return joiner.toString();
+    }
 }

@@ -7,7 +7,7 @@
     {% block contextMenu %}
     <div class="container context-nav-container">
         <div class="buttons is-left">
-            <a href="/targeting/verification/review?id={{ verification.id }}" class="button is-danger">
+            <a href="/verification/review?id={{ verification.id }}" class="button is-danger">
                 <span class="icon-text">
                     <span class="icon">
                         <i class="fa fa-chevron-left"></i>

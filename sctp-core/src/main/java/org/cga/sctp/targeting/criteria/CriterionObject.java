@@ -32,6 +32,8 @@
 
 package org.cga.sctp.targeting.criteria;
 
+import org.cga.sctp.utils.LocaleUtils;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +49,9 @@ public abstract class CriterionObject {
     protected String name;
     private Long createdBy;
     private Boolean active;
+    private String compiledQuery;
     private LocalDateTime createdAt;
+    private LocalDateTime compiledAt;
 
     public Long getId() {
         return id;
@@ -87,5 +91,25 @@ public abstract class CriterionObject {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCompiledQuery() {
+        return compiledQuery;
+    }
+
+    public void setCompiledQuery(String compiledQuery) {
+        this.compiledQuery = compiledQuery;
+    }
+
+    public LocalDateTime getCompiledAt() {
+        return compiledAt;
+    }
+
+    public void setCompiledAt(LocalDateTime compiledAt) {
+        this.compiledAt = compiledAt;
+    }
+
+    public final boolean isApplicable() {
+        return compiledAt != null && !LocaleUtils.isStringNullOrEmpty(compiledQuery);
     }
 }

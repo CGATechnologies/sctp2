@@ -36,11 +36,11 @@ import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.targeting.TargetingService;
 import org.cga.sctp.targeting.criteria.*;
-import org.cga.sctp.user.RoleConstants;
+import org.cga.sctp.user.AdminAccessOnly;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -69,6 +69,14 @@ public class CriterionFilterController extends BaseController {
         return criterion;
     }
 
+    private CriterionView findCriterionViewById(Long id, RedirectAttributes attributes) {
+        CriterionView criterion = targetingService.findCriterionViewById(id);
+        if (criterion == null) {
+            setDangerFlashMessage("Targeting criterion not found.", attributes);
+        }
+        return criterion;
+    }
+
     private ModelAndView redirectToCriteriaList() {
         return redirect("/criteria");
     }
@@ -78,7 +86,7 @@ public class CriterionFilterController extends BaseController {
     }
 
     @GetMapping
-    @Secured({RoleConstants.ROLE_ADMINISTRATOR, RoleConstants.ROLE_STANDARD})
+    @AdminAndStandardAccessOnly
     ModelAndView list(@PathVariable("criterion-id") Long id, RedirectAttributes attributes) {
         Criterion criterion = findCriterionById(id, attributes);
         if (criterion == null) {
@@ -91,12 +99,26 @@ public class CriterionFilterController extends BaseController {
     }
 
     @GetMapping("/new")
-    @Secured({RoleConstants.ROLE_ADMINISTRATOR})
+    @AdminAccessOnly
     ModelAndView newFilter(@PathVariable("criterion-id") Long id, RedirectAttributes attributes) {
+        Long usageCount;
         Criterion criterion = findCriterionById(id, attributes);
         if (criterion == null) {
             return redirectToCriteriaList();
         }
+
+        if ((usageCount = targetingService.getCriterionUsageCount(criterion)) >= 1) {
+            setDangerFlashMessage(
+                    format(
+                            "This targeting criteria can longer be modified because it has already been " +
+                                    "applied to %,d pre-eligibility verification run(s).",
+                            usageCount
+                    ),
+                    attributes
+            );
+            return redirectToCriteriaFilters(criterion.getId());
+        }
+
         List<CriteriaFilterView> filterList = targetingService.getFilterViewsByCriterionId(criterion.getId());
         return view("targeting/criteria/filters/new")
                 .addObject("criterion", criterion)
@@ -106,7 +128,7 @@ public class CriterionFilterController extends BaseController {
     }
 
     @GetMapping(value = "/get-filter-parameters", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured(RoleConstants.ROLE_ADMINISTRATOR)
+    @AdminAccessOnly
     ResponseEntity<List<SelectOptionItem>> getFilterParameters(@RequestParam("category") String category) {
         List<SelectOptionItem> optionItemList;
         List<CriteriaFilterTemplate> templates;
@@ -138,7 +160,7 @@ public class CriterionFilterController extends BaseController {
     }
 
     @GetMapping(value = "/get-template-options", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured(RoleConstants.ROLE_ADMINISTRATOR)
+    @AdminAccessOnly
     ResponseEntity<List<SelectOptionItem>> getFilterTemplateOptions(@RequestParam("template") Long templateId) {
         List<SelectOptionItem> optionItemList;
         CriteriaFilterTemplate template;
@@ -163,7 +185,7 @@ public class CriterionFilterController extends BaseController {
     }
 
     @PostMapping
-    @Secured({RoleConstants.ROLE_ADMINISTRATOR})
+    @AdminAccessOnly
     ModelAndView add(
             @AuthenticationPrincipal String username,
             @PathVariable("criterion-id") Long id,
@@ -171,8 +193,9 @@ public class CriterionFilterController extends BaseController {
             BindingResult result,
             RedirectAttributes attributes) {
 
-        Criterion criterion = findCriterionById(id, attributes);
+        Long usageCount;
         CriteriaFilterTemplate template;
+        Criterion criterion = findCriterionById(id, attributes);
 
         if (criterion == null) {
             return redirectToCriteriaList();
@@ -185,6 +208,18 @@ public class CriterionFilterController extends BaseController {
                     .addObject("templates", Collections.emptyList());
         }
 
+        if ((usageCount = targetingService.getCriterionUsageCount(criterion)) >= 1) {
+            setDangerFlashMessage(
+                    format(
+                            "This targeting criteria can longer be modified because it has already been " +
+                                    "applied to %,d pre-eligibility verification run(s).",
+                            usageCount
+                    ),
+                    attributes
+            );
+            return redirectToCriteriaFilters(criterion.getId());
+        }
+
         if ((template = targetingService.findFilterTemplateById(form.getTemplateId())) == null) {
             return withDangerMessage("targeting/criteria/filters/new", "Selected filter template does not exist.")
                     .addObject("criterion", criterion)
@@ -195,7 +230,7 @@ public class CriterionFilterController extends BaseController {
         if (form.getConjunction() == CriteriaFilterObject.Conjunction.None) {
             if (targetingService.getCriterionFilterCount(criterion) > 1) {
                 return withDangerMessage("targeting/criteria/filters/new",
-                        "The conjunction \"None\" can only be used by the first filter only.")
+                        "The conjunction ’None’ can only be used by the first filter only.")
                         .addObject("criterion", criterion)
                         .addObject("conjunctions", CriteriaFilterObject.Conjunction.VALUES)
                         .addObject("templates", Collections.emptyList());
@@ -216,13 +251,14 @@ public class CriterionFilterController extends BaseController {
     }
 
     @PostMapping("/remove")
-    @Secured({RoleConstants.ROLE_ADMINISTRATOR})
+    @AdminAccessOnly
     ModelAndView remove(
             @PathVariable("criterion-id") Long id,
             @Valid @ModelAttribute("form") RemoveCriteriaFilterForm form,
             BindingResult result,
             RedirectAttributes attributes) {
 
+        Long usageCount;
         Criterion criterion = findCriterionById(id, attributes);
 
         if (criterion == null) {
@@ -232,6 +268,18 @@ public class CriterionFilterController extends BaseController {
         if (result.hasErrors()) {
             setDangerFlashMessage("Something went wrong. Please try again.", attributes);
             return redirectToCriteriaFilters(id);
+        }
+
+        if ((usageCount = targetingService.getCriterionUsageCount(criterion)) >= 1) {
+            setDangerFlashMessage(
+                    format(
+                            "This targeting criteria can longer be modified because it has already been " +
+                                    "applied to %,d pre-eligibility verification run(s).",
+                            usageCount
+                    ),
+                    attributes
+            );
+            return redirectToCriteriaFilters(criterion.getId());
         }
 
         CriteriaFilter filter = targetingService.findCriteriaFilterById(form.getFilter(), id);

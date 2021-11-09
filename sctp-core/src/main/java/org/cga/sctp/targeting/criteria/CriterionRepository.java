@@ -33,6 +33,7 @@
 package org.cga.sctp.targeting.criteria;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,4 +41,9 @@ import java.util.List;
 @Repository
 public interface CriterionRepository extends JpaRepository<Criterion, Long> {
     List<Criterion> findByActive(boolean active);
+
+    @Query(
+            nativeQuery = true,
+            value = "select count(criterion_id) from eligibility_verification_sessions WHERE criterion_id = :id")
+    Long getUsageCount(Long id);
 }

@@ -34,13 +34,18 @@ package org.cga.sctp.targeting;
 
 import org.cga.sctp.core.TransactionalService;
 import org.cga.sctp.targeting.criteria.*;
+import org.cga.sctp.utils.CollectionUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TargetingService extends TransactionalService {
@@ -74,6 +79,9 @@ public class TargetingService extends TransactionalService {
 
     @Autowired
     private EligibilityVerificationSessionViewRepository verificationSessionViewRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     public void saveTargetingSession(TargetingSession targetingSession) {
         sessionRepository.save(targetingSession);
@@ -170,12 +178,103 @@ public class TargetingService extends TransactionalService {
         criteriaFilterRepository.delete(filter);
     }
 
-    public void compileFilterQuery(Criterion criterion) {
-        // TODO Compile query in the database(?)
 
+    private String placeholder(CriteriaFilterInfo info) {
+        return format("%s_%s_%s%d",
+                info.getConjunction().name().toLowerCase(),
+                info.getTableName(), info.getColumnName(), info.getId()
+        );
     }
 
-    public long getCriterionFilterCount(Criterion criterion) {
+    public void compileFilterQuery(Criterion criterion) {
+        List<CriteriaFilterInfo> criteriaFilterInfoList =
+                criteriaFilterRepository.getFilterValuesForCriterion(criterion.getId());
+        if (criteriaFilterInfoList.isEmpty()) {
+            return;
+        }
+
+        StringBuilder builder;
+        List<CriteriaFilterInfo> ands;
+        List<CriteriaFilterInfo> ors;
+
+        boolean hasHouseholdFilters;
+        boolean hasIndividualFilters;
+
+        ands = criteriaFilterInfoList.stream()
+                .filter(cfi -> cfi.getConjunction() == CriteriaFilterObject.Conjunction.And || cfi.getConjunction() == CriteriaFilterObject.Conjunction.None)
+                .collect(Collectors.toList());
+
+        ors = criteriaFilterInfoList.stream()
+                .filter(cfi -> cfi.getConjunction() == CriteriaFilterObject.Conjunction.Or)
+                .collect(Collectors.toList());
+
+        hasIndividualFilters = criteriaFilterInfoList.stream()
+                .anyMatch(cfi -> cfi.getTableName().equalsIgnoreCase("individuals"));
+
+        hasHouseholdFilters = criteriaFilterInfoList.stream()
+                .anyMatch(cfi -> cfi.getTableName().equalsIgnoreCase("households"));
+
+        StringBuilder clauseBuilder = new StringBuilder();
+
+        if (!ands.isEmpty()) {
+            clauseBuilder.append('(');
+            boolean first = true;
+            for (CriteriaFilterInfo info : ands) {
+                if (!first) {
+                    clauseBuilder.append(" AND ");
+                }
+                first = false;
+                clauseBuilder.append(info.getTableName())
+                        .append(".")
+                        .append(info.getColumnName())
+                        .append(" = :").append(placeholder(info));
+            }
+            clauseBuilder.append(')');
+        }
+
+        if (!ors.isEmpty()) {
+            if (!clauseBuilder.isEmpty()) {
+                clauseBuilder.append(" OR ");
+            }
+            clauseBuilder.append('(');
+            boolean first = true;
+            for (CriteriaFilterInfo info : ors) {
+                if (!first) {
+                    clauseBuilder.append(" OR ");
+                }
+                first = false;
+                clauseBuilder.append(info.getTableName())
+                        .append(".")
+                        .append(info.getColumnName())
+                        .append(" = :").append(placeholder(info));
+            }
+            clauseBuilder.append(')');
+        }
+
+        // Compile the query only. The actual run and parameter binding will be done later.
+
+        builder = new StringBuilder("SELECT households.household_id, households.location_code, households.ta_code,")
+                .append("households.zone_code, households.cluster_code FROM households");
+
+        if (hasHouseholdFilters) {
+            if (hasIndividualFilters) {
+                builder.append(" JOIN individuals ON individuals.household_id = households.household_id");
+            }
+        } else {
+            builder.append(" JOIN individuals ON individuals.household_id = households.household_id");
+        }
+
+        builder.append(" WHERE (").append(clauseBuilder).append(") GROUP BY household_id");
+
+        String query = builder.toString();
+
+        criterion.setCompiledAt(LocalDateTime.now());
+        criterion.setCompiledQuery(query);
+
+        saveTargetingCriterion(criterion);
+    }
+
+    public long getCriterionFilterCount(CriterionObject criterion) {
         return criteriaFilterRepository.countByCriterionId(criterion.getId());
     }
 
@@ -185,6 +284,52 @@ public class TargetingService extends TransactionalService {
 
     public void saveEligibilityVerificationSession(EligibilityVerificationSession session) {
         verificationSessionRepository.save(session);
+    }
+
+    public void addEligibilityVerificationSession(EligibilityVerificationSession session, Criterion criterion, Long userId) {
+        if (session instanceof HibernateProxy) {
+            return;
+        }
+        verificationSessionRepository.save(session);
+        runEligibilityVerification(session, criterion, userId);
+        verificationSessionRepository.calculateHouseholdCount(session.getId());
+    }
+
+    /**
+     * Runs the eligibility verification. This method must only be called when creating a {@link EligibilityVerificationSession}
+     *
+     * @param session   A managed entity recently persisted.
+     * @param criterion Criterion from which filters will be used to evaluate households
+     * @param userId    The user who initiated this run.
+     */
+    private void runEligibilityVerification(EligibilityVerificationSession session, Criterion criterion, Long userId) {
+
+        List<CriteriaFilterInfo> criteriaFilterInfoList = criteriaFilterRepository
+                .getFilterValuesForCriterion(session.getCriterionId());
+
+        StringBuilder builder = new StringBuilder(" INSERT INTO eligible_households (session_id, household_id, created_at, run_by)")
+                .append(" WITH _insert_ AS (").append(criterion.getCompiledQuery()).append(")")
+                .append(" SELECT :sessionId, household_id, :createdAt, :runBy")
+                .append(" FROM _insert_")
+                .append(" WHERE location_code = :districtCode AND ta_code = :taCode")
+                .append(" AND FIND_IN_SET(cluster_code, :clusterCodes)");
+
+        String sql = builder.toString();
+
+        Query query = entityManager.createNativeQuery(sql);
+
+        query.setParameter("runBy", userId)
+                .setParameter("taCode", session.getTaCode())
+                .setParameter("sessionId", session.getId())
+                .setParameter("createdAt", LocalDateTime.now())
+                .setParameter("districtCode", session.getDistrictCode())
+                .setParameter("clusterCodes", CollectionUtils.join(session.getClusters()));
+
+        for (CriteriaFilterInfo info : criteriaFilterInfoList) {
+            query.setParameter(placeholder(info), info.getFilterValue());
+        }
+
+        query.executeUpdate();
     }
 
     public List<EligibilityVerificationSessionView> getVerificationSessionViews() {
@@ -200,9 +345,21 @@ public class TargetingService extends TransactionalService {
     }
 
     public void closeVerificationSession(EligibilityVerificationSession session, VerificationSessionDestination destination) {
-        // TODO Run filters
-
         session.setStatus(EligibilityVerificationSessionBase.Status.Closed);
         verificationSessionRepository.save(session);
+
+        // TODO Send to next module, depending on "destination" selection
+    }
+
+    public CriterionView findCriterionViewById(Long id) {
+        return criterionViewRepository.findById(id).orElse(null);
+    }
+
+    public Long getCriterionUsageCount(Criterion criterion) {
+        return criterionRepository.getUsageCount(criterion.getId());
+    }
+
+    public List<EligibleHousehold> getEligibleHouseholds(EligibilityVerificationSessionBase session) {
+        return verificationSessionRepository.getEligibleHouseholds(session.getId());
     }
 }

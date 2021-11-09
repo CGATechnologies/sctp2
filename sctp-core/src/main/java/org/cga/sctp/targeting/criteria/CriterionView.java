@@ -44,6 +44,7 @@ import javax.persistence.Table;
 public class CriterionView extends CriterionObject {
     private Long filters;
     private String creatorName;
+    private Long verifications;
 
     public Long getFilters() {
         return filters;
@@ -59,5 +60,13 @@ public class CriterionView extends CriterionObject {
 
     public void setCreatorName(String creatorName) {
         this.creatorName = creatorName;
+    }
+
+    public Long getVerifications() {
+        return verifications;
+    }
+
+    public void setVerifications(Long verifications) {
+        this.verifications = verifications;
     }
 }
