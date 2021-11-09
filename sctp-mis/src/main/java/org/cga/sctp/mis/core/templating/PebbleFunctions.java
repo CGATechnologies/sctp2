@@ -73,6 +73,11 @@ public class PebbleFunctions {
     }
 
     @Bean
+    public Function breadcrumb() {
+        return new BreadcrumbFn();
+    }
+
+    @Bean
     public Function hasRole() {
         return new HasRole();
     }

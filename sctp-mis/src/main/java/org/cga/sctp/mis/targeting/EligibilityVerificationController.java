@@ -8,6 +8,7 @@ import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.location.LocationService;
 import org.cga.sctp.location.LocationType;
 import org.cga.sctp.mis.core.BaseController;
+import org.cga.sctp.mis.core.navigation.*;
 import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/verification")
+@BreadcrumbDefinition(module = ModuleNames.TARGETING, index = @BreadcrumbPath(link = "/verification", title = "Pre-Eligibility Verification", navigable = true))
 public class EligibilityVerificationController extends BaseController {
 
     @Autowired
@@ -70,12 +72,14 @@ public class EligibilityVerificationController extends BaseController {
 
     @AdminAccessOnly
     @GetMapping("/new")
+    @BreadcrumbPath(link = "/new", title = "New Eligibility Verification Session")
     public ModelAndView newVerificationSession(@ModelAttribute("form") NewVerificationSessionForm form) {
         return newModel();
     }
 
     @AdminAccessOnly
     @PostMapping
+    @BreadcrumbPath(link = "/", title = "Create Eligibility Verification Session")
     public ModelAndView create(
             @AuthenticatedUserDetails AuthenticatedUser user,
             @Valid @ModelAttribute("form") NewVerificationSessionForm form,
@@ -135,6 +139,7 @@ public class EligibilityVerificationController extends BaseController {
 
     @AdminAndStandardAccessOnly
     @GetMapping("/review")
+    @BreadcrumbPath(link = "/review", title = "Eligibility Verification Review")
     public ModelAndView reviewEligibilityList(@RequestParam Long id, RedirectAttributes attributes) {
         EligibilityVerificationSessionView verificationSessionView = targetingService.findVerificationViewById(id);
         if (verificationSessionView == null) {
@@ -148,7 +153,11 @@ public class EligibilityVerificationController extends BaseController {
 
     @AdminAndStandardAccessOnly
     @GetMapping("/hh-composition")
-    public ModelAndView householdComposition(@RequestParam Long session, @RequestParam(name = "household_id") Long householdId, RedirectAttributes attributes) {
+    @BreadcrumbPath(link = "/hh-composition", title = "Household Composition")
+    public ModelAndView householdComposition(
+            @RequestParam Long session,
+            @RequestParam(name = "household_id") Long householdId,
+            RedirectAttributes attributes) {
         Household household;
         List<Individual> individuals;
         EligibilityVerificationSessionView verificationSessionView;

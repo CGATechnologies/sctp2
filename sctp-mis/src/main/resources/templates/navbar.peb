@@ -154,3 +154,5 @@
     </article>
 </div>
 {% endif %}
+{# Breadrcumb #}
+{# {{ breadcrumb(request, useWideContainer) | raw }} #}
