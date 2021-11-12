@@ -32,12 +32,14 @@
 
 package org.cga.sctp.mis.core.templating;
 
+import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.location.Location;
 import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramUser;
 import org.cga.sctp.program.ProgramUserCandidate;
 import org.cga.sctp.security.permission.UserRole;
+import org.cga.sctp.targeting.importation.parameters.Gender;
 import org.cga.sctp.user.AccessLevel;
 import org.cga.sctp.user.Permission;
 import org.cga.sctp.user.SystemRole;
@@ -96,4 +98,10 @@ public class SelectOptionConfigs {
     public SelectOptionEntry userPermissionSelectOption() {
         return new SelectOptionEntry(Permission.class, "name()", "title");
     }
+
+    @Bean
+    public SelectOptionEntry individualSelectionOption(){return new SelectOptionEntry(Individual.class, "id","getFullName()");}
+
+    @Bean
+    public SelectOptionEntry genderSelectionOption(){ return  new SelectOptionEntry(Gender.class, "code","name()");}
 }

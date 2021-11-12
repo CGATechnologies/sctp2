@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.targeting;
 
 import org.cga.sctp.core.TransactionalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,32 +38,41 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class BeneficiaryService extends TransactionalService {
+public class EnrollmentService extends TransactionalService {
 
     @Autowired
-    private IndividualRepository individualRepository;
+    EnrolmentSessionRepository enrolmentSessionRepository;
 
     @Autowired
-    private HouseholdRepository householdRepository;
+    EnrollmentSessionViewRepository sessionViewRepository;
 
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
+    @Autowired
+    EnrollmentHouseholdRepository enrollmentHouseholdRepository;
+
+
+    public List<EnrollmentSessionView> getEnrollmentSessions(){
+        return sessionViewRepository.findAll();
     }
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
+    public Slice<CbtRanking> getEnrolledHouseholds(EnrollmentSessionView session, Pageable pageable) {
+        return enrolmentSessionRepository.getEnrolledHouseholds(session.getId(), pageable.getPageNumber(), pageable.getPageSize());
     }
 
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
+    public EnrollmentSessionView getEnrollmentSession(Long sessionId){
+        return sessionViewRepository.findById(sessionId).orElse(null);
     }
 
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
+    public EnrollmentHousehold findEnrollmentHousehold(Long sessionId,long householdId){
+        return enrollmentHouseholdRepository.findBySessionAndHousehold(sessionId,householdId);
     }
 
-    public Individual getIndividual(Long individualId){
-        return individualRepository.findById(individualId).orElse(null);
+    public HouseholdDetails getHouseholdDetails(Long householdId){
+        return enrollmentHouseholdRepository.getEnrolledHouseholdDetails(householdId);
     }
+
+
+
 }

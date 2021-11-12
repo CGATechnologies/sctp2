@@ -48,4 +48,46 @@ public class EnrolmentSession {
     private Long verificationSessionId;
 
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getTargetSessionId() {
+        return targetSessionId;
+    }
+
+    public void setTargetSessionId(Long targetSessionId) {
+        this.targetSessionId = targetSessionId;
+    }
+
+    public Long getVerificationSessionId() {
+        return verificationSessionId;
+    }
+
+    public void setVerificationSessionId(Long verificationSessionId) {
+        this.verificationSessionId = verificationSessionId;
+    }
+
+
+
 }

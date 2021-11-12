@@ -6,7 +6,7 @@
     <div>
         <div class="card no-overlap">
             <header class="card-header">
-                <p class="card-header-title">Enrolled / Household - ML-300002</p>
+                <p class="card-header-title">Enrolled / Household - ML- {{ details.mlCode }}</p>
             </header>
             <div class="card-content">
                 <div class="card">
@@ -20,17 +20,17 @@
 
                                     <div class="info-row">
                                         <div class="item-label">TA</div>
-                                        <div class="item-value">Mkumpha III</div>
+                                        <div class="item-value">{{ details.taName }}</div>
                                     </div>
 
                                     <div class="info-row">
                                         <div class="item-label">Village Cluster</div>
-                                        <div class="item-value">Likoma</div>
+                                        <div class="item-value">{{ details.clusterName }}</div>
                                     </div>
 
                                     <div class="info-row">
                                         <div class="item-label">Pre-Printed Num</div>
-                                        <div class="item-value">90053846</div>
+                                        <div class="item-value">{{ details.formNumber }}</div>
                                     </div>
 
                                 </div>
@@ -41,17 +41,17 @@
 
                                     <div class="info-row">
                                         <div class="item-label">Household Code</div>
-                                        <div class="item-value">ML-300002</div>
+                                        <div class="item-value">ML-{{ details.mlCode }}</div>
                                     </div>
 
                                     <div class="info-row">
                                         <div class="item-label">Household Name</div>
-                                        <div class="item-value">Alice Kulumbo</div>
+                                        <div class="item-value">{{ details.houseHoldHead }}</div>
                                     </div>
 
                                     <div class="info-row">
                                         <div class="item-label">National ID Number</div>
-                                        <div class="item-value">WYD90053846</div>
+                                        <div class="item-value"></div>
                                     </div>
 
                                 </div>
@@ -62,17 +62,17 @@
 
                                     <div class="info-row">
                                         <div class="item-label">Total Household Members</div>
-                                        <div class="item-value">2</div>
+                                        <div class="item-value">{{ details.memberCount | numberformat("#,###") }}</div>
                                     </div>
 
                                     <div class="info-row">
                                         <div class="item-label">Total Children in Primary</div>
-                                        <div class="item-value">0</div>
+                                        <div class="item-value">{{ details.primaryChildre | numberformat("#,###") }}</div>
                                     </div>
 
                                     <div class="info-row">
                                         <div class="item-label">Total Children in Secondary</div>
-                                        <div class="item-value">0</div>
+                                        <div class="item-value">{{ details.secondaryChildren | numberformat("#,###") }}</div>
                                     </div>
 
                                 </div>
@@ -83,42 +83,14 @@
 
                                     <div class="info-row">
                                         <div class="item-label">Total Enrolled Children Age 6-15</div>
-                                        <div class="item-value">0</div>
+                                        <div class="item-value">{{ details.totalChildren }}</div>
                                     </div>
 
-                                    <div class="info-row">
-                                        <div class="item-label">Amount Household Members</div>
-                                        <div class="item-value">5000</div>
-                                    </div>
 
-                                    <div class="info-row">
-                                        <div class="item-label">Amount Primary Bonus</div>
-                                        <div class="item-value">0</div>
-                                    </div>
 
                                 </div>
                             </div>
 
-                            <div class="column">
-                                <div class="info-list">
-
-                                    <div class="info-row">
-                                        <div class="item-label">Amount Secondary Bonus</div>
-                                        <div class="item-value">ML-300002</div>
-                                    </div>
-
-                                    <div class="info-row">
-                                        <div class="item-label">Amount Primary Education incentive</div>
-                                        <div class="item-value">0</div>
-                                    </div>
-
-                                    <div class="info-row">
-                                        <div class="item-label">Total Monthly Amount</div>
-                                        <div class="item-value">5000</div>
-                                    </div>
-
-                                </div>
-                            </div>
 
                         </div>
                     </div>
@@ -132,82 +104,54 @@
                         <div class="column is-5">
                             <div class="card-image">
                                 <figure class="image is-4by3">
-                                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                                    <img id="main-photo" src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
                                 </figure>
                             </div>
                         </div>
                         <div class="card-content">
-
-{#                                <div class="field is-horizontal">#}
-{#                                    <div class="field-label">#}
-{#                                        <label class="label is-required">HouseHold Member</label>#}
-{#                                    </div>#}
-{#                                    <div class="field-body">#}
-{#                                        <div class="field">#}
-{#                                            <div class="control">#}
-{#                                                    <input class="input" type="text" value="John Doe" disabled>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="field is-horizontal">#}
-{#                                    <div class="field-label is-normal">#}
-{#                                        <label class="label">Gender</label>#}
-{#                                    </div>#}
-{#                                    <div class="field-body">#}
-{#                                        <div class="field">#}
-{#                                            <p class="control">#}
-{#                                                <input class="input" type="text" placeholder="Male" disabled>#}
-{#                                            </p>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="field is-horizontal">#}
-{#                                    <div class="field-label is-normal">#}
-{#                                        <label class="label">Date of Birth</label>#}
-{#                                    </div>#}
-{#                                    <div class="field-body">#}
-{#                                        <div class="field">#}
-{#                                            <p class="control">#}
-{#                                                <input class="input" type="text" value="01-Jan" disabled>#}
-{#                                            </p>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="field is-horizontal">#}
-{#                                    <div class="field-label is-normal">#}
-{#                                        <label class="label">National ID</label>#}
-{#                                    </div>#}
-{#                                    <div class="field-body">#}
-{#                                        <div class="field">#}
-{#                                            <p class="control">#}
-{#                                                <input class="input" type="text" value="" disabled>#}
-{#                                            </p>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
                             <div class="columns">
                                 <div class="column is-6">
                                     <label class="label">HouseHold Member</label>
                                 </div>
-                                <div class="column is-6">
-                                    <input class="input" type="text" value="John Doe" disabled>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                    {{ selectField('mainReceiver', individuals, enrolmentForm.mainReceiver, true) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'mainReceiver')) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="columns">
                                 <div class="column is-6">
                                     <label class="label">Gender</label>
                                 </div>
-                                <div class="column is-6">
-                                    <input class="input" type="text" value="Male" disabled>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                    {{ selectField('mainGender', gender, enrolmentForm.mainGender, true) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'mainGender')) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="columns">
                                 <div class="column is-6">
                                     <label class="label">Date of Birth</label>
                                 </div>
-                                <div class="column is-6">
-                                    <input class="input" type="text" value="01-Jan" disabled>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div class=" is-fullwidth">
+                                                    {{ dateField('mainDOB', enrolmentForm.mainDOB, true) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'mainDOB')) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="columns">
@@ -215,8 +159,11 @@
                                     <label class="label">National ID</label>
                                 </div>
                                 <div class="column is-6">
-                                    <input class="input" type="text" value="W9SNA5510"  disabled>
+                                    <input class="input" type="text" value=""  disabled>
                                 </div>
+                            </div>
+                            <div class="columns">
+                                <button id="modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
                             </div>
                         </div>
                     </div>
@@ -231,82 +178,65 @@
                         <div class="column is-5">
                             <div class="card-image">
                                 <figure class="image is-4by3">
-                                    <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                                    <img id="alt-photo" src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
                                 </figure>
                             </div>
                         </div>
                         <div class="card-content">
-
-                            {#                                <div class="field is-horizontal">#}
-                            {#                                    <div class="field-label">#}
-                            {#                                        <label class="label is-required">HouseHold Member</label>#}
-                            {#                                    </div>#}
-                            {#                                    <div class="field-body">#}
-                            {#                                        <div class="field">#}
-                            {#                                            <div class="control">#}
-                            {#                                                    <input class="input" type="text" value="John Doe" disabled>#}
-                            {#                                            </div>#}
-                            {#                                        </div>#}
-                            {#                                    </div>#}
-                            {#                                </div>#}
-                            {#                                <div class="field is-horizontal">#}
-                            {#                                    <div class="field-label is-normal">#}
-                            {#                                        <label class="label">Gender</label>#}
-                            {#                                    </div>#}
-                            {#                                    <div class="field-body">#}
-                            {#                                        <div class="field">#}
-                            {#                                            <p class="control">#}
-                            {#                                                <input class="input" type="text" placeholder="Male" disabled>#}
-                            {#                                            </p>#}
-                            {#                                        </div>#}
-                            {#                                    </div>#}
-                            {#                                </div>#}
-                            {#                                <div class="field is-horizontal">#}
-                            {#                                    <div class="field-label is-normal">#}
-                            {#                                        <label class="label">Date of Birth</label>#}
-                            {#                                    </div>#}
-                            {#                                    <div class="field-body">#}
-                            {#                                        <div class="field">#}
-                            {#                                            <p class="control">#}
-                            {#                                                <input class="input" type="text" value="01-Jan" disabled>#}
-                            {#                                            </p>#}
-                            {#                                        </div>#}
-                            {#                                    </div>#}
-                            {#                                </div>#}
-                            {#                                <div class="field is-horizontal">#}
-                            {#                                    <div class="field-label is-normal">#}
-                            {#                                        <label class="label">National ID</label>#}
-                            {#                                    </div>#}
-                            {#                                    <div class="field-body">#}
-                            {#                                        <div class="field">#}
-                            {#                                            <p class="control">#}
-                            {#                                                <input class="input" type="text" value="" disabled>#}
-                            {#                                            </p>#}
-                            {#                                        </div>#}
-                            {#                                    </div>#}
-                            {#                                </div>#}
+                            <div class="control mb-5">
+                                <label class="radio">
+                                    <input type="radio" name="answer" checked onclick="handleClick(this);" value="1">
+                                    Household Member
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="answer" onclick="handleClick(this);" value="2">
+                                    Non-Household Member
+                                </label>
+                            </div>
                             <div class="columns">
                                 <div class="column is-6">
-                                    <label class="label">HouseHold Member</label>
+                                    <label class="label">Member</label>
                                 </div>
-                                <div class="column is-6">
-                                    <input class="input" type="text" value="John Doe" disabled>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div id="altDiv" class="select is-fullwidth">
+                                                    {{ selectField('altReceiver', individuals, enrolmentForm.altReceiver, true) }}
+                                                    {{ textField('altName', enrolmentForm.altName, 1, 100, true, null) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'altReceiver')) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="columns">
                                 <div class="column is-6">
                                     <label class="label">Gender</label>
                                 </div>
-                                <div class="column is-6">
-                                    <input class="input" type="text" value="Male" disabled>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                    {{ selectField('altGender', gender, enrolmentForm.altGender, true) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'altGender')) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="columns">
                                 <div class="column is-6">
                                     <label class="label">Date of Birth</label>
                                 </div>
-                                <div class="column is-6">
-                                    <input class="input" type="text" value="01-Jan" disabled>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div class=" is-fullwidth">
+                                                    {{ dateField('altDOB', enrolmentForm.altDOB, true) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'altDOB')) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="columns">
@@ -317,10 +247,255 @@
                                     <input class="input" type="text" value="W9SNA5510" disabled>
                                 </div>
                             </div>
+                            <div class="columns">
+                                <button id="alt-modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
+                                <button id="sendData" class="button is-primary" onclick="sendData()">Send picture</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-content">
+{#                        <p class="image is-4by3">#}
+{#                            <img src="https://bulma.io/images/placeholders/1280x960.png" alt="">#}
+{#                        </p>#}
+                        <main id="webcam-app">
+                            <!--
+                               <div class="form-control webcam-start" id="webcam-control">
+                                   <label class="form-switch">
+                                       <input type="checkbox" id="webcam-switch">
+                                       <i></i>
+                                       <span id="webcam-caption">Click to Start Camera</span>
+                                   </label>
+
+                               <button id="cameraFlip" class="btn d-none"></button>
+                               </div>
+                            -->
+                            <div id="errorMsg" class="col-12 col-md-6 alert-danger d-none">
+                                Fail to start camera, please allow permision to access camera. <br />
+                                If you are browsing through social media built in browsers, you would need to open the page in Sarafi
+                                (iPhone)/ Chrome (Android)
+                                <button id="closeError" class="btn btn-primary ml-3">OK</button>
+                            </div>
+                            <div class="md-modal md-effect-12">
+                                <div id="app-panel" class="app-panel md-content row p-0 m-0">
+                                    <div id="webcam-container" class="webcam-container columns d-none p-0 m-0">
+                                        <div class="column">
+                                            <video id="webcam" autoplay playsinline width="640" height="480"></video>
+                                        </div>
+                                        <div class="column">
+                                            <canvas id="canvas" class="d-none"></canvas>
+                                        </div>
+
+                                        <div class="flash"></div>
+                                        <audio id="snapSound" src="/assets/js/vendor/webcam-easy/audio/snap.wav" preload="auto"></audio>
+                                    </div>
+                                    <div id="cameraControls" class="cameraControls">
+                                        <!--
+                                            <a href="#" id="exit-app" title="Exit App" class="d-none"><i
+                                                    class="material-icons">exit_to_app</i></a>
+                                                    -->
+                                        <a href="#" id="take-photo" title="Take Photo"><i class="material-icons">camera_alt</i></a>
+                                        <a href="#" id="download-photo"  title="Save Photo"
+                                           class="d-none"><i class="material-icons">file_download</i></a>
+                                        <a href="#" id="resume-camera" title="Resume Camera" class="d-none"><i
+                                                class="material-icons">camera_front</i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md-overlay"></div>
+                        </main>
+
+
+
+                    </div>
+                    <button id="modalCloseBtn" class="modal-close is-large" aria-label="close"></button>
+                </div>
+
             </div>
         </div>
     </div>
+    {% endblock %}
+    {% block headerScripts %}
+        <link rel="stylesheet" type="text/css" href="/assets/css/vendor/webcam-easy/webcam.css"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% endblock %}
+    {% block footerScripts %}
+    <script src="/assets/js/vendor/webcam-easy/jquery.min.js" type="text/javascript"></script>
+    <script src="/assets/js/vendor/webcam-easy/webcam-easy.js" type="text/javascript"></script>
+    <script src="/assets/js/vendor/webcam-easy/app.js" type="text/javascript"></script>
+    <script>
+        (function(){
+
+
+
+           // modal
+            const mainModalBtn = document.querySelector('#modal-btn');
+            const altModalBtn = document.querySelector('#alt-modal-btn');
+            const modalCloseBtn = document.querySelector('#modalCloseBtn');
+            const modalBg = document.querySelector('.modal-background');
+            const modal = document.querySelector('.modal');
+
+            mainModalBtn.addEventListener('click', () => {
+              modal.classList.add('is-active');
+              receiver = 1;
+              webcam.start()
+                    .then(result => {
+                        cameraStarted();
+                        console.log("webcam started");
+                    })
+                    .catch(err => {
+                        displayError();
+                        console.log(err);
+                    });
+            });
+
+            altModalBtn.addEventListener('click', () => {
+              modal.classList.add('is-active');
+              receiver = 2;
+              webcam.start()
+                    .then(result => {
+                        cameraStarted();
+                        console.log("webcam started");
+                    })
+                    .catch(err => {
+                        displayError();
+                        console.log(err);
+                    });
+            })
+
+            window.closeModal = function(){
+              modal.classList.remove('is-active');
+              cameraStopped();
+              webcam.stop();
+              console.log("webcam stopped");
+              exitCamera();
+            }
+
+            modalBg.addEventListener('click', () => {
+              closeModal();
+            })
+
+            modalCloseBtn.addEventListener('click', () => {
+               closeModal();
+            })
+
+           document.getElementById('altName').style.display = 'none';
+
+           window.handleClick = function(myRadio) {
+                if(myRadio.value == 1){
+                    isNonMember = 0;
+                    document.getElementById("altDiv").classList.add("select");
+                    document.getElementById('altReceiver').style.display = 'block';
+                    document.getElementById('altName').style.display = 'none';
+                }else{
+                    isNonMember = 1;
+                    document.getElementById("altDiv").classList.remove("select");
+                    document.getElementById('altReceiver').style.display = 'none';
+                    document.getElementById('altName').style.display = 'block';
+                }
+            }
+
+
+            var individualsLists = [];
+
+            {% for ind in individuals %}
+                individualsLists.push({id:"{{ ind.id }}",fullName:"{{ ind.getFullName }}",gender:"{{ ind.gender }}",dob:"{{ ind.dateOfBirth }}"})
+            {% endfor %}
+
+              window.setIndividualDetails = function(sender, receiver){
+                var individualId = sender.selectedOptions[0].value;
+                var indv = individualsLists.find(({ id }) => id === individualId );
+                if(indv){
+                    if(receiver == "main"){
+                        document.getElementById('mainGender').value = (indv.gender == "Male") ? 1 : 2 ;
+                        document.getElementById('mainDOB').value = indv.dob;
+                    }else{
+                        document.getElementById('altGender').value = (indv.gender == "Male") ? 1 : 2 ;
+                        document.getElementById('altDOB').value = indv.dob;
+                    }
+                 }
+              };
+
+            mainReceiver.onchange = function(){
+                    setIndividualDetails(this,"main")
+            };
+
+            altReceiver.onchange = function(){
+                    setIndividualDetails(this,"alt")
+            };
+
+        })();
+    </script>
+    <script>
+        function base64ToBlob(base64, mime)
+        {
+            mime = mime || '';
+            var sliceSize = 1024;
+            var byteChars = window.atob(base64);
+            var byteArrays = [];
+
+            for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+                var slice = byteChars.slice(offset, offset + sliceSize);
+
+                var byteNumbers = new Array(slice.length);
+                for (var i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                var byteArray = new Uint8Array(byteNumbers);
+
+                byteArrays.push(byteArray);
+            }
+
+            return new Blob(byteArrays, {type: mime});
+        }
+
+         var __csrfTokenValue = query('meta[name="csrf-token"]').content;
+
+        function sendData(){
+         var mainRaw = $("#main-photo").attr("src");
+         var altRaw = $("#alt-photo").attr("src");
+
+         var mainRep = mainRaw.replace(/^data:image\/(png|jpg);base64,/, "");
+         var altRep = altRaw.replace(/^data:image\/(png|jpg);base64,/, "");
+         var mainPhoto = base64ToBlob(mainRep, 'image/png');
+         var altPhoto = base64ToBlob(altRep, 'image/png');
+
+         var jsonDataObj = {
+            "householdId" : "{{ details.householdId }}",
+        	"mainReceiver": $("#mainReceiver").val(),
+            "altReceiver" : $("#altReceiver").val(),
+            "mainDOB" : $("#mainDOB").val(),
+            "altDOB" : $("#altDOB").val(),
+            "altName" : $("#altName").val(),
+            "mainGender" : $("#mainGender").val(),
+            "altGender" : $("#altGender").val(),
+            "nonHouseholdMember": isNonMember
+            };
+
+
+             var formData = new FormData();
+             formData.append('file', mainPhoto);
+             formData.append('altPhoto', altPhoto);
+             formData.append("jsondata", JSON.stringify(jsonDataObj));
+
+
+            $.ajax({
+                url: "/targeting/enrolment/test",
+                type: "POST",
+                cache: false,
+                enctype: 'multipart/form-data',
+                contentType: false,
+                processData: false,
+                headers: {"X-CSRF-TOKEN": __csrfTokenValue},
+                data: formData})
+                    .done(function(e){
+                        alert('done!');
+                    });
+             }
+
+    </script>
     {% endblock %}

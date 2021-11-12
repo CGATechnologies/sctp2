@@ -30,40 +30,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.targeting;
 
-import org.cga.sctp.core.TransactionalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
+import javax.persistence.*;
 
-@Service
-public class BeneficiaryService extends TransactionalService {
+@Entity
+@Table(name = "household_enrollment")
+public class EnrollmentHousehold {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private long sessionId;
+    private long householdId;
 
-    @Autowired
-    private IndividualRepository individualRepository;
-
-    @Autowired
-    private HouseholdRepository householdRepository;
-
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
+    public long getId() {
+        return id;
     }
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
+    public long getSessionId() {
+        return sessionId;
     }
 
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
     }
 
-    public Individual getIndividual(Long individualId){
-        return individualRepository.findById(individualId).orElse(null);
+    public long getHouseholdId() {
+        return householdId;
     }
+
+    public void setHouseholdId(long householdId) {
+        this.householdId = householdId;
+    }
+
+
+
 }

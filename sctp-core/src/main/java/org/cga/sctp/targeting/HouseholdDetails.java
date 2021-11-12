@@ -30,40 +30,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.targeting;
 
-import org.cga.sctp.core.TransactionalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
-@Service
-public class BeneficiaryService extends TransactionalService {
+public interface HouseholdDetails {
+    public Long getHouseholdId();
 
-    @Autowired
-    private IndividualRepository individualRepository;
+    public String getTaName();
 
-    @Autowired
-    private HouseholdRepository householdRepository;
+    public String getClusterName();
 
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
-    }
+    public String getVillageName();
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
-    }
+    public String getDistrictName();
 
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
-    }
+    public String getHouseholdHead();
 
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
-    }
+    public LocalDateTime getCreatedAt();
 
-    public Individual getIndividual(Long individualId){
-        return individualRepository.findById(individualId).orElse(null);
-    }
+    public String getZoneName();
+
+    public String getFormNumber();
+
+    Long getMemberCount();
+
+    Long getTotalChildren();
+
+    Long getSecondaryChildren();
+
+    Long getPrimaryChildren();
+
+    String getVillageHeadName();
+
+    Long getMlCode();
+
+
 }

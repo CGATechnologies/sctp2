@@ -32,7 +32,9 @@
 
 package org.cga.sctp.targeting;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -41,11 +43,17 @@ import org.springframework.stereotype.Repository;
 public interface EnrolmentSessionRepository extends JpaRepository<EnrolmentSession,Long> {
 //public interface EnrolmentSessionRepository extends StoredProcedureParameter {
 
-
     @Procedure(procedureName = "sendHouseholdToEnrolment")
     void sendToEnrolment(
             @Param("targeting_session_id") Long targetingId,
             @Param("verification_session_id") Long verificationId,
             @Param("user_id") Long userId
+    );
+
+    @Query(value = "CALL getEnrolledHouseholds(:sessionId, :page, :pageSize)", nativeQuery = true)
+    Slice<CbtRanking> getEnrolledHouseholds(
+            @Param("sessionId") Long id,
+            @Param("page") int page,
+            @Param("pageSize") int pageSize
     );
 }

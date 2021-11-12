@@ -334,4 +334,6 @@ public class Individual {
     public void setHouseholdId(Long householdId) {
         this.householdId = householdId;
     }
+
+    public String getFullName(){ return firstName+" "+lastName; }
 }

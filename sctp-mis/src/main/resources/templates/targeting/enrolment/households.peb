@@ -1,9 +1,5 @@
     {% extends "targeting/community/base" %}
 
-    {# @pebvariable name="targetingSession" type="org.cga.sctp.targeting.TargetingSessionView" #}
-    {# @pebvariable name="isSessionOpen" type="java.lang.Boolean" #}
-    {# @pebvariable name="canModify" type="java.lang.Boolean" #}
-
     {% block contextMenu %}
         {% set canModify = hasRole("ADMINISTRATOR") and isSessionOpen %}
         {% set useWideContainer = true %}
@@ -41,17 +37,7 @@
                             </div>
                         </div>
                     </div>
-                    {% if canModify %}
-                        <div class="level-item">
-                            <form enctype="application/x-www-form-urlencoded"
-                                  method="post"
-                                  action="/targeting/community/close">
-                                {{ csrf(_csrf) }}
-                                {{ hiddenField('id', targetingSession.id) }}
-                                <button class="button is-success">Finish And Send To Enrolment</button>
-                            </form>
-                        </div>
-                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -61,7 +47,7 @@
     <div>
         <div class="card no-overlap">
             <header class="card-header">
-                <p class="card-header-title">Enrolment - SCTP / Likomo</p>
+                <p class="card-header-title">Enrolment - {{ sessionInfo.programName }} / {{ sessionInfo.districtName }}</p>
             </header>
             <div class="card-content">
                 {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
@@ -82,19 +68,17 @@
                         </tr>
                         </thead>
                         <tbody>
-
-                                {# @pebvariable name="ranks" type="java.util.List<org.cga.sctp.targeting.CbtRanking>" #}
-                                {# @pebvariable name="ranking" type="org.cga.sctp.targeting.CbtRanking" #}
+                            {% for ranking in ranks %}
                             <tr>
-                                <td>ML-300002</td>
-                                <td>2</td>
-                                <td>Alice Kulumbo</td>
-                                <td>Mkumpha III</td>
-                                <td>Mtaya</td>
-                                <td>Likoma</td>
-                                <td>Alinafe</td>
-                                <td>90053846</td>
-                                <td>Enrolled</td>
+                                <td>ML-{{ ranking.mlCode }}</td>
+                                <td>{{ ranking.memberCount | numberformat("#,###") }}</td>
+                                <td>{{ ranking.householdHead }}</td>
+                                <td>{{ ranking.taName }}</td>
+                                <td>{{ ranking.villageHeadName }}</td>
+                                <td>{{ ranking.clusterName }}</td>
+                                <td>{{ ranking.zoneName }}</td>
+                                <td>{{ ranking.formNumber }}</td>
+                                <td>{{ ranking.status }}</td>
                                 <td>
                                     <div class="dropdown is-hoverable is-right">
                                         <div class="dropdown-trigger">
@@ -108,7 +92,7 @@
                                         </div>
                                         <div class="dropdown-menu" id="dropdown-menu2" role="menu">
                                             <div class="dropdown-content">
-                                                <a href="/targeting/enrolment/details?household=5"
+                                                <a href="/targeting/enrolment/details?session={{ sessionInfo.id }}&id={{ ranking.householdId }}"
                                                    class="dropdown-item">View household</a>
 
                                             </div>
@@ -116,7 +100,7 @@
                                     </div>
                                 </td>
                             </tr>
-
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -124,44 +108,6 @@
         </div>
     </div>
 
-    <div id="rank-editor-dlg" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Edit Household Rank</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">Current Rank</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control is-fullwidth">
-                                <input class="input is-static is-fullwidth" type="email" value="34" readonly>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">New Rank</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <p class="control">
-                                <input class="input" type="email" placeholder="New Rank">
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-            </footer>
-        </div>
-    </div>
     {% endblock %}
 
     {% block footerScripts %}

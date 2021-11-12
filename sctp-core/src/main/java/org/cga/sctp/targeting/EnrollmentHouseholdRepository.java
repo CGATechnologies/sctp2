@@ -30,40 +30,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.targeting;
 
-import org.cga.sctp.core.TransactionalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@Service
-public class BeneficiaryService extends TransactionalService {
+@Repository
+public interface EnrollmentHouseholdRepository extends JpaRepository<EnrollmentHousehold, Long> {
 
-    @Autowired
-    private IndividualRepository individualRepository;
+    @Query(value = "select * FROM household_enrollment WHERE session_id = :session and household_id = :household", nativeQuery = true)
+    EnrollmentHousehold findBySessionAndHousehold(@Param("session") long session,@Param("household") long household);
 
-    @Autowired
-    private HouseholdRepository householdRepository;
+    @Query(value = "CALL getHouseholdDetails(:household)", nativeQuery = true)
+    HouseholdDetails getEnrolledHouseholdDetails(@Param("household") Long id);
 
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
-    }
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
-    }
-
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
-    }
-
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
-    }
-
-    public Individual getIndividual(Long individualId){
-        return individualRepository.findById(individualId).orElse(null);
-    }
 }
+
+

@@ -30,40 +30,81 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.targeting;
 
-import org.cga.sctp.core.TransactionalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
+import org.hibernate.annotations.Immutable;
 
-@Service
-public class BeneficiaryService extends TransactionalService {
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-    @Autowired
-    private IndividualRepository individualRepository;
+@Immutable
+@Entity
+@Table(name = "enrollment_session_v")
+public class EnrollmentSessionView {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDateTime createdAt;
+    private String taName;
+    private String districtName;
+    private String programName;
+    private Long householdCount;
+    private String doneBy;
 
-    @Autowired
-    private HouseholdRepository householdRepository;
-
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
+    public Long getId() {
+        return id;
     }
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Individual getIndividual(Long individualId){
-        return individualRepository.findById(individualId).orElse(null);
+    public String getTaName() {
+        return taName;
     }
+
+    public void setTaName(String taName) {
+        this.taName = taName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    public Long getHouseholdCount() {
+        return householdCount;
+    }
+
+    public void setHouseholdCount(Long householdCount) {
+        this.householdCount = householdCount;
+    }
+
+    public String getDoneBy() {
+        return doneBy;
+    }
+
+    public void setDoneBy(String doneBy) {
+        this.doneBy = doneBy;
+    }
+
 }
