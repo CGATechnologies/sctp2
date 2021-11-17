@@ -8,7 +8,8 @@ const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement
 
 var file;
 var receiver;
-var isNonMember = 0;
+
+
 
 $('.md-modal').addClass('md-show');
 
@@ -87,8 +88,10 @@ $("#take-photo").click(function () {
 $("#download-photo").click(function () {
    if(receiver === 1){
         document.querySelector('#main-photo').src = file;
+        closeModal();
    }else{
         document.querySelector('#alt-photo').src = file;
+        closeModal();
    }
 });
 

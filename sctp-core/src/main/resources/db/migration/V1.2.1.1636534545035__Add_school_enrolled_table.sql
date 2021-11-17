@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS school_enrolled(
-	id bigint primary key not null,
+	id bigint PRIMARY KEY AUTO_INCREMENT,
 	household_id bigint not null,
 	individual_id bigint not null,
+	education_level bigint  not null,
+	grade bigint not null,
 	school_id bigint not null,
 	status int comment 'to check if the children are still active',
 	CONSTRAINT hd_id_fk FOREIGN KEY (household_id) REFERENCES households(household_id),

@@ -30,32 +30,73 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting;
+package org.cga.sctp.mis.targeting;
 
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.Procedure;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+public class SchoolEnrollmentForm {
+    private long householdId;
 
-@Repository
-public interface EnrolmentSessionRepository extends JpaRepository<EnrolmentSession,Long> {
-//public interface EnrolmentSessionRepository extends StoredProcedureParameter {
+    private long individualId;
 
-    @Procedure(procedureName = "sendHouseholdToEnrolment")
-    void sendToEnrolment(
-            @Param("targeting_session_id") Long targetingId,
-            @Param("verification_session_id") Long verificationId,
-            @Param("user_id") Long userId
-    );
+    private long schoolId;
 
-    @Query(value = "CALL getEnrolledHouseholds(:sessionId, :page, :pageSize)", nativeQuery = true)
-    Slice<CbtRanking> getEnrolledHouseholds(
-            @Param("sessionId") Long id,
-            @Param("page") int page,
-            @Param("pageSize") int pageSize
-    );
+    private long educationLevel;
+
+    private long grade;
+
+    private int status;
+
+
+    public long getHouseholdId() {
+        return householdId;
+    }
+
+    public void setHouseholdId(long householdId) {
+        this.householdId = householdId;
+    }
+
+    public long getIndividualId() {
+        return individualId;
+    }
+
+    public void setIndividualId(long individualId) {
+        this.individualId = individualId;
+    }
+
+    public long getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(long schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    public long getEducationLevel() {
+        return educationLevel;
+    }
+
+    public void setEducationLevel(long educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+
+    public long getGrade() {
+        return grade;
+    }
+
+    public void setGrade(long grade) {
+        this.grade = grade;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+
+
+
 
 
 }

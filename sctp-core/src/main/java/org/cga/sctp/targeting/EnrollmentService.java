@@ -38,6 +38,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -51,6 +52,15 @@ public class EnrollmentService extends TransactionalService {
 
     @Autowired
     EnrollmentHouseholdRepository enrollmentHouseholdRepository;
+
+    @Autowired
+    AlternateRecipientRepository alternateRecipientRepository;
+
+    @Autowired
+    HouseholdRecipientRepository householdRecipientRepository;
+
+    @Autowired
+    SchoolEnrolledRepository schoolEnrolledRepository;
 
 
     public List<EnrollmentSessionView> getEnrollmentSessions(){
@@ -73,6 +83,28 @@ public class EnrollmentService extends TransactionalService {
         return enrollmentHouseholdRepository.getEnrolledHouseholdDetails(householdId);
     }
 
+    public void saveAlternateRecipient(AlternateRecipient alternateRecipient){
+        alternateRecipientRepository.save(alternateRecipient);
+    }
 
+    public void saveHouseholdRecipient(HouseholdRecipient householdRecipient){
+        householdRecipientRepository.save(householdRecipient);
+    }
+
+    public void saveHouseholdAlternateRecipient(Long householdId,
+                                                Long mainRecipientId,
+                                                String mainPhoto,
+                                                String altPhoto,
+                                                String firstName,
+                                                String lastName,
+                                                String nationalId,
+                                                int gender,
+                                                LocalDate dob){
+        householdRecipientRepository.addHouseholdRecipient(householdId,mainRecipientId,mainPhoto,altPhoto,firstName,lastName,nationalId,gender,dob);
+    }
+
+    public void saveChildrenEnrolledSchool(List<SchoolEnrolled> schoolEnrolled){
+        schoolEnrolledRepository.saveAll(schoolEnrolled);
+    }
 
 }

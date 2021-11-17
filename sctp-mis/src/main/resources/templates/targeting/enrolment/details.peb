@@ -124,6 +124,34 @@
                                     </div>
                                 </div>
                             </div>
+{#                            <div class="columns">#}
+{#                                <div class="column is-6">#}
+{#                                    <label class="label">First Name</label>#}
+{#                                </div>#}
+{#                                <div class="column is-12">#}
+{#                                    <div class="field">#}
+{#                                        <div class="control">#}
+{#                                            <div  class="is-fullwidth">#}
+{#                                                    {{ textField('mainFirstName', enrolmentForm.mainFirstName, 1, 100, true, null) }}#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="columns">#}
+{#                                <div class="column is-6">#}
+{#                                    <label class="label">Last Name</label>#}
+{#                                </div>#}
+{#                                <div class="column is-12">#}
+{#                                    <div class="field">#}
+{#                                        <div class="control">#}
+{#                                            <div class="is-fullwidth">#}
+{#                                                    {{ textField('mainLastName', enrolmentForm.mainLastName, 1, 100, true, null) }}#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
                             <div class="columns">
                                 <div class="column is-6">
                                     <label class="label">Gender</label>
@@ -135,7 +163,6 @@
                                                     {{ selectField('mainGender', gender, enrolmentForm.mainGender, true) }}
                                             </div>
                                         </div>
-                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'mainGender')) }}
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +186,7 @@
                                     <label class="label">National ID</label>
                                 </div>
                                 <div class="column is-6">
-                                    <input class="input" type="text" value=""  disabled>
+                                    <input id="mainNationalId" name="mainNationalId" type="text" minlength="1" maxlength="100" class="input" disabled>
                                 </div>
                             </div>
                             <div class="columns">
@@ -172,9 +199,15 @@
                 <!--alternative receiver-->
                 <div class="card mt-5">
                     <header class="card-header">
-                        <p class="card-header-title">Alternative Receiver</p>
+                        <p class="card-header-title">
+                            <label class="checkbox">
+                                <input id="hasAlt" type="checkbox" class="is-large">
+                                Alternative Receiver
+                            </label>
+                        </p>
                     </header>
-                    <div class="columns">
+
+                    <div id="altCard" class="columns">
                         <div class="column is-5">
                             <div class="card-image">
                                 <figure class="image is-4by3">
@@ -193,7 +226,7 @@
                                     Non-Household Member
                                 </label>
                             </div>
-                            <div class="columns">
+                            <div id="altMember" class="columns">
                                 <div class="column is-6">
                                     <label class="label">Member</label>
                                 </div>
@@ -202,7 +235,36 @@
                                         <div class="control">
                                             <div id="altDiv" class="select is-fullwidth">
                                                     {{ selectField('altReceiver', individuals, enrolmentForm.altReceiver, true) }}
-                                                    {{ textField('altName', enrolmentForm.altName, 1, 100, true, null) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'altReceiver')) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="columns" id="altFieldFirst">
+                                <div class="column is-6">
+                                    <label class="label">First Name</label>
+                                </div>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div id="altDiv" class="is-fullwidth">
+                                                    {{ textField('altFirstName', enrolmentForm.altFirstName, 1, 100, true, null) }}
+                                            </div>
+                                        </div>
+                                        {{ printFieldErrors(getFieldErrors('enrolmentForm', 'altReceiver')) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="columns" id="altFieldLast">
+                                <div class="column is-6">
+                                    <label class="label">Last Name</label>
+                                </div>
+                                <div class="column is-12">
+                                    <div class="field">
+                                        <div class="control">
+                                            <div id="altDiv" class="is-fullwidth">
+                                                    {{ textField('altLastName', enrolmentForm.altLastName, 1, 100, true, null) }}
                                             </div>
                                         </div>
                                         {{ printFieldErrors(getFieldErrors('enrolmentForm', 'altReceiver')) }}
@@ -244,20 +306,84 @@
                                     <label class="label">National ID</label>
                                 </div>
                                 <div class="column is-6">
-                                    <input class="input" type="text" value="W9SNA5510" disabled>
+                                        {{ textField('altNationalId', enrolmentForm.altNationalId, 1, 100, true, null) }}
                                 </div>
                             </div>
                             <div class="columns">
                                 <button id="alt-modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
-                                <button id="sendData" class="button is-primary" onclick="sendData()">Send picture</button>
+
                             </div>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="modal">
+
+                <!-- School confirmation -->
+                <div class="card mt-5">
+                    <header class="card-header">
+                        <p class="card-header-title">School Confirmation</p>
+                    </header>
+                    <table class="table dataTable is-narrow is-striped is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>Name of child</th>
+                            <th>HH Member Code</th>
+                            <th>Current School</th>
+                            <th>Education Level</th>
+                            <th>Grade</th>
+                            <th>Select School</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                                {% for child in children %}
+                            <tr>
+                                <td>{{ child.getFullName }}</td>
+                                <td>ML-{{ child.individualId }}</td>
+                                <td>{{ child.schoolName}}</td>
+                                <td class="control">
+                                    <select id="el-{{ child.id }}" class="input">
+                                            <option disabled="disabled" selected="selected">Select Option</option>
+                                            {% for el in educationLevel %}
+                                            <option>{{ el.name() }}</option>
+                                            {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="control">
+                                    <select  id="gl-{{ child.id }}" class="input">
+                                            <option disabled="disabled" selected="selected">Select Option</option>
+                                            {% for gl in gradeLevel %}
+                                            <option>{{ gl.name() }}</option>
+                                            {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="columns">
+                                    <div class="column">
+                                        <input class="input" id="sch-{{ child.id }}" disabled/>
+                                    </div>
+
+                                    <div class="column">
+                                        <button class="button" id="sc-{{ child.id }}" onclick="openSchModal(this)">
+                                            <span class="icon is-small">
+                                              <i class="fas fa-bold"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                </td>
+                            </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-5">
+                    <button id="sendData" class="button is-primary" onclick="sendData()">save</button>
+                </div>
+
+                <div id="cameraModal" class="modal">
                     <div class="modal-background"></div>
-                    <div class="modal-content">
+                    <div id="camera-content" class="modal-content">
 {#                        <p class="image is-4by3">#}
 {#                            <img src="https://bulma.io/images/placeholders/1280x960.png" alt="">#}
 {#                        </p>#}
@@ -314,6 +440,96 @@
                     <button id="modalCloseBtn" class="modal-close is-large" aria-label="close"></button>
                 </div>
 
+                <!-- school confirmation modal -->
+                <div id="modalSchool" class="modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">school confirmation</p>
+                            <button id="schModalClose" class="delete" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <table id="dataTable2" class="table dataTable is-narrow is-striped is-hoverable">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Code</th>
+                                    <th>Education Level</th>
+                                    <th>District</th>
+                                    <th>TA</th>
+                                    <th>Education Zone</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                       <tr>
+                                           <td id="co-2">Mwambi</td>
+                                           <td>581111</td>
+                                           <td>Primary</td>
+                                           <td>Likoma</td>
+                                           <td>Mwase</td>
+                                           <td>Sambi</td>
+                                           <td>
+                                               <input id="bt-2" type="radio" name="answer" onclick="handleSchSelect(this);" value="2">
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <td id="co-3">Mwambi 2</td>
+                                           <td>581185</td>
+                                           <td>Primary</td>
+                                           <td>Likoma</td>
+                                           <td>Mwase</td>
+                                           <td>Sambi</td>
+                                           <td>
+                                               <input id="bt-3" type="radio" name="answer" onclick="handleSchSelect(this);" value="3">
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <td id="co-4">Mwambi 3</td>
+                                           <td>581111</td>
+                                           <td>Primary</td>
+                                           <td>Likoma</td>
+                                           <td>Mwase</td>
+                                           <td>Sambi</td>
+                                           <td>
+                                               <input id="bt-4" type="radio" name="answer" onclick="handleSchSelect(this);" value="4">
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <td id="co-5">Mwambi 4</td>
+                                           <td>581111</td>
+                                           <td>Primary</td>
+                                           <td>Likoma</td>
+                                           <td>Mwase</td>
+                                           <td>Sambi</td>
+                                           <td>
+                                               <input id="bt-5" type="radio" name="answer" onclick="handleSchSelect(this);" value="5">
+                                           </td>
+                                       </tr>
+                                       <tr>
+                                           <td id="co-6">Mwambi 5</td>
+                                           <td>581111</td>
+                                           <td>Primary</td>
+                                           <td>Likoma</td>
+                                           <td>Mwase</td>
+                                           <td>Sambi</td>
+                                           <td>
+                                               <input id="bt-6" type="radio" name="answer" onclick="handleSchSelect(this);" value="6">
+                                           </td>
+                                       </tr>
+
+                                </tbody>
+                            </table>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button id="saveSch" class="button is-success">Save</button>
+                            <button id="cancelSch" class="button">Cancel</button>
+                        </footer>
+                    </div>
+{#                    <button id="modalSchoolCloseBtn" class="modal-close is-large" aria-label="close"></button>#}
+                </div>
+
             </div>
         </div>
     </div>
@@ -326,17 +542,57 @@
     <script src="/assets/js/vendor/webcam-easy/jquery.min.js" type="text/javascript"></script>
     <script src="/assets/js/vendor/webcam-easy/webcam-easy.js" type="text/javascript"></script>
     <script src="/assets/js/vendor/webcam-easy/app.js" type="text/javascript"></script>
+        <script>
+            var isNonMember = 0;
+            var householdId = "{{ details.householdId }}";
+            var enrolledChildren =[];
+            var hasAlternate = 0;
+        </script>
     <script>
         (function(){
 
+            var currentSelectedChild = {id:"",sch:"",co:""};
+
+            const mainGender = document.querySelector('#mainGender');
+            const altGender = document.querySelector('#altGender');
+            const mainDOB = document.querySelector('#mainDOB');
+            const altDOB = document.querySelector('#altDOB');
+            const altNationalId = document.querySelector('#altNationalId');
+
+            window.enableAltFields = function(){
+                altGender.disabled = false;
+                altDOB.disabled = false;
+                altNationalId.disabled = false;
+            }
+
+            window.clearAltFields = function(){
+                altGender.value = "";
+                altDOB.value = "";
+                altNationalId.value = "";
+           }
 
 
+            window.disableFields = function(){
+                mainGender.disabled = true;
+                altGender.disabled = true;
+                mainDOB.disabled = true;
+                altDOB.disabled = true;
+                altNationalId.disabled = true;
+            }
+
+            disableFields();
            // modal
             const mainModalBtn = document.querySelector('#modal-btn');
             const altModalBtn = document.querySelector('#alt-modal-btn');
             const modalCloseBtn = document.querySelector('#modalCloseBtn');
             const modalBg = document.querySelector('.modal-background');
-            const modal = document.querySelector('.modal');
+            const modal = document.querySelector('#cameraModal');
+            const schModalBtn = document.querySelector('#sch-modal-btn');
+            const schModal = document.querySelector('#modalSchool');
+            const schModalClose = document.querySelector('#schModalClose');
+            const cancelSch = document.querySelector('#cancelSch');
+            const saveSch = document.querySelector('#saveSch');
+            const hasAltBtn = document.querySelector('#hasAlt');
 
             mainModalBtn.addEventListener('click', () => {
               modal.classList.add('is-active');
@@ -374,6 +630,32 @@
               exitCamera();
             }
 
+            document.getElementById('altCard').style.display = 'none';
+            hasAltBtn.addEventListener('click',function(){
+                if(this.checked){
+                     hasAlternate = 1;
+                     document.getElementById('altCard').style.display = '';
+                }else{
+                     hasAlternate = 0;
+                    document.getElementById('altCard').style.display = 'none';
+                }
+            });
+
+            window.closeSchModal = function(){
+                schModal.classList.remove('is-active');
+                currentSelectedChild.id = "";
+                currentSelectedChild.sch = "";
+                currentSelectedChild.co = "";
+            }
+
+            schModalClose.addEventListener('click', () => {
+              closeSchModal();
+            })
+
+            cancelSch.addEventListener('click', () => {
+              closeSchModal();
+              })
+
             modalBg.addEventListener('click', () => {
               closeModal();
             })
@@ -382,27 +664,108 @@
                closeModal();
             })
 
-           document.getElementById('altName').style.display = 'none';
+            const dataTable = new simpleDatatables.DataTable("#dataTable2", {
+                searchable: true,
+                fixedHeight: false
+            })
+
+            window.openSchModal = function(btn){
+                var elementSelected = btn.id;
+                const elementArray = elementSelected.split("-",2);
+                currentSelectedChild.id = elementArray[1];
+                schModal.classList.add('is-active');
+            }
+
+           document.getElementById('altFieldFirst').style.display = 'none';
+           document.getElementById('altFieldLast').style.display = 'none';
+
 
            window.handleClick = function(myRadio) {
                 if(myRadio.value == 1){
                     isNonMember = 0;
-                    document.getElementById("altDiv").classList.add("select");
-                    document.getElementById('altReceiver').style.display = 'block';
-                    document.getElementById('altName').style.display = 'none';
+                      document.getElementById('altMember').style.display = '';
+                      document.getElementById("altDiv").classList.add("select");
+                      document.getElementById('altFieldLast').style.display = 'none';
+                      document.getElementById('altFieldFirst').style.display = 'none';
+                      disableFields();
+
+
                 }else{
                     isNonMember = 1;
+                    document.getElementById('altMember').style.display = 'none';
                     document.getElementById("altDiv").classList.remove("select");
-                    document.getElementById('altReceiver').style.display = 'none';
-                    document.getElementById('altName').style.display = 'block';
+                    document.getElementById('altFieldFirst').style.display = '';
+                    document.getElementById('altFieldLast').style.display = '';
+                    enableAltFields();
+                    clearAltFields();
                 }
             }
 
+           window.handleSchSelect = function(sch){
+                currentSelectedChild.sch = sch.value;
+                var elementSelected = sch.id;
+                const elementArray = elementSelected.split("-",2);
+                currentSelectedChild.co = elementArray[1];
+                console.log(currentSelectedChild);
+           }
+
+           window.checkItemExist = function(child){
+               var ans = enrolledChildren.findIndex((e) => e.id === child);
+               return ans;
+           }
+
+           window.setSchName = function(){
+                    var inputSch = document.querySelector('#sch-'+currentSelectedChild.id);
+                    inputSch.value = document.querySelector('#co-'+currentSelectedChild.co).innerText;
+           }
+
+           saveSch.addEventListener('click',function(){
+                if(currentSelectedChild.id !="" && currentSelectedChild.sch !=""){
+                    var eduLevel = document.getElementById("el-"+currentSelectedChild.id);
+                    var gradeLevel = document.getElementById("gl-"+currentSelectedChild.id);
+                     if(enrolledChildren.length > 0){
+                          var res = checkItemExist(currentSelectedChild.id);
+                          if(res == -1 ){
+                                enrolledChildren.push({individualId:currentSelectedChild.id,
+                                                       schoolId:currentSelectedChild.sch,
+                                                       householdId:householdId,
+                                                       educationLevel:eduLevel,
+                                                       grade:gradeLevel,
+                                                       status:0
+                                                       });
+                                setSchName();
+                                closeSchModal();
+                          }else{
+                                enrolledChildren[res].sch = currentSelectedChild.sch;
+                                setSchName();
+                                closeSchModal();
+                          }
+                     }else{
+                        enrolledChildren.push({individualId:currentSelectedChild.id,
+                                                       schoolId:currentSelectedChild.sch,
+                                                       householdId:householdId,
+                                                       educationLevel:eduLevel,
+                                                       grade:gradeLevel,
+                                                       status:0
+                                                       });
+                        setSchName();
+                        closeSchModal();
+                     }
+                }else{
+                    alert("Please, select school to save!");
+                }
+           })
 
             var individualsLists = [];
 
             {% for ind in individuals %}
-                individualsLists.push({id:"{{ ind.id }}",fullName:"{{ ind.getFullName }}",gender:"{{ ind.gender }}",dob:"{{ ind.dateOfBirth }}"})
+                individualsLists.push({id:"{{ ind.id }}",
+                                        fullName:"{{ ind.getFullName }}",
+                                        gender:"{{ ind.gender }}",
+                                        dob:"{{ ind.dateOfBirth }}",
+                                        firstName:"{{ ind.firstName }}",
+                                        lastName:"{{ ind.lastName }}",
+                                        nationalId:"{{ ind.individualId }}"})
             {% endfor %}
 
               window.setIndividualDetails = function(sender, receiver){
@@ -412,9 +775,15 @@
                     if(receiver == "main"){
                         document.getElementById('mainGender').value = (indv.gender == "Male") ? 1 : 2 ;
                         document.getElementById('mainDOB').value = indv.dob;
+                        //document.getElementById('mainFirstName').value = indv.firstName;
+                        //document.getElementById('mainLastName').value = indv.lastName;
+                        document.getElementById('mainNationalId').value = indv.nationalId;
                     }else{
                         document.getElementById('altGender').value = (indv.gender == "Male") ? 1 : 2 ;
                         document.getElementById('altDOB').value = indv.dob;
+                        //document.getElementById('altFirstName').value = indv.firstName;
+                        //document.getElementById('altLastName').value = indv.lastName;
+                         document.getElementById('altNationalId').value = indv.nationalId;
                     }
                  }
               };
@@ -460,26 +829,35 @@
          var altRaw = $("#alt-photo").attr("src");
 
          var mainRep = mainRaw.replace(/^data:image\/(png|jpg);base64,/, "");
-         var altRep = altRaw.replace(/^data:image\/(png|jpg);base64,/, "");
          var mainPhoto = base64ToBlob(mainRep, 'image/png');
-         var altPhoto = base64ToBlob(altRep, 'image/png');
+
 
          var jsonDataObj = {
-            "householdId" : "{{ details.householdId }}",
+            "householdId" : householdId,
         	"mainReceiver": $("#mainReceiver").val(),
             "altReceiver" : $("#altReceiver").val(),
-            "mainDOB" : $("#mainDOB").val(),
+{#            "mainDOB" : $("#mainDOB").val(),#}
             "altDOB" : $("#altDOB").val(),
-            "altName" : $("#altName").val(),
-            "mainGender" : $("#mainGender").val(),
+{#            "mainFirstName" : $("#mainFirstName").val(),#}
+{#            "mainLastName" : $("#mainLastName").val(),#}
+            "altFirstName" : $("#altFirstName").val(),
+            "altLastName" : $("#altLastName").val(),
+{#            "mainGender" : $("#mainGender").val(),#}
             "altGender" : $("#altGender").val(),
-            "nonHouseholdMember": isNonMember
+            "altNationalId" : $("#altNationalId").val(),
+            "nonHouseholdMember": isNonMember,
+            "hasAlternate": hasAlternate,
+            "schoolEnrollmentForm": enrolledChildren
             };
 
 
              var formData = new FormData();
              formData.append('file', mainPhoto);
-             formData.append('altPhoto', altPhoto);
+             if(hasAlternate != 0){
+                var altRep = altRaw.replace(/^data:image\/(png|jpg);base64,/, "");
+                var altPhoto = base64ToBlob(altRep, 'image/png');
+                formData.append('altPhoto', altPhoto);
+             }
              formData.append("jsondata", JSON.stringify(jsonDataObj));
 
 

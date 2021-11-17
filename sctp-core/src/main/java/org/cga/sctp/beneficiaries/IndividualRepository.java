@@ -36,7 +36,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 interface IndividualRepository extends JpaRepository<Individual, Long> {
@@ -45,4 +48,7 @@ interface IndividualRepository extends JpaRepository<Individual, Long> {
     DashboardStats getDashboardStats();
 
     Slice<Individual> findByHouseholdId(Long householdId, Pageable pageable);
+
+    @Query(nativeQuery = true, value = "select * from individuals where household_id =:hhId and date_of_birth >= '1996-01-01' and  date_of_birth <= '2017-01-01'")
+    List<Individual> findSchoolChildren(@Param("hhId") Long householdId);
 }

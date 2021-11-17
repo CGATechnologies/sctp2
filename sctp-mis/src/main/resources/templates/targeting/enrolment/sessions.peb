@@ -38,7 +38,7 @@
                             <td>{{ s.districtName }}</td>
                             <td>{{ s.householdCount }}</td>
                             <td>{{ s.taName }}</td>
-                            <td>{{ s.createdAt }}</td>
+                            <td>{{ printDate(s.createdAt) }}</td>
                             <td>{{ s.doneBy }}</td>
 {#                            <td>Review</td>#}
                             <td>

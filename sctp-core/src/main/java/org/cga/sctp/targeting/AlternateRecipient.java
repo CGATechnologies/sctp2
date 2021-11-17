@@ -32,30 +32,72 @@
 
 package org.cga.sctp.targeting;
 
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.Procedure;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.cga.sctp.targeting.importation.converters.GenderParameterValueConverter;
+import org.cga.sctp.targeting.importation.parameters.Gender;
 
-@Repository
-public interface EnrolmentSessionRepository extends JpaRepository<EnrolmentSession,Long> {
-//public interface EnrolmentSessionRepository extends StoredProcedureParameter {
+import javax.persistence.*;
+import java.time.LocalDate;
 
-    @Procedure(procedureName = "sendHouseholdToEnrolment")
-    void sendToEnrolment(
-            @Param("targeting_session_id") Long targetingId,
-            @Param("verification_session_id") Long verificationId,
-            @Param("user_id") Long userId
-    );
+@Entity
+@Table(name = "alternate_recipient")
+public class AlternateRecipient {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String firstName;
+    private String lastName;
+    private String nationalId;
+    @Convert(converter = GenderParameterValueConverter.class)
+    private Gender gender;
+    private LocalDate dateOfBirth;
 
-    @Query(value = "CALL getEnrolledHouseholds(:sessionId, :page, :pageSize)", nativeQuery = true)
-    Slice<CbtRanking> getEnrolledHouseholds(
-            @Param("sessionId") Long id,
-            @Param("page") int page,
-            @Param("pageSize") int pageSize
-    );
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getNationalId() {
+        return nationalId;
+    }
+
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 
 
 }

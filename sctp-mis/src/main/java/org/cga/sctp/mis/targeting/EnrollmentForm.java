@@ -32,6 +32,8 @@
 
 package org.cga.sctp.mis.targeting;
 
+import java.util.List;
+
 public class EnrollmentForm {
 
     private long mainReceiver;
@@ -40,23 +42,71 @@ public class EnrollmentForm {
 
   //  @DateTimeFormat(pattern = "yyyy-MM-dd")
   //  public LocalDate mainDOB;
-    private String mainDOB;
+//    private String mainDOB;
 
 //    @DateTimeFormat(pattern = "yyyy-MM-dd")
 //    public LocalDate altDOB;
     private String altDOB;
 
-    private String altName;
+    private String altFirstName;
 
-    private long mainGender;
+    public String getAltLastName() {
+        return altLastName;
+    }
 
-    private long altGender;
+    public void setAltLastName(String altLastName) {
+        this.altLastName = altLastName;
+    }
 
+    private String altLastName;
+
+//    private long mainGender;
+
+    private int altGender;
 
     private int nonHouseholdMember;
 
     private long householdId;
 
+//    private String mainFirstName;
+//
+//    private String mainLastName;
+
+    private int hasAlternate;
+
+    public String getAltNationalId() {
+        return altNationalId;
+    }
+
+    public void setAltNationalId(String altNationalId) {
+        this.altNationalId = altNationalId;
+    }
+
+    private String altNationalId;
+
+//    public String getMainFirstName() {
+//        return mainFirstName;
+//    }
+//
+//    public void setMainFirstName(String mainFirstName) {
+//        this.mainFirstName = mainFirstName;
+//    }
+
+//    public String getMainLastName() {
+//        return mainLastName;
+//    }
+//
+//    public void setMainLastName(String mainLastName) {
+//        this.mainLastName = mainLastName;
+//    }
+
+    public int getHasAlternate() {
+        return hasAlternate;
+    }
+
+    public void setHasAlternate(int hasAlternate) {
+        this.hasAlternate = hasAlternate;
+    }
 
     public long getHouseholdId() {
         return householdId;
@@ -82,13 +132,13 @@ public class EnrollmentForm {
         this.altReceiver = altReceiver;
     }
 
-    public String getMainDOB() {
-        return mainDOB;
-    }
-
-    public void setMainDOB(String mainDOB) {
-        this.mainDOB = mainDOB;
-    }
+//    public String getMainDOB() {
+//        return mainDOB;
+//    }
+//
+//    public void setMainDOB(String mainDOB) {
+//        this.mainDOB = mainDOB;
+//    }
 
     public String getAltDOB() {
         return altDOB;
@@ -98,27 +148,27 @@ public class EnrollmentForm {
         this.altDOB = altDOB;
     }
 
-    public String getAltName() {
-        return altName;
+    public String getAltFirstName() {
+        return altFirstName;
     }
 
-    public void setAltName(String altName) {
-        this.altName = altName;
+    public void setAltFirstName(String altName) {
+        this.altFirstName = altName;
     }
 
-    public long getMainGender() {
-        return mainGender;
-    }
+//    public long getMainGender() {
+//        return mainGender;
+//    }
+//
+//    public void setMainGender(long mainGender) {
+//        this.mainGender = mainGender;
+//    }
 
-    public void setMainGender(long mainGender) {
-        this.mainGender = mainGender;
-    }
-
-    public long getAltGender() {
+    public int getAltGender() {
         return altGender;
     }
 
-    public void setAltGender(long altGender) {
+    public void setAltGender(int altGender) {
         this.altGender = altGender;
     }
 
@@ -129,6 +179,16 @@ public class EnrollmentForm {
     public void setNonHouseholdMember(int nonHouseholdMember) {
         this.nonHouseholdMember = nonHouseholdMember;
     }
+
+    public List<SchoolEnrollmentForm> getSchoolEnrollmentForm() {
+        return schoolEnrollmentForm;
+    }
+
+    public void setSchoolEnrollmentForm(List<SchoolEnrollmentForm> schoolEnrollmentForm) {
+        this.schoolEnrollmentForm = schoolEnrollmentForm;
+    }
+
+    List<SchoolEnrollmentForm> schoolEnrollmentForm;
 
 
 }

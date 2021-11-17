@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS alternate_recipient(
-	id bigint primary key,
+	id bigint PRIMARY KEY AUTO_INCREMENT,
 	household_id bigint not null,
 	first_name varchar(120),
 	last_name varchar(120),

@@ -37,7 +37,9 @@ import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.mis.core.SecuredBaseController;
 import org.cga.sctp.targeting.*;
+import org.cga.sctp.targeting.importation.parameters.EducationLevel;
 import org.cga.sctp.targeting.importation.parameters.Gender;
+import org.cga.sctp.targeting.importation.parameters.GradeLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -53,6 +55,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/targeting/enrolment")
@@ -103,9 +110,13 @@ public class EnrolmentController extends SecuredBaseController {
         }
 
         Slice<Individual> individuals = beneficiaryService.getIndividualsForCommunityReview(householdId,null);
+        List<Individual>  children = beneficiaryService.findSchoolChildren(householdId);
         return view("targeting/enrolment/details")
                 .addObject("details",householdDetails)
                 .addObject("gender", Gender.VALUES)
+                .addObject("children", children)
+                .addObject("educationLevel", EducationLevel.VALUES)
+                .addObject("gradeLevel", GradeLevel.VALUES)
                 .addObject("individuals",individuals.toList());
     }
 
@@ -144,17 +155,68 @@ public class EnrolmentController extends SecuredBaseController {
 
     @RequestMapping(value="/test", method= RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadFile(@RequestParam(required=true, value="file") MultipartFile file,
-                                             @RequestParam(required=true, value="altPhoto") MultipartFile alternate,
+                                             @RequestParam(required=false, value="altPhoto") MultipartFile alternate,
                                              @RequestParam(required=true, value="jsondata")String jsondata)
             throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
+        HouseholdRecipient householdRecipient = new HouseholdRecipient();
 
-         downloadFile(file,"main.jpg");
-         downloadFile(alternate,"alter.jpg");
         EnrollmentForm enrollmentForm = objectMapper.readValue(jsondata, EnrollmentForm.class);
-        System.out.println(enrollmentForm.getAltName());
-        System.out.println(enrollmentForm.getMainReceiver());
+
+        String mainReceiverPhotoName = "main-"+enrollmentForm.getHouseholdId()+".jpg";
+        String altReceiverPhotoName = null;
+        downloadFile(file,mainReceiverPhotoName);
+
+
+
+
+        if (enrollmentForm.getHasAlternate() != 0) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+            altReceiverPhotoName = "alt-"+enrollmentForm.getHouseholdId()+".jpg";
+            downloadFile(alternate,altReceiverPhotoName);
+            System.out.println("has alternate do some shit here");
+            if (enrollmentForm.getNonHouseholdMember() != 0){
+                enrollmentService.saveHouseholdAlternateRecipient(enrollmentForm.getHouseholdId(),
+                        enrollmentForm.getMainReceiver(),
+                        mainReceiverPhotoName,
+                        altReceiverPhotoName,
+                        enrollmentForm.getAltFirstName(),
+                        enrollmentForm.getAltLastName(),
+                        enrollmentForm.getAltNationalId(),
+                        enrollmentForm.getAltGender(),
+                        LocalDate.parse(enrollmentForm.getAltDOB()));
+            }else{
+                householdRecipient.setHouseholdId(enrollmentForm.getHouseholdId());
+                householdRecipient.setMainRecipient(enrollmentForm.getMainReceiver());
+                householdRecipient.setAltRecipient(enrollmentForm.getAltReceiver());
+                householdRecipient.setCreatedAt(LocalDateTime.now());
+                householdRecipient.setMainPhoto(mainReceiverPhotoName);
+                householdRecipient.setAltPhoto(altReceiverPhotoName);
+                enrollmentService.saveHouseholdRecipient(householdRecipient);
+            }
+        }else {
+            householdRecipient.setHouseholdId(enrollmentForm.getHouseholdId());
+            householdRecipient.setMainRecipient(enrollmentForm.getMainReceiver());
+            householdRecipient.setAltRecipient(enrollmentForm.getAltReceiver());
+            householdRecipient.setCreatedAt(LocalDateTime.now());
+            householdRecipient.setMainPhoto(mainReceiverPhotoName);
+            householdRecipient.setAltPhoto(altReceiverPhotoName);
+            enrollmentService.saveHouseholdRecipient(householdRecipient);
+        }
+
+
+        List<SchoolEnrolled> schoolEnrolledList = new ArrayList<SchoolEnrolled>();
+        List<SchoolEnrollmentForm> schoolEnrollmentForm = enrollmentForm.schoolEnrollmentForm;
+        if (!schoolEnrollmentForm.isEmpty()){
+            for(SchoolEnrollmentForm sch: schoolEnrollmentForm ) {
+                //System.out.println(id.getIndividualId());
+                schoolEnrolledList.add(new SchoolEnrolled(sch.getHouseholdId(), sch.getIndividualId(), sch.getEducationLevel(), sch.getGrade(), sch.getSchoolId(), sch.getStatus()));
+            }
+            enrollmentService.saveChildrenEnrolledSchool(schoolEnrolledList);
+        }
+
+
 
         return new ResponseEntity<>("File is uploaded successfully", HttpStatus.OK);
 
