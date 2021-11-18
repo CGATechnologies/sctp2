@@ -32,6 +32,10 @@
 
 package org.cga.sctp.mis.targeting;
 
+import org.cga.sctp.targeting.importation.converters.GenderParameterValueConverter;
+import org.cga.sctp.targeting.importation.parameters.Gender;
+
+import javax.persistence.Convert;
 import java.util.List;
 
 public class EnrollmentForm {
@@ -61,8 +65,8 @@ public class EnrollmentForm {
     private String altLastName;
 
 //    private long mainGender;
-
-    private int altGender;
+    @Convert(converter = GenderParameterValueConverter.class)
+    private Gender altGender;
 
     private int nonHouseholdMember;
 
@@ -164,11 +168,11 @@ public class EnrollmentForm {
 //        this.mainGender = mainGender;
 //    }
 
-    public int getAltGender() {
+    public Gender getAltGender() {
         return altGender;
     }
 
-    public void setAltGender(int altGender) {
+    public void setAltGender(Gender altGender) {
         this.altGender = altGender;
     }
 

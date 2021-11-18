@@ -2,6 +2,28 @@
 
         {% block head %}<link rel="stylesheet" type="text/css" href="/assets/css/info-list.css"/>{% endblock %}
 
+        {% block contextMenu %}
+            {% set canModify = hasRole("ADMINISTRATOR") and isSessionOpen %}
+            {% set useWideContainer = true %}
+        <div class="context-nav-container">
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <a href="{{ returnUrl }}" class="button is-danger">
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa fa-chevron-left"></i>
+                                </span>
+                                <span>Back</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+
+
     {% block content %}
     <div>
         <div class="card no-overlap">
@@ -190,7 +212,25 @@
                                 </div>
                             </div>
                             <div class="columns">
-                                <button id="modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
+                                <div class="column">
+                                    <button id="modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
+                                </div>
+                                <div class="column">
+                                    <div class="file">
+                                        <label class="file-label">
+                                            <input class="file-input" type="file" accept="image/*" name="alt-photo" onchange="loadMainFile(event)">
+                                            <span class="file-cta">
+                                              <span class="file-icon">
+                                                <i class="fas fa-upload"></i>
+                                              </span>
+                                              <span class="file-label">
+                                                Choose a file…
+                                              </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -310,7 +350,26 @@
                                 </div>
                             </div>
                             <div class="columns">
-                                <button id="alt-modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
+                                <div class="column">
+                                    <button id="alt-modal-btn" class="button is-primary modal-button" data-target="modal" aria-haspopup="true">Take picture</button>
+                                </div>
+                                <div class="column">
+                                    <div class="file">
+                                        <label class="file-label">
+                                            <input class="file-input" type="file" accept="image/*" name="alt-photo" onchange="loadAltFile(event)">
+                                            <span class="file-cta">
+                                              <span class="file-icon">
+                                                <i class="fas fa-upload"></i>
+                                              </span>
+                                              <span class="file-label">
+                                                Choose a file…
+                                              </span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
 
                             </div>
                         </div>
@@ -342,10 +401,10 @@
                                 <td>ML-{{ child.individualId }}</td>
                                 <td>{{ child.schoolName}}</td>
                                 <td class="control">
-                                    <select id="el-{{ child.id }}" class="input">
+                                    <select id="el-{{ child.id }}" class="input" onchange="handleEduLevel(this);">
                                             <option disabled="disabled" selected="selected">Select Option</option>
                                             {% for el in educationLevel %}
-                                            <option>{{ el.name() }}</option>
+                                            <option value="{{ el.code }}">{{ el.name() }}</option>
                                             {% endfor %}
                                     </select>
                                 </td>
@@ -353,7 +412,7 @@
                                     <select  id="gl-{{ child.id }}" class="input">
                                             <option disabled="disabled" selected="selected">Select Option</option>
                                             {% for gl in gradeLevel %}
-                                            <option>{{ gl.name() }}</option>
+                                            <option value="{{ gl.code }}">{{ gl.name() }}</option>
                                             {% endfor %}
                                     </select>
                                 </td>
@@ -450,76 +509,32 @@
                         </header>
                         <section class="modal-card-body">
                             <table id="dataTable2" class="table dataTable is-narrow is-striped is-hoverable">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Code</th>
-                                    <th>Education Level</th>
-                                    <th>District</th>
-                                    <th>TA</th>
-                                    <th>Education Zone</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
+{#                                <thead>#}
+{#                                <tr>#}
+{#                                    <th>Name</th>#}
+{#                                    <th>Code</th>#}
+{#                                    <th>Education Level</th>#}
+{#                                    <th>District</th>#}
+{#                                    <th>Education Zone</th>#}
+{#                                    <th></th>#}
+{#                                </tr>#}
+{#                                </thead>#}
+{#                                <tbody>#}
+{#                                    {% for sch in schools %}#}
+{#                                    <tr>#}
+{#                                        <td id="co-{{ sch.id }}">{{ sch.name }}</td>#}
+{#                                        <td>{{ sch.code }}</td>#}
+{#                                        <td>{{ sch.educationLevel }}</td>#}
+{#                                        <td>{{ sch.districtName }}</td>#}
+{#                                        <td>{{ sch.educationZone }}</td>#}
+{#                                        <td>#}
+{#                                            <input id="bt-{{ sch.id }}" type="radio" name="answer" onclick="handleSchSelect(this);" value="{{ sch.id }}">#}
+{#                                        </td>#}
+{#                                    </tr>#}
+{#                                    {% endfor %}#}
 
-                                       <tr>
-                                           <td id="co-2">Mwambi</td>
-                                           <td>581111</td>
-                                           <td>Primary</td>
-                                           <td>Likoma</td>
-                                           <td>Mwase</td>
-                                           <td>Sambi</td>
-                                           <td>
-                                               <input id="bt-2" type="radio" name="answer" onclick="handleSchSelect(this);" value="2">
-                                           </td>
-                                       </tr>
-                                       <tr>
-                                           <td id="co-3">Mwambi 2</td>
-                                           <td>581185</td>
-                                           <td>Primary</td>
-                                           <td>Likoma</td>
-                                           <td>Mwase</td>
-                                           <td>Sambi</td>
-                                           <td>
-                                               <input id="bt-3" type="radio" name="answer" onclick="handleSchSelect(this);" value="3">
-                                           </td>
-                                       </tr>
-                                       <tr>
-                                           <td id="co-4">Mwambi 3</td>
-                                           <td>581111</td>
-                                           <td>Primary</td>
-                                           <td>Likoma</td>
-                                           <td>Mwase</td>
-                                           <td>Sambi</td>
-                                           <td>
-                                               <input id="bt-4" type="radio" name="answer" onclick="handleSchSelect(this);" value="4">
-                                           </td>
-                                       </tr>
-                                       <tr>
-                                           <td id="co-5">Mwambi 4</td>
-                                           <td>581111</td>
-                                           <td>Primary</td>
-                                           <td>Likoma</td>
-                                           <td>Mwase</td>
-                                           <td>Sambi</td>
-                                           <td>
-                                               <input id="bt-5" type="radio" name="answer" onclick="handleSchSelect(this);" value="5">
-                                           </td>
-                                       </tr>
-                                       <tr>
-                                           <td id="co-6">Mwambi 5</td>
-                                           <td>581111</td>
-                                           <td>Primary</td>
-                                           <td>Likoma</td>
-                                           <td>Mwase</td>
-                                           <td>Sambi</td>
-                                           <td>
-                                               <input id="bt-6" type="radio" name="answer" onclick="handleSchSelect(this);" value="6">
-                                           </td>
-                                       </tr>
 
-                                </tbody>
+{#                                </tbody>#}
                             </table>
                         </section>
                         <footer class="modal-card-foot">
@@ -550,7 +565,26 @@
         </script>
     <script>
         (function(){
+            var educationLevelList = [];
+            var schoolsList = [];
+            var schoolsTableList = [];
+            {% for sch in schools %}
+                 var tmpSch = {id:"{{ sch.id }}",name:"{{ sch.name }}", code:"{{ sch.code }}", educationLevel:"{{ sch.educationLevel }}",educationZone:"{{ sch.educationZone }}",district:"{{ sch.districtName }}"};
+                 schoolsList.push(tmpSch);
+                 schoolsTableList.push(tmpSch);
 
+
+            {% endfor %}
+
+             {% for ed in education %}
+                 educationLevelList.push({id:"{{ sch.id }}",
+                                        name:"{{ sch.name }}",
+                                        educationLevel:"{{ sch.educationLevel }}",
+                                        educationZone:"{{ sch.educationZone }}",
+                                        district:"{{ sch.districtName }}"})
+            {% endfor %}
+
+            console.log(schoolsList);
             var currentSelectedChild = {id:"",sch:"",co:""};
 
             const mainGender = document.querySelector('#mainGender');
@@ -558,6 +592,7 @@
             const mainDOB = document.querySelector('#mainDOB');
             const altDOB = document.querySelector('#altDOB');
             const altNationalId = document.querySelector('#altNationalId');
+            document.querySelector('#altReceiver').disabled = true;
 
             window.enableAltFields = function(){
                 altGender.disabled = false;
@@ -666,7 +701,23 @@
 
             const dataTable = new simpleDatatables.DataTable("#dataTable2", {
                 searchable: true,
-                fixedHeight: false
+                fixedHeight: false,
+                columns:[
+                    // Hide the sixth column
+                    { select: 0, hidden: true },
+                    {
+                        select: 5,
+                        render: function(data, cell, row) {
+
+                            return data + "<input id='bt-"+row.dataIndex+"' class='ml-3' type='radio' name='answer' onclick='handleSchSelect(this);' >";
+
+                        }
+                    }
+                ],
+                data:{
+                    "headings":["id","Name","Code","Education Level","District","Education Zone"],
+                    "data":  schoolsTableList.map(item => Object.values(item))
+                }
             })
 
             window.openSchModal = function(btn){
@@ -688,8 +739,7 @@
                       document.getElementById('altFieldLast').style.display = 'none';
                       document.getElementById('altFieldFirst').style.display = 'none';
                       disableFields();
-
-
+                      hideSelectedOption("mainReceiver",0);
                 }else{
                     isNonMember = 1;
                     document.getElementById('altMember').style.display = 'none';
@@ -698,6 +748,7 @@
                     document.getElementById('altFieldLast').style.display = '';
                     enableAltFields();
                     clearAltFields();
+                    hideSelectedOption("mainReceiver",0);
                 }
             }
 
@@ -707,6 +758,7 @@
                 const elementArray = elementSelected.split("-",2);
                 currentSelectedChild.co = elementArray[1];
                 console.log(currentSelectedChild);
+
            }
 
            window.checkItemExist = function(child){
@@ -721,8 +773,8 @@
 
            saveSch.addEventListener('click',function(){
                 if(currentSelectedChild.id !="" && currentSelectedChild.sch !=""){
-                    var eduLevel = document.getElementById("el-"+currentSelectedChild.id);
-                    var gradeLevel = document.getElementById("gl-"+currentSelectedChild.id);
+                    var eduLevel = document.getElementById("el-"+currentSelectedChild.id).value;
+                    var gradeLevel = document.getElementById("gl-"+currentSelectedChild.id).value;
                      if(enrolledChildren.length > 0){
                           var res = checkItemExist(currentSelectedChild.id);
                           if(res == -1 ){
@@ -788,17 +840,83 @@
                  }
               };
 
-            mainReceiver.onchange = function(){
-                    setIndividualDetails(this,"main")
-            };
+             window.loadMainFile = function(event) {
+                var reader = new FileReader();
+                reader.onload = function(){
+                  var output = document.getElementById('main-photo');
+                  output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+              };
 
-            altReceiver.onchange = function(){
-                    setIndividualDetails(this,"alt")
-            };
+             window.loadAltFile = function(event) {
+                var reader = new FileReader();
+                reader.onload = function(){
+                  var output = document.getElementById('alt-photo');
+                  output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+              };
+
+            window.handleEduLevel = function(event){
+                //schoolsTableList.pop();
+                console.log(event.id);
+                console.log(schoolsTableList);
+                var rowsCount =[];
+
+                var elementSelected = event.selectedOptions[0].value;
+                //const elementArray = elementSelected.split("-",2);
+                //var selectedId = elementArray[1];
+
+
+                for (let i = 0; i < schoolsTableList.length; i++) {
+                  rowsCount.push(i);
+                }
+
+                // remove the data
+                dataTable.rows().remove(rowsCount);
+
+                schoolsTableList = schoolsList;
+
+                schoolsTableList = schoolsTableList.filter((e)=> e.educationLevel == elementSelected);
+
+                console.log(schoolsTableList);
+
+                let newRows = {  data: schoolsTableList.map(item => Object.values(item)) };
+
+                //add filtered
+                // dataTable.rows().add(newRows);
+                dataTable.insert(newRows);
+            }
+
 
         })();
     </script>
     <script>
+
+          mainReceiver.onchange = function(){
+                setIndividualDetails(this,"main")
+                var selectValue = this.value;
+                if(selectValue != ''){
+                    hideSelectedOption("altReceiver",selectValue);
+                    $( "#altReceiver" ).prop( "disabled", false );
+                }
+            };
+
+        altReceiver.onchange = function(){
+            setIndividualDetails(this,"alt")
+            var selectValue = this.value;
+            if(selectValue != ''){
+              hideSelectedOption("mainReceiver",selectValue);
+            }
+        };
+
+
+        function hideSelectedOption(el,selectVal){
+              $("#"+el+" option[value='"+selectVal+"']").hide();
+              $("#"+el+" option[value!='"+selectVal+"']").show();
+        }
+
         function base64ToBlob(base64, mime)
         {
             mime = mime || '';

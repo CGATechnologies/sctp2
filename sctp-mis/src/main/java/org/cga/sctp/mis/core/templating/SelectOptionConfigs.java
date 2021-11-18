@@ -39,6 +39,7 @@ import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramUser;
 import org.cga.sctp.program.ProgramUserCandidate;
 import org.cga.sctp.security.permission.UserRole;
+import org.cga.sctp.targeting.importation.parameters.EducationLevel;
 import org.cga.sctp.targeting.importation.parameters.Gender;
 import org.cga.sctp.user.AccessLevel;
 import org.cga.sctp.user.Permission;
@@ -104,4 +105,6 @@ public class SelectOptionConfigs {
 
     @Bean
     public SelectOptionEntry genderSelectionOption(){ return  new SelectOptionEntry(Gender.class, "code","name()");}
+
+
 }

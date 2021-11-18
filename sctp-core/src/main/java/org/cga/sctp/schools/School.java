@@ -30,53 +30,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.mis.targeting;
+package org.cga.sctp.schools;
 
 import org.cga.sctp.targeting.importation.converters.EducationLevelParameterValueConverter;
-import org.cga.sctp.targeting.importation.converters.GradeLevelParameterValueConverter;
 import org.cga.sctp.targeting.importation.parameters.EducationLevel;
-import org.cga.sctp.targeting.importation.parameters.GradeLevel;
 
-import javax.persistence.Convert;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-public class SchoolEnrollmentForm {
-    private long householdId;
+@Entity
+@Table(name = "schools")
+public class School {
 
-    private long individualId;
+    @Id
+    @GeneratedValue
+    private long id;
 
-    private long schoolId;
+    private String name;
+
+    private long code;
 
     @Convert(converter = EducationLevelParameterValueConverter.class)
     private EducationLevel educationLevel;
 
-    @Convert(converter = GradeLevelParameterValueConverter.class)
-    private GradeLevel grade;
+    private long educationZone;
 
-    private int status;
+    private LocalDateTime createdAt;
 
+    private LocalDateTime modifiedAt;
 
-    public long getHouseholdId() {
-        return householdId;
+    public long getId() {
+        return id;
     }
 
-    public void setHouseholdId(long householdId) {
-        this.householdId = householdId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public long getIndividualId() {
-        return individualId;
+    public String getName() {
+        return name;
     }
 
-    public void setIndividualId(long individualId) {
-        this.individualId = individualId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public long getSchoolId() {
-        return schoolId;
+    public long getCode() {
+        return code;
     }
 
-    public void setSchoolId(long schoolId) {
-        this.schoolId = schoolId;
+    public void setCode(long code) {
+        this.code = code;
     }
 
     public EducationLevel getEducationLevel() {
@@ -87,25 +91,29 @@ public class SchoolEnrollmentForm {
         this.educationLevel = educationLevel;
     }
 
-    public GradeLevel getGrade() {
-        return grade;
+    public long getEducationZone() {
+        return educationZone;
     }
 
-    public void setGrade(GradeLevel grade) {
-        this.grade = grade;
+    public void setEducationZone(long educationZone) {
+        this.educationZone = educationZone;
     }
 
-    public int getStatus() {
-        return status;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
 
-
-
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
 
 
 }

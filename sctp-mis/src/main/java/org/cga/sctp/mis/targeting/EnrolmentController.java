@@ -36,6 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.mis.core.SecuredBaseController;
+import org.cga.sctp.schools.SchoolService;
+import org.cga.sctp.schools.SchoolsView;
 import org.cga.sctp.targeting.*;
 import org.cga.sctp.targeting.importation.parameters.EducationLevel;
 import org.cga.sctp.targeting.importation.parameters.Gender;
@@ -57,7 +59,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +71,9 @@ public class EnrolmentController extends SecuredBaseController {
 
     @Autowired
     private BeneficiaryService beneficiaryService;
+
+    @Autowired
+    private SchoolService schoolService;
 
 
     @GetMapping
@@ -109,15 +113,22 @@ public class EnrolmentController extends SecuredBaseController {
             return redirect("/targeting/enrolment/households?session="+sessionId);
         }
 
-        Slice<Individual> individuals = beneficiaryService.getIndividualsForCommunityReview(householdId,null);
+        List<Individual> individuals = beneficiaryService.getEligibleRecipients(householdId);
         List<Individual>  children = beneficiaryService.findSchoolChildren(householdId);
+        List<SchoolsView> schools = schoolService.getSchools();
+
+
+        String returnUrl = "households?session="+sessionId;
+
         return view("targeting/enrolment/details")
                 .addObject("details",householdDetails)
                 .addObject("gender", Gender.VALUES)
                 .addObject("children", children)
                 .addObject("educationLevel", EducationLevel.VALUES)
                 .addObject("gradeLevel", GradeLevel.VALUES)
-                .addObject("individuals",individuals.toList());
+                .addObject("returnUrl", returnUrl)
+                .addObject("schools",  schools)
+                .addObject("individuals",individuals);
     }
 
 //    @GetMapping("/test")
@@ -145,6 +156,7 @@ public class EnrolmentController extends SecuredBaseController {
 
 
     public void downloadFile(MultipartFile file,String fileName) throws IOException{
+        //need to put path server path
         File convertFile = new File("D:\\user\\Pictures\\"+fileName);
         convertFile.createNewFile();
         FileOutputStream fout = new FileOutputStream(convertFile);
@@ -172,10 +184,8 @@ public class EnrolmentController extends SecuredBaseController {
 
 
         if (enrollmentForm.getHasAlternate() != 0) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
             altReceiverPhotoName = "alt-"+enrollmentForm.getHouseholdId()+".jpg";
             downloadFile(alternate,altReceiverPhotoName);
-            System.out.println("has alternate do some shit here");
             if (enrollmentForm.getNonHouseholdMember() != 0){
                 enrollmentService.saveHouseholdAlternateRecipient(enrollmentForm.getHouseholdId(),
                         enrollmentForm.getMainReceiver(),
@@ -184,7 +194,7 @@ public class EnrolmentController extends SecuredBaseController {
                         enrollmentForm.getAltFirstName(),
                         enrollmentForm.getAltLastName(),
                         enrollmentForm.getAltNationalId(),
-                        enrollmentForm.getAltGender(),
+                        enrollmentForm.getAltGender().getCode(),
                         LocalDate.parse(enrollmentForm.getAltDOB()));
             }else{
                 householdRecipient.setHouseholdId(enrollmentForm.getHouseholdId());
@@ -210,16 +220,51 @@ public class EnrolmentController extends SecuredBaseController {
         List<SchoolEnrollmentForm> schoolEnrollmentForm = enrollmentForm.schoolEnrollmentForm;
         if (!schoolEnrollmentForm.isEmpty()){
             for(SchoolEnrollmentForm sch: schoolEnrollmentForm ) {
-                //System.out.println(id.getIndividualId());
-                schoolEnrolledList.add(new SchoolEnrolled(sch.getHouseholdId(), sch.getIndividualId(), sch.getEducationLevel(), sch.getGrade(), sch.getSchoolId(), sch.getStatus()));
+                schoolEnrolledList.add(new SchoolEnrolled(sch.getHouseholdId(), sch.getIndividualId(), sch.getEducationLevel().getCode(), sch.getGrade().getCode(), sch.getSchoolId(), sch.getStatus()));
             }
             enrollmentService.saveChildrenEnrolledSchool(schoolEnrolledList);
         }
-
-
-
         return new ResponseEntity<>("File is uploaded successfully", HttpStatus.OK);
 
     }
+
+    @GetMapping("/edit")
+    public ModelAndView edit(@RequestParam("id") Long householdId,
+                                @RequestParam("session") Long sessionId, RedirectAttributes attributes,
+                                @ModelAttribute("enrollmentForm") EnrollmentForm enrollmentForm) {
+
+        EnrollmentHousehold enrollmentHousehold = enrollmentService.findEnrollmentHousehold(sessionId,householdId);
+        if (enrollmentHousehold == null){
+            setDangerFlashMessage("Enrollment session not found.", attributes);
+            return redirect("/targeting/enrolment/households?session="+sessionId);
+        }
+
+        HouseholdDetails householdDetails = enrollmentService.getHouseholdDetails(householdId);
+        if (householdDetails == null){
+            setDangerFlashMessage("Enrollment household not found.", attributes);
+            return redirect("/targeting/enrolment/households?session="+sessionId);
+        }
+
+        List<Individual> individuals = beneficiaryService.getEligibleRecipients(householdId);
+        List<Individual>  children = beneficiaryService.findSchoolChildren(householdId);
+        String returnUrl = "households?session="+sessionId;
+
+        HouseholdRecipient householdRecipient =enrollmentService.getHouseholdRecipient(householdId);
+        System.out.println(householdRecipient.getMainRecipient());
+        enrollmentForm.setMainReceiver(householdRecipient.getMainRecipient());
+        enrollmentForm.setAltReceiver(householdRecipient.getAltRecipient());
+        enrollmentForm.setHasAlternate((householdRecipient.getAltOther() != 0) ? 1 : 0);
+        enrollmentForm.setNonHouseholdMember((householdRecipient.getAltOther() != 0) ? 1 : 0);
+
+        return view("targeting/enrolment/details")
+                .addObject("details",householdDetails)
+                .addObject("gender", Gender.VALUES)
+                .addObject("children", children)
+                .addObject("educationLevel", EducationLevel.VALUES)
+                .addObject("gradeLevel", GradeLevel.VALUES)
+                .addObject("returnUrl", returnUrl)
+                .addObject("individuals",individuals);
+    }
+
 
 }

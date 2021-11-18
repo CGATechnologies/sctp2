@@ -107,4 +107,8 @@ public class EnrollmentService extends TransactionalService {
         schoolEnrolledRepository.saveAll(schoolEnrolled);
     }
 
+    public HouseholdRecipient getHouseholdRecipient(Long householdId){
+       return householdRecipientRepository.findById(householdId).orElse(null);
+    }
+
 }

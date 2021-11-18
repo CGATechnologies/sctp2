@@ -30,50 +30,73 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.schools;
 
-import org.cga.sctp.core.TransactionalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+public interface SchoolsView {
 
-@Service
-public class BeneficiaryService extends TransactionalService {
+    Long getId();
 
-    @Autowired
-    private IndividualRepository individualRepository;
+    String getName();
 
-    @Autowired
-    private HouseholdRepository householdRepository;
+    Long getCode();
 
-    public DashboardStats getDashboardStats() {
-        return individualRepository.getDashboardStats();
-    }
+   // @Convert(converter = EducationLevelParameterValueConverter.class)
+   //  EducationLevel getEducationLevel();
+    Long getEducationLevel();
 
-    public void saveHousehold(Household household) {
-        householdRepository.save(household);
-    }
+    String getEducationZone();
 
-    public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {
-        return householdRepository.findByCbtSessionIdAndHouseholdId(cbtSessionId, household);
-    }
+    String getDistrictName();
 
-    public Slice<Individual> getIndividualsForCommunityReview(Long householdId, Pageable pageable) {
-        return individualRepository.findByHouseholdId(householdId, pageable);
-    }
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public long getCode() {
+//        return code;
+//    }
+//
+//    public void setCode(long code) {
+//        this.code = code;
+//    }
+//
+//    public EducationLevel getEducationLevel() {
+//        return educationLevel;
+//    }
+//
+//    public void setEducationLevel(EducationLevel educationLevel) {
+//        this.educationLevel = educationLevel;
+//    }
+//
+//    public String getEducationZone() {
+//        return educationZone;
+//    }
+//
+//    public void setEducationZone(String educationZone) {
+//        this.educationZone = educationZone;
+//    }
+//
+//    public String getDistrictName() {
+//        return districtName;
+//    }
+//
+//    public void setDistrictName(String districtName) {
+//        this.districtName = districtName;
+//    }
 
-    public Individual getIndividual(Long individualId){
-        return individualRepository.findById(individualId).orElse(null);
-    }
 
-    public List<Individual> findSchoolChildren(Long householdId){
-        return  individualRepository.findSchoolChildren(householdId);
-    }
 
-    public List<Individual> getEligibleRecipients(Long householdId){
-        return individualRepository.getEligibleRecipients(householdId);
-    }
 }

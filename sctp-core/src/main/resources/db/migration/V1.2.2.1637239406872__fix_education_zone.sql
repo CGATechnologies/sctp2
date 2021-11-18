@@ -1,0 +1,1 @@
+ALTER TABLE education_zone DROP COLUMN education_zone;

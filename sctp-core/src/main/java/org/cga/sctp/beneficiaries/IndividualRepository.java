@@ -51,4 +51,7 @@ interface IndividualRepository extends JpaRepository<Individual, Long> {
 
     @Query(nativeQuery = true, value = "select * from individuals where household_id =:hhId and date_of_birth >= '1996-01-01' and  date_of_birth <= '2017-01-01'")
     List<Individual> findSchoolChildren(@Param("hhId") Long householdId);
+
+    @Query(nativeQuery = true, value = "select * from individuals where household_id =:hhId and TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) >= 14 ")
+    List<Individual> getEligibleRecipients(@Param("hhId") Long householdId);
 }
