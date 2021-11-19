@@ -32,10 +32,6 @@
 
 package org.cga.sctp.mis.targeting;
 
-import org.cga.sctp.targeting.importation.converters.GenderParameterValueConverter;
-import org.cga.sctp.targeting.importation.parameters.Gender;
-
-import javax.persistence.Convert;
 import java.util.List;
 
 public class EnrollmentForm {
@@ -65,16 +61,12 @@ public class EnrollmentForm {
     private String altLastName;
 
 //    private long mainGender;
-    @Convert(converter = GenderParameterValueConverter.class)
-    private Gender altGender;
+
+    private int altGender;
 
     private int nonHouseholdMember;
 
     private long householdId;
-
-//    private String mainFirstName;
-//
-//    private String mainLastName;
 
     private int hasAlternate;
 
@@ -87,22 +79,6 @@ public class EnrollmentForm {
     }
 
     private String altNationalId;
-
-//    public String getMainFirstName() {
-//        return mainFirstName;
-//    }
-//
-//    public void setMainFirstName(String mainFirstName) {
-//        this.mainFirstName = mainFirstName;
-//    }
-
-//    public String getMainLastName() {
-//        return mainLastName;
-//    }
-//
-//    public void setMainLastName(String mainLastName) {
-//        this.mainLastName = mainLastName;
-//    }
 
     public int getHasAlternate() {
         return hasAlternate;
@@ -136,14 +112,6 @@ public class EnrollmentForm {
         this.altReceiver = altReceiver;
     }
 
-//    public String getMainDOB() {
-//        return mainDOB;
-//    }
-//
-//    public void setMainDOB(String mainDOB) {
-//        this.mainDOB = mainDOB;
-//    }
-
     public String getAltDOB() {
         return altDOB;
     }
@@ -160,19 +128,11 @@ public class EnrollmentForm {
         this.altFirstName = altName;
     }
 
-//    public long getMainGender() {
-//        return mainGender;
-//    }
-//
-//    public void setMainGender(long mainGender) {
-//        this.mainGender = mainGender;
-//    }
-
-    public Gender getAltGender() {
+    public int getAltGender() {
         return altGender;
     }
 
-    public void setAltGender(Gender altGender) {
+    public void setAltGender(int altGender) {
         this.altGender = altGender;
     }
 

@@ -194,7 +194,7 @@ public class EnrolmentController extends SecuredBaseController {
                         enrollmentForm.getAltFirstName(),
                         enrollmentForm.getAltLastName(),
                         enrollmentForm.getAltNationalId(),
-                        enrollmentForm.getAltGender().getCode(),
+                        enrollmentForm.getAltGender(),
                         LocalDate.parse(enrollmentForm.getAltDOB()));
             }else{
                 householdRecipient.setHouseholdId(enrollmentForm.getHouseholdId());
@@ -220,7 +220,7 @@ public class EnrolmentController extends SecuredBaseController {
         List<SchoolEnrollmentForm> schoolEnrollmentForm = enrollmentForm.schoolEnrollmentForm;
         if (!schoolEnrollmentForm.isEmpty()){
             for(SchoolEnrollmentForm sch: schoolEnrollmentForm ) {
-                schoolEnrolledList.add(new SchoolEnrolled(sch.getHouseholdId(), sch.getIndividualId(), sch.getEducationLevel().getCode(), sch.getGrade().getCode(), sch.getSchoolId(), sch.getStatus()));
+                schoolEnrolledList.add(new SchoolEnrolled(sch.getHouseholdId(), sch.getIndividualId(), sch.getEducationLevel(), sch.getGrade(), sch.getSchoolId(), sch.getStatus()));
             }
             enrollmentService.saveChildrenEnrolledSchool(schoolEnrolledList);
         }
@@ -247,14 +247,27 @@ public class EnrolmentController extends SecuredBaseController {
 
         List<Individual> individuals = beneficiaryService.getEligibleRecipients(householdId);
         List<Individual>  children = beneficiaryService.findSchoolChildren(householdId);
+        List<SchoolEnrolled> schoolEnrolled = enrollmentService.getSchoolEnrolledByHousehold(householdId);
+        List<SchoolsView> schools = schoolService.getSchools();
         String returnUrl = "households?session="+sessionId;
 
         HouseholdRecipient householdRecipient =enrollmentService.getHouseholdRecipient(householdId);
+        if (householdRecipient.getAltOther() != 0){
+            AlternateRecipient alternateRecipient = enrollmentService.getHouseholdAlternateRecipient(householdRecipient.getAltOther());
+            enrollmentForm.setAltGender(alternateRecipient.getGender());
+            enrollmentForm.setAltDOB(alternateRecipient.getDateOfBirth().toString());
+            enrollmentForm.setAltFirstName(alternateRecipient.getFirstName());
+            enrollmentForm.setAltLastName(alternateRecipient.getLastName());
+            enrollmentForm.setAltNationalId(alternateRecipient.getNationalId());
+            System.out.println(alternateRecipient.getFirstName());
+        }
+
         System.out.println(householdRecipient.getMainRecipient());
         enrollmentForm.setMainReceiver(householdRecipient.getMainRecipient());
         enrollmentForm.setAltReceiver(householdRecipient.getAltRecipient());
-        enrollmentForm.setHasAlternate((householdRecipient.getAltOther() != 0) ? 1 : 0);
+        enrollmentForm.setHasAlternate((householdRecipient.getAltOther() != 0 || householdRecipient.getAltRecipient() != 0) ? 1 : 0);
         enrollmentForm.setNonHouseholdMember((householdRecipient.getAltOther() != 0) ? 1 : 0);
+
 
         return view("targeting/enrolment/details")
                 .addObject("details",householdDetails)
@@ -263,6 +276,9 @@ public class EnrolmentController extends SecuredBaseController {
                 .addObject("educationLevel", EducationLevel.VALUES)
                 .addObject("gradeLevel", GradeLevel.VALUES)
                 .addObject("returnUrl", returnUrl)
+                .addObject("parent", 1)
+                .addObject("schools",  schools)
+                .addObject("schoolEnrolled", schoolEnrolled)
                 .addObject("individuals",individuals);
     }
 

@@ -63,6 +63,7 @@ public class EnrollmentService extends TransactionalService {
     SchoolEnrolledRepository schoolEnrolledRepository;
 
 
+
     public List<EnrollmentSessionView> getEnrollmentSessions(){
         return sessionViewRepository.findAll();
     }
@@ -109,6 +110,14 @@ public class EnrollmentService extends TransactionalService {
 
     public HouseholdRecipient getHouseholdRecipient(Long householdId){
        return householdRecipientRepository.findById(householdId).orElse(null);
+    }
+
+    public AlternateRecipient getHouseholdAlternateRecipient(Long alternateId){
+        return alternateRecipientRepository.findById(alternateId).orElse(null);
+    }
+
+    public List<SchoolEnrolled> getSchoolEnrolledByHousehold(Long householdId){
+        return  schoolEnrolledRepository.findHouseholdSchoolEnrolled(householdId);
     }
 
 }

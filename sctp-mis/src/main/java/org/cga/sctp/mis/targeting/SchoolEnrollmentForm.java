@@ -32,13 +32,6 @@
 
 package org.cga.sctp.mis.targeting;
 
-import org.cga.sctp.targeting.importation.converters.EducationLevelParameterValueConverter;
-import org.cga.sctp.targeting.importation.converters.GradeLevelParameterValueConverter;
-import org.cga.sctp.targeting.importation.parameters.EducationLevel;
-import org.cga.sctp.targeting.importation.parameters.GradeLevel;
-
-import javax.persistence.Convert;
-
 public class SchoolEnrollmentForm {
     private long householdId;
 
@@ -46,11 +39,11 @@ public class SchoolEnrollmentForm {
 
     private long schoolId;
 
-    @Convert(converter = EducationLevelParameterValueConverter.class)
-    private EducationLevel educationLevel;
 
-    @Convert(converter = GradeLevelParameterValueConverter.class)
-    private GradeLevel grade;
+    private int educationLevel;
+
+
+    private int grade;
 
     private int status;
 
@@ -79,19 +72,19 @@ public class SchoolEnrollmentForm {
         this.schoolId = schoolId;
     }
 
-    public EducationLevel getEducationLevel() {
+    public int getEducationLevel() {
         return educationLevel;
     }
 
-    public void setEducationLevel(EducationLevel educationLevel) {
+    public void setEducationLevel(int educationLevel) {
         this.educationLevel = educationLevel;
     }
 
-    public GradeLevel getGrade() {
+    public int getGrade() {
         return grade;
     }
 
-    public void setGrade(GradeLevel grade) {
+    public void setGrade(int grade) {
         this.grade = grade;
     }
 

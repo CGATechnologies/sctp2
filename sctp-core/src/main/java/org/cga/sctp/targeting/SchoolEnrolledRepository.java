@@ -33,8 +33,15 @@
 package org.cga.sctp.targeting;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface SchoolEnrolledRepository extends JpaRepository<SchoolEnrolled,Long> {
+
+    @Query(value = "select * FROM school_enrolled WHERE household_id = :household", nativeQuery = true)
+    List<SchoolEnrolled> findHouseholdSchoolEnrolled(@Param("household") long household);
 }

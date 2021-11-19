@@ -32,9 +32,6 @@
 
 package org.cga.sctp.targeting;
 
-import org.cga.sctp.targeting.importation.converters.GenderParameterValueConverter;
-import org.cga.sctp.targeting.importation.parameters.Gender;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -47,8 +44,7 @@ public class AlternateRecipient {
     private String firstName;
     private String lastName;
     private String nationalId;
-    @Convert(converter = GenderParameterValueConverter.class)
-    private Gender gender;
+    private int gender;
     private LocalDate dateOfBirth;
 
     public long getId() {
@@ -83,11 +79,11 @@ public class AlternateRecipient {
         this.nationalId = nationalId;
     }
 
-    public Gender getGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 

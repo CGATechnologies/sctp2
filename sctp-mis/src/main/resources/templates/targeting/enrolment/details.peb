@@ -258,11 +258,11 @@
                         <div class="card-content">
                             <div class="control mb-5">
                                 <label class="radio">
-                                    <input type="radio" name="answer" checked onclick="handleClick(this);" value="1">
+                                    <input id="householdMemberBtn" type="radio" name="answer" checked onclick="handleClick(this);" value="1">
                                     Household Member
                                 </label>
                                 <label class="radio">
-                                    <input type="radio" name="answer" onclick="handleClick(this);" value="2">
+                                    <input id="nonHouseholdMemberBtn" type="radio" name="non-household" onclick="handleClick(this);" value="2">
                                     Non-Household Member
                                 </label>
                             </div>
@@ -409,11 +409,11 @@
                                     </select>
                                 </td>
                                 <td class="control">
-                                    <select  id="gl-{{ child.id }}" class="input">
-                                            <option disabled="disabled" selected="selected">Select Option</option>
-                                            {% for gl in gradeLevel %}
-                                            <option value="{{ gl.code }}">{{ gl.name() }}</option>
-                                            {% endfor %}
+                                    <select  id="gl-{{ child.id }}" class="input" onchange="saveGrade(this)">
+                                            <option disabled="disabled" selected="selected" >Select Option</option>
+{#                                            {% for gl in gradeLevel %}#}
+{#                                            <option value="{{ gl.code }}">{{ gl.name() }}</option>#}
+{#                                            {% endfor %}#}
                                     </select>
                                 </td>
                                 <td class="columns">
@@ -558,34 +558,99 @@
     <script src="/assets/js/vendor/webcam-easy/webcam-easy.js" type="text/javascript"></script>
     <script src="/assets/js/vendor/webcam-easy/app.js" type="text/javascript"></script>
         <script>
+            var parent = "{{ parent }}";
+
+
+
             var isNonMember = 0;
             var householdId = "{{ details.householdId }}";
             var enrolledChildren =[];
+            var schoolsList = [];
+            var schoolsTableList = [];
             var hasAlternate = 0;
+
+             window.hideSelectedOption = function(el,selectVal){
+                  $("#"+el+" option[value='"+selectVal+"']").hide();
+                  $("#"+el+" option[value!='"+selectVal+"']").show();
+            }
         </script>
     <script>
         (function(){
             var educationLevelList = [];
-            var schoolsList = [];
-            var schoolsTableList = [];
-            {% for sch in schools %}
-                 var tmpSch = {id:"{{ sch.id }}",name:"{{ sch.name }}", code:"{{ sch.code }}", educationLevel:"{{ sch.educationLevel }}",educationZone:"{{ sch.educationZone }}",district:"{{ sch.districtName }}"};
+
+
+            var primaryGrades = [
+            {id:"1",name:"Standard 1"},
+            {id:"2",name:"Standard 2"},
+            {id:"3",name:"Standard 3"},
+            {id:"4",name:"Standard 4"},
+            {id:"5",name:"Standard 5"},
+            {id:"6",name:"Standard 6"},
+            {id:"7",name:"Standard 7"},
+            {id:"8",name:"Standard 8"}
+            ]
+
+            var secondaryGrades = [
+            {id:"9",name:"Form 1"},
+            {id:"10",name:"Form 2"},
+            {id:"11",name:"Form 3"},
+            {id:"12",name:"Form 4"},
+            ]
+
+            var otherGrade =[{id:"13",name:"Other"}]
+
+            window.removeOptions = function (selectElement) {
+               var i, L = selectElement.options.length - 1;
+               for(i = L; i >= 0; i--) {
+                  selectElement.remove(i);
+               }
+            }
+
+            window.populateGradeLevel = function(sender,level){
+                var langArray = [];
+                if(level == 2){
+                    langArray = primaryGrades;
+                }else if(level == 3){
+                    langArray = secondaryGrades;
+                }else{
+                    langArray = otherGrade;
+                }
+                removeOptions(sender);
+
+              //for(element in langArray)
+              langArray.forEach((e)=>
+                {
+                   var opt = document.createElement("option");
+                   opt.value= e.id;
+                   opt.innerHTML = e.name; // whatever property it has
+
+                   // then append it to the select element
+                   sender.appendChild(opt);
+
+                })
+            }
+
+            {% for ed in educationLevel %}
+                 educationLevelList.push({code:"{{ ed.code }}", name:"{{ ed.name() }}"})
+            {% endfor %}
+
+            window.getEducationLevelName = function(id){
+                var eL = educationLevelList.find((e)=> e.code == id);
+                return eL.name;
+            }
+
+             {% for sch in schools %}
+                 var tmpSch = {id:"{{ sch.id }}",name:"{{ sch.name }}", code:"{{ sch.code }}", educationLevel:getEducationLevelName("{{ sch.educationLevel }}"),educationZone:"{{ sch.educationZone }}",district:"{{ sch.districtName }}",eduLevel:"{{ sch.educationLevel }}"};
+                 var tmpSchSimple = {id:"{{ sch.id }}",name:"{{ sch.name }}", code:"{{ sch.code }}", educationLevel:getEducationLevelName("{{ sch.educationLevel }}"),educationZone:"{{ sch.educationZone }}",district:"{{ sch.districtName }}"};
                  schoolsList.push(tmpSch);
-                 schoolsTableList.push(tmpSch);
+                 schoolsTableList.push(tmpSchSimple);
 
 
-            {% endfor %}
+             {% endfor %}
 
-             {% for ed in education %}
-                 educationLevelList.push({id:"{{ sch.id }}",
-                                        name:"{{ sch.name }}",
-                                        educationLevel:"{{ sch.educationLevel }}",
-                                        educationZone:"{{ sch.educationZone }}",
-                                        district:"{{ sch.districtName }}"})
-            {% endfor %}
+             console.log(schoolsList);
 
-            console.log(schoolsList);
-            var currentSelectedChild = {id:"",sch:"",co:""};
+            var currentSelectedChild = {id:"",sch:"",co:"",level:""};
 
             const mainGender = document.querySelector('#mainGender');
             const altGender = document.querySelector('#altGender');
@@ -681,6 +746,7 @@
                 currentSelectedChild.id = "";
                 currentSelectedChild.sch = "";
                 currentSelectedChild.co = "";
+                currentSelectedChild.level = "";
             }
 
             schModalClose.addEventListener('click', () => {
@@ -709,7 +775,7 @@
                         select: 5,
                         render: function(data, cell, row) {
 
-                            return data + "<input id='bt-"+row.dataIndex+"' class='ml-3' type='radio' name='answer' onclick='handleSchSelect(this);' >";
+                            return data + "<input id='bt-"+row.dataIndex+"' class='ml-3' type='radio' name='answer' onclick='handleSchSelect("+row.dataIndex+");' >";
 
                         }
                     }
@@ -753,10 +819,13 @@
             }
 
            window.handleSchSelect = function(sch){
-                currentSelectedChild.sch = sch.value;
-                var elementSelected = sch.id;
-                const elementArray = elementSelected.split("-",2);
-                currentSelectedChild.co = elementArray[1];
+                var id = schoolsTableList[sch].id;
+                var tmp = schoolsList.find((e)=> e.id == id);
+                console.log("The row"+sch+"");
+                console.log("The id now"+id+"");
+                currentSelectedChild.sch = id;
+                currentSelectedChild.co = id;
+                currentSelectedChild.level = tmp.eduLevel;
                 console.log(currentSelectedChild);
 
            }
@@ -768,12 +837,24 @@
 
            window.setSchName = function(){
                     var inputSch = document.querySelector('#sch-'+currentSelectedChild.id);
-                    inputSch.value = document.querySelector('#co-'+currentSelectedChild.co).innerText;
+                    inputSch.value = schoolsTableList[currentSelectedChild.co-1].name;
+                    console.log("the edu level"+schoolsTableList[currentSelectedChild.co-1].educationLevel)
+                    var el = schoolsList.find((e)=> e.id == currentSelectedChild.id );
+                    console.log(el);
+                    //document.getElementById("el-"+currentSelectedChild.id).value = schoolsTableList[currentSelectedChild.co-1].educationLevel;
+                    document.getElementById("el-"+currentSelectedChild.id).value = currentSelectedChild.level;
+           }
+
+           window.saveGrade = function(btn){
+                var res = checkItemExist(currentSelectedChild.id);
+                if(res == -1){
+                }else{
+                    enrolledChildren[res].grade = btn.selectedOptions[0].value;
+                }
            }
 
            saveSch.addEventListener('click',function(){
                 if(currentSelectedChild.id !="" && currentSelectedChild.sch !=""){
-                    var eduLevel = document.getElementById("el-"+currentSelectedChild.id).value;
                     var gradeLevel = document.getElementById("gl-"+currentSelectedChild.id).value;
                      if(enrolledChildren.length > 0){
                           var res = checkItemExist(currentSelectedChild.id);
@@ -781,8 +862,8 @@
                                 enrolledChildren.push({individualId:currentSelectedChild.id,
                                                        schoolId:currentSelectedChild.sch,
                                                        householdId:householdId,
-                                                       educationLevel:eduLevel,
-                                                       grade:gradeLevel,
+                                                       educationLevel:currentSelectedChild.eduLevel,
+
                                                        status:0
                                                        });
                                 setSchName();
@@ -796,8 +877,8 @@
                         enrolledChildren.push({individualId:currentSelectedChild.id,
                                                        schoolId:currentSelectedChild.sch,
                                                        householdId:householdId,
-                                                       educationLevel:eduLevel,
-                                                       grade:gradeLevel,
+                                                       educationLevel:currentSelectedChild.eduLevel,
+
                                                        status:0
                                                        });
                         setSchName();
@@ -878,30 +959,100 @@
 
                 schoolsTableList = schoolsList;
 
-                schoolsTableList = schoolsTableList.filter((e)=> e.educationLevel == elementSelected);
-
-                console.log(schoolsTableList);
+                schoolsTableList = schoolsList.filter((e)=> e.eduLevel == elementSelected);
 
                 let newRows = {  data: schoolsTableList.map(item => Object.values(item)) };
 
                 //add filtered
                 // dataTable.rows().add(newRows);
                 dataTable.insert(newRows);
+
+
+                var elementId = event.id;
+                const elementArray = elementId.split("-",2);
+
+                var sender = document.getElementById("gl-"+elementArray[1]);
+                populateGradeLevel(sender,elementSelected);
             }
+
+
+
+            //if edit page load data
+           if(parent == 1){
+            var mainRec = "{{ enrollmentForm.mainReceiver }}";
+            var altRe = "{{ enrollmentForm.altReceiver }}";
+            var altDate = "{{ enrollmentForm.altDOB }}";
+            var altFirstN = "{{ enrollmentForm.altFirstName }}";
+            var altLastN = "{{ enrollmentForm.altLastName }}";
+            var altGe = "{{ enrollmentForm.altGender }}";
+            var nonHousehold = "{{ enrollmentForm.nonHouseholdMember }}";
+            var household = "{{ enrollmentForm.householdId }}";
+            var hasAlter = "{{ enrollmentForm.hasAlternate }}";
+            var altNational = "{{ enrollmentForm.altNationalId }}";
+
+            var schoolEnrolledList = [];
+
+             {% for ed in schoolEnrolled %}
+                 schoolEnrolledList.push({id:"{{ ed.id }}", householdId:"{{ ed.householdId }}",individualId:"{{ ed.individualId }}",educationLevel:"{{ ed.educationLevel }}",grade:"{{ ed.grade }}",schoolId:"{{ ed.schoolId }}"})
+            {% endfor %}
+
+
+            schoolEnrolledList.forEach((e)=>{
+                    var eduOption = document.getElementById("el-"+e.individualId).value = e.educationLevel;
+                   //handleEduLevel.
+                    document.getElementById("gl-"+e.individualId).value = e.grade;
+                    var tmp = schoolsList.find((p)=> p.id == e.schoolId);
+
+                    document.getElementById("sch-"+e.individualId).value = tmp.name;
+
+            })
+
+            //setup mainReceiver
+            var mR = document.getElementById('mainReceiver');
+            mR.value = mainRec;
+            setIndividualDetails(mR,"main");
+
+
+
+            //if household has alternate receiver
+            if(hasAlter == 1){
+                hasAltBtn.click();
+                if(nonHousehold == 1){
+                    var houseBtn = document.getElementById('householdMemberBtn');
+                    houseBtn.checked = false;
+                    var nonHouseBtn = document.getElementById('nonHouseholdMemberBtn');
+                    nonHouseBtn.click();
+
+                    document.getElementById("altFirstName").value = altFirstN;
+                     document.getElementById("altLastName").value = altLastN;
+                     document.getElementById("altDOB").value = altDate;
+                     document.getElementById("altGender").value = altGe;
+                     document.getElementById("altNationalId").value = altNational;
+                }else{
+                    //alternate set selection details
+                    var aR = document.getElementById('altReceiver');
+                    aR.value = altRe;
+                    setIndividualDetails(aR,"alt");
+                }
+
+            }
+        }
+
+
 
 
         })();
     </script>
     <script>
 
-          mainReceiver.onchange = function(){
-                setIndividualDetails(this,"main")
-                var selectValue = this.value;
-                if(selectValue != ''){
-                    hideSelectedOption("altReceiver",selectValue);
-                    $( "#altReceiver" ).prop( "disabled", false );
-                }
-            };
+      mainReceiver.onchange = function(){
+            setIndividualDetails(this,"main")
+            var selectValue = this.value;
+            if(selectValue != ''){
+                hideSelectedOption("altReceiver",selectValue);
+                $( "#altReceiver" ).prop( "disabled", false );
+            }
+        };
 
         altReceiver.onchange = function(){
             setIndividualDetails(this,"alt")
@@ -911,11 +1062,6 @@
             }
         };
 
-
-        function hideSelectedOption(el,selectVal){
-              $("#"+el+" option[value='"+selectVal+"']").hide();
-              $("#"+el+" option[value!='"+selectVal+"']").show();
-        }
 
         function base64ToBlob(base64, mime)
         {
