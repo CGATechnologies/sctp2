@@ -34,6 +34,7 @@ package org.cga.sctp.targeting;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
@@ -56,6 +57,10 @@ public interface EnrolmentSessionRepository extends JpaRepository<EnrolmentSessi
             @Param("page") int page,
             @Param("pageSize") int pageSize
     );
+
+    @Modifying
+    @Query(value = "UPDATE household_enrollment SET status = 4 WHERE household_id = :id", nativeQuery = true)
+    void setEnrolledHouseholdToEnrolled(@Param("id") Long id);
 
 
 }

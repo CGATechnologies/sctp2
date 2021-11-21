@@ -120,4 +120,7 @@ public class EnrollmentService extends TransactionalService {
         return  schoolEnrolledRepository.findHouseholdSchoolEnrolled(householdId);
     }
 
+    public void setEnrollmentHouseholdEnrolled(Long householdId){
+        enrolmentSessionRepository.setEnrolledHouseholdToEnrolled(householdId);
+    }
 }

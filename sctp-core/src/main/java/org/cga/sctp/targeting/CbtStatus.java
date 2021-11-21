@@ -38,7 +38,8 @@ public enum CbtStatus {
     NonRecertified(4),
     Selected(3),
     Ineligible(2),
-    Eligible(1);
+    Eligible(1),
+    Enrolled(5);
 
     public final int code;
     public static final CbtStatus[] VALUES = values();

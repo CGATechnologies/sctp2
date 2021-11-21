@@ -75,6 +75,8 @@ public class EnrolmentController extends SecuredBaseController {
     @Autowired
     private SchoolService schoolService;
 
+    private String uploadPath = "D:\\user\\Pictures\\";
+
 
     @GetMapping
     public ModelAndView index() {
@@ -157,7 +159,7 @@ public class EnrolmentController extends SecuredBaseController {
 
     public void downloadFile(MultipartFile file,String fileName) throws IOException{
         //need to put path server path
-        File convertFile = new File("D:\\user\\Pictures\\"+fileName);
+        File convertFile = new File(uploadPath+fileName);
         convertFile.createNewFile();
         FileOutputStream fout = new FileOutputStream(convertFile);
         fout.write(file.getBytes());
@@ -165,7 +167,7 @@ public class EnrolmentController extends SecuredBaseController {
     }
 
 
-    @RequestMapping(value="/test", method= RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(value="/enroll", method= RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadFile(@RequestParam(required=true, value="file") MultipartFile file,
                                              @RequestParam(required=false, value="altPhoto") MultipartFile alternate,
                                              @RequestParam(required=true, value="jsondata")String jsondata)
@@ -224,11 +226,13 @@ public class EnrolmentController extends SecuredBaseController {
             }
             enrollmentService.saveChildrenEnrolledSchool(schoolEnrolledList);
         }
+        enrollmentService.setEnrollmentHouseholdEnrolled(enrollmentForm.getHouseholdId());
+
         return new ResponseEntity<>("File is uploaded successfully", HttpStatus.OK);
 
     }
 
-    @GetMapping("/edit")
+    @GetMapping("/view")
     public ModelAndView edit(@RequestParam("id") Long householdId,
                                 @RequestParam("session") Long sessionId, RedirectAttributes attributes,
                                 @ModelAttribute("enrollmentForm") EnrollmentForm enrollmentForm) {

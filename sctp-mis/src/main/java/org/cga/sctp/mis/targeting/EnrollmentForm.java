@@ -70,6 +70,28 @@ public class EnrollmentForm {
 
     private int hasAlternate;
 
+    private String mainPhoto;
+
+    private String altPhoto;
+
+    public String getMainPhoto() {
+        return mainPhoto;
+    }
+
+    public void setMainPhoto(String mainPhoto) {
+        this.mainPhoto = mainPhoto;
+    }
+
+    public String getAltPhoto() {
+        return altPhoto;
+    }
+
+    public void setAltPhoto(String altPhoto) {
+        this.altPhoto = altPhoto;
+    }
+
+
+
     public String getAltNationalId() {
         return altNationalId;
     }

@@ -92,8 +92,8 @@
                                         </div>
                                         <div class="dropdown-menu" id="dropdown-menu2" role="menu">
                                             <div class="dropdown-content">
-                                                <a href="/targeting/enrolment/details?session={{ sessionInfo.id }}&id={{ ranking.householdId }}"
-                                                   class="dropdown-item">View household</a>
+                                                <a href="/targeting/enrolment/{{ ranking.status.code == 5 ? 'view' : 'details' }}?session={{ sessionInfo.id }}&id={{ ranking.householdId }}"
+                                                   class="dropdown-item">View household </a>
 
                                             </div>
                                         </div>
