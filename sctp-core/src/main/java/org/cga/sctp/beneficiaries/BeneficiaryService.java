@@ -35,6 +35,8 @@ package org.cga.sctp.beneficiaries;
 import org.cga.sctp.core.TransactionalService;
 import org.cga.sctp.targeting.CbtStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,10 @@ public class BeneficiaryService extends TransactionalService {
 
     public void saveHousehold(Household household) {
         householdRepository.save(household);
+    }
+
+    public Page<Household> findAllHouseholdsPaged(Pageable pageable) {
+        return householdRepository.findAll(pageable);
     }
 
     public Household findHouseholdByTargetingSessionIdAndHouseholdId(Long cbtSessionId, Long household) {

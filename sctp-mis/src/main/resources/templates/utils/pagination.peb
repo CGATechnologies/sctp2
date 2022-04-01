@@ -1,0 +1,15 @@
+{# This template contains Macros for Pagination #}
+{% macro paginator(page, pageCount, showNext = false, showPrev = false) %}
+<div class="paginator is-paginator">
+    <ul class="is-inline">
+        <li><a href="">First</a></li>
+        <li><a href="">Prev</a></li>
+
+        <li><a href="">Page #s</a></li>
+
+        <li><a href="">Next</a></li>
+        <li><a href="">Last</a></li>
+    </ul>
+</div>
+{% endmacro %}
+

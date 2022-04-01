@@ -1,0 +1,35 @@
+{% extends "../base" %}
+{% import "../utils/form" %}
+{% block contextMenu %}
+<div class="container context-nav-container">
+    <div class="buttons is-right">
+        <a href="{{ href('calculation/new') }}" class="button is-primary">New Cash Transfer Amount Calculation</a>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="content-container">
+<div class="card card-default">
+    <div class="card-header">
+        <div class="card-title">Transfers Summary</div>
+    </div>
+    <div class="card-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>District</th>
+                    <th>Current Period Status</th>
+                    <th>Cur. Period Start</th>
+                    <th>Cur. Period End</th>
+                    <th>No. of Households</th>
+                    <th>No. of Household Members</th>
+                    <th>Amount to Disburse</th>
+                    <th>Total Disbursed</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</div>
+{% endblock %}

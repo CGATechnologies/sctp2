@@ -30,30 +30,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.mis.transfers.parameters;
+package org.cga.sctp.mis.transfers;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
-public class LocationTransferParameterForm {
-    private Long id;
+
+public class TransferPeriodForm {
+    @NotEmpty
+    private String name;
+
+    @NotNull
+    private Long transferSessionId;
+
+    @NotNull
+    private Long programId;
 
     @NotNull
     private Long locationId;
 
-    @Min(0) @Max(1_000_000)
-    private Integer amount;
+    @NotNull
+    private Long transferAgencyId;
 
     @NotNull
-    private Boolean active;
+    private LocalDate startDate;
 
-    public Long getId() {
-        return id;
+    @NotNull
+    private LocalDate endDate;
+
+
+    public String getName() {
+        return name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getTransferSessionId() {
+        return transferSessionId;
+    }
+
+    public void setTransferSessionId(Long transferSessionId) {
+        this.transferSessionId = transferSessionId;
+    }
+
+    public Long getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(Long programId) {
+        this.programId = programId;
     }
 
     public Long getLocationId() {
@@ -64,19 +92,27 @@ public class LocationTransferParameterForm {
         this.locationId = locationId;
     }
 
-    public Integer getAmount() {
-        return amount;
+    public Long getTransferAgencyId() {
+        return transferAgencyId;
     }
 
-    public void setAmount(Integer amount) {
-        this.amount = amount;
+    public void setTransferAgencyId(Long transferAgencyId) {
+        this.transferAgencyId = transferAgencyId;
     }
 
-    public Boolean getActive() {
-        return active;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

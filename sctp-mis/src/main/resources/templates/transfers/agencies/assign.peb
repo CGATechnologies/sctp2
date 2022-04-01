@@ -96,6 +96,30 @@
 
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
+                            <label class="label is-required">District</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                            {{ selectField('locationId', districts, form.district, true) }}
+                                    </div>
+                                </div>
+                                {{ printFieldErrors(getFieldErrors('form', 'locationId')) }}
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                            {{ selectField('traditionalAuthority', authorities, form.traditionalAuthority, true) }}
+                                    </div>
+                                    {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
                             <label class="label is-required">Village T/A</label>
                         </div>
 
@@ -135,3 +159,9 @@
     </div>
     </div>
     {% endblock %}
+{% block footerScripts %}
+<script type="text/javascript">
+// When the thingy is selected, load the appropriate locations
+
+</script>
+{% endblock %}

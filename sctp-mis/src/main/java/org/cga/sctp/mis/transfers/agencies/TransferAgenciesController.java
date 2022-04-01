@@ -205,31 +205,4 @@ public class TransferAgenciesController extends BaseController {
                 .addObject("districts", districts)
                 .addObject("traditionalAuthorities", tas);
     }
-
-    @PostMapping("/assign")
-    @AdminAccessOnly
-    public String handleAssignPage(@AuthenticatedUserDetails AuthenticatedUser user,
-                                   @Validated @ModelAttribute TransferAgencyAssignmentForm form,
-                                   BindingResult bindingResult,
-                                   RedirectAttributes attributes) {
-
-        if (bindingResult.hasErrors()) {
-            return redirectWithDangerMessage("/transfers/agencies/assign", "Could not save. Please fix form errors", attributes);
-        }
-
-        Location location = locationService.findActiveLocationById(form.getLocationId());
-        TransferAgency transferAgency = transferAgencyService.findActiveTransferAgencyById(form.getTransferAgencyId());
-
-        if (locationService.locationHasTransferAgency(location)) {
-            // there is already a transfer agency assigned to this location
-            return redirectWithDangerMessage("/transfers/agencies/assign", "Cannot assign Transfer Agencies. Location already has Transfer Agency assigned.", attributes);
-        }
-
-        TransferAgencyAssignment agencyAssignment = transferAgencyService.assignAgency(transferAgency, location, form.getTransferMethod(), user.id());
-        if (agencyAssignment != null) {
-           return redirectWithSuccessMessage("/transfers/agencies", "Assigned Transfer Agency successfully", attributes);
-        }
-
-        return redirectWithDangerMessage("/transfers/agencies/assign", "Failed to assign the agency", attributes);
-    }
 }

@@ -25,7 +25,7 @@
             <p class="card-header-title">Perform Transfer Calculations</p>
         </header>
         <div class="card-content">
-            <form action="">
+            <form action="{{ url() }}">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label is-required">Program</label>
@@ -56,40 +56,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label is-required">Traditional Authority</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <div class="select is-fullwidth">
-                                        {{ selectField('traditionalAuthorityId', traditionalAuthorities, form.traditionalAuthorityId, true) }}
-                                </div>
-                            </div>
-                            {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthorityId')) }}
-                        </div>
-                    </div>
-                </div>
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label is-required">Zone</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <div class="select is-fullwidth">
-                                        {{ selectField('zoneId', zoneId, form.zoneId, true) }}
-                                </div>
-                            </div>
-                            {{ printFieldErrors(getFieldErrors('form', 'zoneId')) }}
-                        </div>
-                    </div>
-                </div>
 
                 <div class="actions action-buttons">
-                    <button class="button is-primary">Show/Preview Targeted Households</button>
-                    <button class="button is-primary">Initiate Cash Transfer Calculations</button>
+                    <button class="button is-primary">Initiate Transfers</button>
                 </div>
             </form>
         </div>

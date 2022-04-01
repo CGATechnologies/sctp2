@@ -30,68 +30,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.mis.transfers.agencies;
+package org.cga.sctp.api.households;
 
-import org.cga.sctp.location.Location;
-import org.cga.sctp.transfers.agencies.TransferAgency;
-import org.cga.sctp.transfers.agencies.TransferMethod;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.cga.sctp.api.core.BaseController;
+import org.cga.sctp.api.core.IncludeGeneralResponses;
+import org.cga.sctp.beneficiaries.BeneficiaryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
+@RequestMapping("/households")
+@RestController
+public class HouseholdController extends BaseController {
 
-/**
- * Links a {@link Location}s with a {@link TransferAgency}.
- */
-public class TransferAgencyAssignmentForm {
-    private Long id;
+    @Autowired
+    private BeneficiaryService beneficiaryService;
 
-    @NotNull
-    private Long locationId;
-
-    @NotNull
-    private Long transferAgencyId;
-
-    @NotNull
-    private TransferMethod transferMethod;
-
-    private int transferFrequency;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
-    }
-
-    public Long getTransferAgencyId() {
-        return transferAgencyId;
-    }
-
-    public void setTransferAgencyId(Long transferAgencyId) {
-        this.transferAgencyId = transferAgencyId;
-    }
-
-    public TransferMethod getTransferMethod() {
-        return transferMethod;
-    }
-
-    public void setTransferMethod(TransferMethod transferMethod) {
-        this.transferMethod = transferMethod;
-    }
-
-    public int getTransferFrequency() {
-        return transferFrequency;
-    }
-
-    public void setTransferFrequency(int transferFrequency) {
-        this.transferFrequency = transferFrequency;
+    @GetMapping
+    @Operation(description = "Fetches households from the system.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = HouseholdDetailResponse.class)))
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> fetchAllHouseholdsPaged(Pageable pageable) {
+        return ResponseEntity.ok(beneficiaryService.findAllHouseholdsPaged(pageable));
     }
 }
