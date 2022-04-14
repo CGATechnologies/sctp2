@@ -34,7 +34,6 @@ package org.cga.sctp.transfers.agencies;
 
 import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.location.Location;
-import org.cga.sctp.persistence.StatusCode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -66,12 +65,8 @@ public class TransferAgencyAssignment {
     @Enumerated(EnumType.STRING)
     private TransferMethod transferMethod;
 
-    @Column
+    @Column(name = "disbursement_frequency")
     private int frequency;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.ORDINAL)
-    private StatusCode status;
 
     @Column
     private LocalDateTime createdAt;
@@ -133,14 +128,6 @@ public class TransferAgencyAssignment {
 
     public void setFrequency(int frequency) {
         this.frequency = frequency;
-    }
-
-    public StatusCode getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusCode status) {
-        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

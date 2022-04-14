@@ -30,19 +30,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.agencies;
+package org.cga.sctp.mis.transfers.agencies;
 
-public enum TransferMethod {
-    Manual("Manual Transfers"),
-    EPayment("E-Payment Transfers");
+import org.cga.sctp.transfers.agencies.TransferMethod;
 
-    private final String description;
+import javax.validation.constraints.NotNull;
 
-    TransferMethod(String description) {
-        this.description = description;
+public class TransferAgencyAssignmentForm {
+    @NotNull(message = "Transfer Agency must be specified")
+    private Long transferAgencyId;
+    @NotNull(message = "Location must be specified")
+    private Long locationId;
+    @NotNull(message = "Transfer method must be specified")
+    private TransferMethod transferMethod;
+
+    public Long getTransferAgencyId() {
+        return transferAgencyId;
     }
 
-    public String getDescription() {
-        return description;
+    public void setTransferAgencyId(Long transferAgencyId) {
+        this.transferAgencyId = transferAgencyId;
+    }
+
+    public Long getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
+    }
+
+    public TransferMethod getTransferMethod() {
+        return transferMethod;
+    }
+
+    public void setTransferMethod(TransferMethod transferMethod) {
+        this.transferMethod = transferMethod;
     }
 }

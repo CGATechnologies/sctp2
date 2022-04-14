@@ -44,22 +44,22 @@ public class TransferAgency {
     @Column
     private String name;
     @Column
-    private Boolean active; // 'On or off in the form  0=off, 1=on.',
+    private Boolean active;
     @Column
-    private String website; // 'web site'
+    private String website;
     @Column
-    private String address; // 'Address'
+    private String address;
     @Column
-    private String phone; // 'Address'
+    private String phone;
     @Column
-    private String representativeName; // 'Name representative'
+    private String representativeName;
     @Column
-    private String representativeEmail; // 'Email representative'
+    private String representativeEmail;
     @Column
-    private String representativePhone; // 'Phone representative'
+    private String representativePhone;
 
     @Column
-    private String branch; // 'Branch'
+    private String branch;
 
     @Column
     private Long locationId;

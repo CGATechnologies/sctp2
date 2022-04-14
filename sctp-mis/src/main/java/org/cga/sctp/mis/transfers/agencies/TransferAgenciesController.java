@@ -32,17 +32,15 @@
 
 package org.cga.sctp.mis.transfers.agencies;
 
-import org.cga.sctp.location.Location;
-import org.cga.sctp.location.LocationInfo;
-import org.cga.sctp.location.LocationService;
-import org.cga.sctp.location.LocationType;
+import org.cga.sctp.location.*;
 import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.Booleans;
 import org.cga.sctp.transfers.agencies.TransferAgency;
-import org.cga.sctp.transfers.agencies.TransferAgencyAssignment;
-import org.cga.sctp.transfers.agencies.TransferAgencyService;
+import org.cga.sctp.transfers.agencies.TransferAgencyAlreadyAssignedException;
+import org.cga.sctp.transfers.agencies.TransferAgencyServiceImpl;
 import org.cga.sctp.transfers.agencies.TransferMethod;
 import org.cga.sctp.user.AdminAccessOnly;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.cga.sctp.user.AuthenticatedUser;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.slf4j.LoggerFactory;
@@ -63,7 +61,7 @@ import java.util.List;
 public class TransferAgenciesController extends BaseController {
 
     @Autowired
-    private TransferAgencyService transferAgencyService;
+    private TransferAgencyServiceImpl transferAgencyService;
 
     @Autowired
     private LocationService locationService;
@@ -195,14 +193,36 @@ public class TransferAgenciesController extends BaseController {
     @AdminAccessOnly
     public ModelAndView viewAssignPage() {
         List<TransferAgency> transferAgencies = transferAgencyService.fetchAllTransferAgencies();
-        List<Location> districts = locationService.getActiveDistricts();
-        List<LocationInfo> tas = locationService.getByType(LocationType.SUBNATIONAL2);
+        List<Location> initialLocations = locationService.getActiveDistricts();
 
         return view("/transfers/agencies/assign")
                 .addObject("transferAgencies", transferAgencies)
                 .addObject("transferMethodOptions", TransferMethod.values())
+                .addObject("geolocationTypes", LocationType.values())
                 .addObject("options", Booleans.VALUES)
-                .addObject("districts", districts)
-                .addObject("traditionalAuthorities", tas);
+                // Initially load districts as the locations but locations will be changed by geolocation types
+                .addObject("locations", initialLocations);
+    }
+
+    @PostMapping("/assign")
+    @AdminAndStandardAccessOnly
+    public ModelAndView handleAssignPage(@AuthenticatedUserDetails AuthenticatedUser user,
+                                         @Validated @ModelAttribute TransferAgencyAssignmentForm form,
+                                         BindingResult result,
+                                         RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            setWarningFlashMessage("Invalid request, please fix errors and try again", attributes);
+            return redirect("/transfers/agencies/assign");
+        }
+
+        TransferAgency transferAgency = transferAgencyService.findActiveTransferAgencyById(form.getTransferAgencyId());
+        Location location = locationService.findById(form.getLocationId());
+        try {
+            transferAgencyService.assignAgency(transferAgency, location, form.getTransferMethod(), user.id());
+        } catch(TransferAgencyAlreadyAssignedException e) {
+            setDangerFlashMessage("Location already has an assigned Transfer agency, please use 'Change Transfer Agency'", attributes);
+            return redirect("/transfers/agencies/assign");
+        }
+        return redirect("/transfers/agencies/assign");
     }
 }

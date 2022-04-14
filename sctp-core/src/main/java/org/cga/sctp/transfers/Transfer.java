@@ -36,26 +36,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/*
-TODO: Review the necessity of the fields below
-private int fieldwork_houmemreceivespayment_id;
-private String personauthorized;
-private Long fieldWorkUserID;// fieldwork_use_id;
-private Long arrearsUncollectedAmount;// valuearrearsuncollected;
-private Long arrearsUntransferredAmount;// valuearrearsuntransferred;
-private Long arrearsUpdatedAmount;// valuearrearsupdated;
-private Long valueArrearsTopup;
-private Long valueArrearstopupReceive;
-private Boolean hasChangedGeolocation;
-private Boolean isReplaced; // trarepenr_replaced;
-private Boolean isTransferFieldWork; // istransferfieldwork
-private LocalDateTime datefieldwork; // datefieldwork
-private TransferHouseholdState transferHouseholdState;
-private TransferMethod modality; // modality -- can get the value from the transfer agency assigned at the time?
-private Boolean isNonRecertified; //flagnonrecertified;
-private Long totalTransferAmount;// valuetotaltransfer;
-*/
-
 @Entity
 @Table(name = "transfers")
 public class Transfer {
@@ -84,13 +64,7 @@ public class Transfer {
     private Long transferAgencyId;
 
     @Column
-    private int transfer_period_start_month;
-    @Column
-    private int transfer_period_start_year;
-    @Column
-    private int transfer_period_end;
-    @Column
-    private int transfer_period_end_year;
+    private Long transferPeriodId;
 
     @Column
     private Long districtId;
@@ -265,38 +239,6 @@ public class Transfer {
 
     public void setTransferAgencyId(Long transferAgencyId) {
         this.transferAgencyId = transferAgencyId;
-    }
-
-    public int getTransfer_period_start_month() {
-        return transfer_period_start_month;
-    }
-
-    public void setTransfer_period_start_month(int transfer_period_start_month) {
-        this.transfer_period_start_month = transfer_period_start_month;
-    }
-
-    public int getTransfer_period_start_year() {
-        return transfer_period_start_year;
-    }
-
-    public void setTransfer_period_start_year(int transfer_period_start_year) {
-        this.transfer_period_start_year = transfer_period_start_year;
-    }
-
-    public int getTransfer_period_end() {
-        return transfer_period_end;
-    }
-
-    public void setTransfer_period_end(int transfer_period_end) {
-        this.transfer_period_end = transfer_period_end;
-    }
-
-    public int getTransfer_period_end_year() {
-        return transfer_period_end_year;
-    }
-
-    public void setTransfer_period_end_year(int transfer_period_end_year) {
-        this.transfer_period_end_year = transfer_period_end_year;
     }
 
     public Long getDistrictId() {

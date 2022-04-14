@@ -34,13 +34,17 @@ package org.cga.sctp.transfers;
 
 import org.cga.sctp.targeting.importation.parameters.UbrParameterValue;
 
+/**
+ * Indicates that a Transfer either hasn't happened i.e. money has not been disbursed,
+ * is in progress or under scrutiny just after disbursement (pre-close) or has finally been marked as closed.
+ */
 public enum TransferStatus implements UbrParameterValue {
     Open(19, "Open"),
     Preclose(20, "Pre-Close"),
     Closed(21, "Close");
 
-    private int code;
-    private String name;
+    private final int code;
+    private final String name;
 
     TransferStatus(int code, String name) {
         this.code = code;

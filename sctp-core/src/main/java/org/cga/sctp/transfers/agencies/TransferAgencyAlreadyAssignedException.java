@@ -32,17 +32,33 @@
 
 package org.cga.sctp.transfers.agencies;
 
-public enum TransferMethod {
-    Manual("Manual Transfers"),
-    EPayment("E-Payment Transfers");
+public class TransferAgencyAlreadyAssignedException extends Exception {
+    private final String transferAgencyName;
+    private final String locationName;
 
-    private final String description;
-
-    TransferMethod(String description) {
-        this.description = description;
+    public TransferAgencyAlreadyAssignedException(String transferAgencyName, String locationName) {
+        this.transferAgencyName = transferAgencyName;
+        this.locationName = locationName;
     }
 
-    public String getDescription() {
-        return description;
+    public TransferAgencyAlreadyAssignedException(String message) {
+        super(message);
+        // TODO: only for testing
+        this.transferAgencyName = "";
+        this.locationName = "";
+    }
+
+    public TransferAgencyAlreadyAssignedException(String message, String transferAgencyName, String locationName) {
+        super(message);
+        this.transferAgencyName = transferAgencyName;
+        this.locationName = locationName;
+    }
+
+    public String getTransferAgencyName() {
+        return transferAgencyName;
+    }
+
+    public String getLocationName() {
+        return locationName;
     }
 }

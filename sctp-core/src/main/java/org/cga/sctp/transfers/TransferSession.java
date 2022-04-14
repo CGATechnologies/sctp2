@@ -32,8 +32,6 @@
 
 package org.cga.sctp.transfers;
 
-import org.cga.sctp.persistence.DatabaseRecord;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 

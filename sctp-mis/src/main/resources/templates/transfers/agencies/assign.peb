@@ -42,7 +42,7 @@
                                     {{ selectField('transferAgencyId', transferAgencies, form.transferAgencyId, true) }}
                             </div>
                         </div>
-                        {{ printFieldErrors(getFieldErrors('form', 'transferAgency')) }}
+                        {{ printFieldErrors(getFieldErrors('form', 'transferAgencyId')) }}
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
@@ -72,81 +72,16 @@
 
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
-                            <label class="label is-required">District</label>
+                            <label id="locationTypeLabel" class="label is-required">Geolocation</label>
                         </div>
                         <div class="field-body">
                             <div class="field">
                                 <div class="control">
                                     <div class="select is-fullwidth">
-                                            {{ selectField('locationId', districts, form.district, true) }}
+                                        {{ selectField('locationId', locations, form.locationId, true) }}
                                     </div>
                                 </div>
                                 {{ printFieldErrors(getFieldErrors('form', 'locationId')) }}
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                            {{ selectField('traditionalAuthority', authorities, form.traditionalAuthority, true) }}
-                                    </div>
-                                    {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label is-required">District</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                            {{ selectField('locationId', districts, form.district, true) }}
-                                    </div>
-                                </div>
-                                {{ printFieldErrors(getFieldErrors('form', 'locationId')) }}
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                            {{ selectField('traditionalAuthority', authorities, form.traditionalAuthority, true) }}
-                                    </div>
-                                    {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label is-required">Village T/A</label>
-                        </div>
-
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-multiple is-fullwidth">
-                                            {{ multiSelectField('traditionalAuthority', traditionalAuthority, form.traditionalAuthority, false, 4) }}
-                                    </div>
-                                </div>
-                                {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label is-required">Village Cluster</label>
-                        </div>
-
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-multiple is-fullwidth">
-                                            {{ multiSelectField('clusters', clusters, form.clusters, false, 4) }}
-                                    </div>
-                                </div>
-                                {{ printFieldErrors(getFieldErrors('form', 'clusters')) }}
                             </div>
                         </div>
                     </div>
