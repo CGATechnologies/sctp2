@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2021, CGATechnologies
+ * Copyright (c) 2022, CGATechnologies
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,19 +30,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.beneficiaries;
+package org.cga.sctp.api.targeting.community;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-interface HouseholdRepository extends JpaRepository<Household, Long> {
-    Household findByCbtSessionIdAndHouseholdId(Long cbtSessionId, Long household);
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
-    @Modifying
-    @Query(value = "UPDATE households SET cbt_status = :statusCode, cbt_rank = :rank WHERE household_id = :householdId", nativeQuery = true)
-    void updateHouseholdRankAndStatus(@Param("householdId") Long id, @Param("rank") Long rank, @Param("statusCode") int status);
+public final class UpdateHouseholdRankRequest {
+    @NotEmpty
+    private List<UpdateHouseholdRankEntry> updates;
+
+    public List<UpdateHouseholdRankEntry> getUpdates() {
+        return updates;
+    }
+
+    public void setUpdates(List<UpdateHouseholdRankEntry> updates) {
+        this.updates = updates;
+    }
+
+    public static class UpdateHouseholdRankEntry {
+        @NotNull(message = "householdId must be specified")
+        private Long householdId;
+        @NotNull(message = "rank must be specified")
+        private Long rank;
+        @NotNull(message = "CbtStatus must be specified")
+        private String cbtStatus;
+
+        public Long getHouseholdId() {
+            return householdId;
+        }
+
+        public void setHouseholdId(Long householdId) {
+            this.householdId = householdId;
+        }
+
+        public Long getRank() {
+            return rank;
+        }
+
+        public void setRank(Long rank) {
+            this.rank = rank;
+        }
+
+        public String getCbtStatus() {
+            return cbtStatus;
+        }
+
+        public void setCbtStatus(String cbtStatus) {
+            this.cbtStatus = cbtStatus;
+        }
+    }
 }

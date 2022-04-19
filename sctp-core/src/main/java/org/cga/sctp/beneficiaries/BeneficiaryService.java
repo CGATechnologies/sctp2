@@ -33,6 +33,7 @@
 package org.cga.sctp.beneficiaries;
 
 import org.cga.sctp.core.TransactionalService;
+import org.cga.sctp.targeting.CbtStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -83,5 +84,9 @@ public class BeneficiaryService extends TransactionalService {
 
     public List<Individual> getHouseholdMembers(Long householdId) {
         return individualRepository.findByHouseholdId(householdId);
+    }
+
+    public void updateHouseholdRankAndStatus(Long householdId, Long rank, CbtStatus status) {
+        householdRepository.updateHouseholdRankAndStatus(householdId, rank, status.code);
     }
 }

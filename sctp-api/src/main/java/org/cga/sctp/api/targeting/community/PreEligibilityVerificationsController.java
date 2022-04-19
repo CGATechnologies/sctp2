@@ -42,13 +42,12 @@ import org.cga.sctp.api.core.IncludeGeneralResponses;
 import org.cga.sctp.api.households.HouseholdDetailResponse;
 import org.cga.sctp.api.user.ApiUserDetails;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
-import org.cga.sctp.targeting.EligibilityVerificationSessionView;
-import org.cga.sctp.targeting.EligibleHousehold;
-import org.cga.sctp.targeting.TargetingService;
+import org.cga.sctp.targeting.*;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -63,6 +62,9 @@ public class PreEligibilityVerificationsController extends BaseController {
 
     @Autowired
     private BeneficiaryService beneficiaryService;
+
+    @Autowired
+    private EnrollmentService enrollmentService;
 
     @GetMapping("/sessions")
     @Operation(description = "Fetches open pre-eligibility verification sessions.")
@@ -116,5 +118,36 @@ public class PreEligibilityVerificationsController extends BaseController {
         });
 
         return ResponseEntity.ok(householdDetailResponses);
+    }
+
+    @PostMapping("/sessions/{session-id}/households/update-ranks")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> updateHouseholdRank(@AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+                                                 @PathVariable("session-id") Long sessionId,
+                                                 @Validated @RequestBody UpdateHouseholdRankRequest request) {
+
+        EligibilityVerificationSessionView verificationSessionView = targetingService.findVerificationViewById(sessionId);
+        if (verificationSessionView == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (request == null || !verificationSessionView.isOpen()) {
+            return ResponseEntity.badRequest().build();
+        }
+        // FIXME: Make this operation run in a batch op instead of one-by-one like this
+        request.getUpdates()
+            .forEach(updateRankRequest -> {
+                publishGeneralEvent("User %s updated rank and status of household %s", apiUserDetails.getUserName(), updateRankRequest.getHouseholdId());
+                CbtStatus status = CbtStatus.valueOf(updateRankRequest.getCbtStatus());
+                // FIXME: combine these two updates (via stored procedure?)
+                beneficiaryService.updateHouseholdRankAndStatus(updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
+                enrollmentService.updateHouseholdEnrollmentStatus(updateRankRequest.getHouseholdId(), status);
+            });
+
+        return ResponseEntity.ok().build();
     }
 }
