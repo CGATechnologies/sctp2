@@ -32,37 +32,12 @@
 
 package org.cga.sctp.api.households;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.cga.sctp.api.core.BaseController;
-import org.cga.sctp.api.core.IncludeGeneralResponses;
-import org.cga.sctp.beneficiaries.BeneficiaryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.cga.sctp.api.core.pagination.PagedResponse;
+import org.cga.sctp.beneficiaries.Household;
+import org.springframework.data.domain.Page;
 
-@RequestMapping("/households")
-@RestController
-public class HouseholdController extends BaseController {
-    private final int PAGE_SIZE = 25;
-    @Autowired
-    private BeneficiaryService beneficiaryService;
-
-    @GetMapping
-    @Operation(description = "Fetches paginated list of households from the system.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = HouseholdPagedResponse.class)))
-    })
-    @IncludeGeneralResponses
-    public ResponseEntity<HouseholdPagedResponse> fetchAllHouseholdsPaged(@RequestParam(value = "page", defaultValue = "0") int page) {
-        var pageable = Pageable.ofSize(PAGE_SIZE).withPage(page);
-        return ResponseEntity.ok(new HouseholdPagedResponse(beneficiaryService.findAllHouseholdsPaged(pageable)));
+class HouseholdPagedResponse extends PagedResponse<Household> {
+    public HouseholdPagedResponse(Page<Household> page) {
+        super(page);
     }
 }
