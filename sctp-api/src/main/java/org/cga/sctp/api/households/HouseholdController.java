@@ -30,26 +30,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.api.beneficiaries;
+package org.cga.sctp.api.households;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.cga.sctp.api.core.BaseController;
+import org.cga.sctp.api.core.IncludeGeneralResponses;
+import org.cga.sctp.api.targeting.community.HouseholdDetailsResponse;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
-import org.cga.sctp.targeting.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping("/households")
 @RestController
-public class HouseholdsController {
+public class HouseholdController extends BaseController {
+
     @Autowired
     private BeneficiaryService beneficiaryService;
 
-    @Autowired
-    private EnrollmentService enrollmentService;
-
-    @PostMapping
-    public ResponseEntity<?> postMainAndAlternateReceiver() {
-        // TODO: Implement me!
-        return ResponseEntity.badRequest().build();
+    @GetMapping
+    @Operation(description = "Fetches households from the system.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = HouseholdDetailsResponse.class)))
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> fetchAllHouseholdsPaged(Pageable pageable) {
+        return ResponseEntity.ok(beneficiaryService.findAllHouseholdsPaged(pageable));
     }
+
+    
 }

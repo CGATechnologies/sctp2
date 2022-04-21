@@ -148,7 +148,7 @@ public class PreEligibilityVerificationsController extends BaseController {
             .forEach(updateRankRequest -> {
                 publishGeneralEvent("User %s updated rank and status of household %s", apiUserDetails.getUserName(), updateRankRequest.getHouseholdId());
                 CbtStatus status = CbtStatus.valueOf(updateRankRequest.getCbtStatus());
-                // FIXME: combine these two updates (via stored procedure?)
+                // FIXME: combine these two updates (via stored procedure?) or in another service?
                 beneficiaryService.updateHouseholdRankAndStatus(updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
                 enrollmentService.updateHouseholdEnrollmentStatus(updateRankRequest.getHouseholdId(), status);
             });
