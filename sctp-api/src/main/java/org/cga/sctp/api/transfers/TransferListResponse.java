@@ -30,21 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.reconciliation;
+package org.cga.sctp.api.transfers;
 
-import java.util.List;
+import org.cga.sctp.api.core.pagination.PagedResponse;
+import org.cga.sctp.transfers.Transfer;
+import org.springframework.data.domain.Page;
 
-public class TransferReconciliationRequest {
-
-    private List<TransferReconciliation> reconciliationList;
-
-    public List<TransferReconciliation> getReconciliationList() {
-        return reconciliationList;
+public class TransferListResponse extends PagedResponse<Transfer> {
+    public TransferListResponse(Page<Transfer> page) {
+        super(page);
     }
-
-    public void setReconciliationList(List<TransferReconciliation> reconciliationList) {
-        this.reconciliationList = reconciliationList;
-    }
-
-    public static class TransferReconciliation extends TransferUpdateDto {}
 }

@@ -40,6 +40,7 @@ import org.cga.sctp.targeting.EnrollmentSessionView;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.nio.file.Path;
@@ -79,6 +80,8 @@ public interface TransferService {
      */
     void initiateTransfers(Program program, Location location, TransferPeriod period, TransferSession transferSession, EnrollmentSessionView enrollmentSession, User user);
 
+    Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village);
+
     /**
      * Removes a household from transfer with given reason
      * @param household houshold to remove
@@ -100,6 +103,25 @@ public interface TransferService {
      * @return number of transfers affected
      */
     int reconcileTransfers(TransferReconciliationRequest transferReconciliationRequest);
+
+    /**
+     * Updates the transfers after they have been performed, this can only be done once for each Transfer.
+     *
+     * @param transferUpdates transfers to update
+     * @param userId user who requested/initiate the update
+     * @return
+     */
+    int updatePerformedTransfers(TransferReconciliationRequest transferUpdates, long userId);
+    
+    /**
+     * Performs manual transfers - which is basically updating the amounts.
+     *
+     * @param transferUpdates transfers to update
+     * @param userId user who requested/initiate the update
+     * @see #updatePerformedTransfers(TransferReconciliationRequest, long)
+     * @return
+     */
+    int performManualTransfers(TransferReconciliationRequest transferUpdates, long userId);
 
     /**
      * Mark the provided transfers as closed

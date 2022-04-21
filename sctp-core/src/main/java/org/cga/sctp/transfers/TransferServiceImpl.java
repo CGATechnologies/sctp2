@@ -41,6 +41,7 @@ import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +90,14 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
+    public Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village) {
+        return transfersRepository.findAllByStatusByLocationToVillageLevel(
+                TransferStatus.OPEN.getCode(),
+                districtCode, taCode, villageCluster, zone, village
+        );
+    }
+
+    @Override
     public void removeHouseholdFromTransfers(Household household, TransferPeriod transferPeriod, String reason) {
         throw new UnsupportedOperationException("not yet implemented");
     }
@@ -101,6 +110,21 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public int updateTransferCalculations(TransferPeriod transferPeriod) {
         throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    @Override
+    public int updatePerformedTransfers(TransferReconciliationRequest transferUpdates, long userId) {
+        return 0;
+    }
+
+    @Override
+    public int performManualTransfers(TransferReconciliationRequest transferUpdates, long userId) {
+        // TODO: Verify each transfer is still 'Open' state
+        // TODO: Verify each household for transfer is not 'Suspended'
+        // TODO: Validate amount for the transfer
+        // TODO: Calculate the arrears for each transfer
+        // TODO:
+        return 0;
     }
 
     @Override

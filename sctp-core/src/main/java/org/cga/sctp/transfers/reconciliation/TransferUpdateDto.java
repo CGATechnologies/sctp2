@@ -32,19 +32,72 @@
 
 package org.cga.sctp.transfers.reconciliation;
 
-import java.util.List;
+import org.cga.sctp.transfers.TransferStatus;
 
-public class TransferReconciliationRequest {
+import java.sql.Timestamp;
 
-    private List<TransferReconciliation> reconciliationList;
+public class TransferUpdateDto {
+    private Long householdId;
+    private Long transferId;
+    private Long transferAgencyId;
+    private Long amountTransferred;
+    private Long reconcilingUserId;
+    private TransferStatus status;
+    private Timestamp timestamp;
 
-    public List<TransferReconciliation> getReconciliationList() {
-        return reconciliationList;
+    public Long getHouseholdId() {
+        return householdId;
     }
 
-    public void setReconciliationList(List<TransferReconciliation> reconciliationList) {
-        this.reconciliationList = reconciliationList;
+    public void setHouseholdId(Long householdId) {
+        this.householdId = householdId;
     }
 
-    public static class TransferReconciliation extends TransferUpdateDto {}
+    public Long getTransferId() {
+        return transferId;
+    }
+
+    public void setTransferId(Long transferId) {
+        this.transferId = transferId;
+    }
+
+    public Long getTransferAgencyId() {
+        return transferAgencyId;
+    }
+
+    public void setTransferAgencyId(Long transferAgencyId) {
+        this.transferAgencyId = transferAgencyId;
+    }
+
+    public Long getAmountTransferred() {
+        return amountTransferred;
+    }
+
+    public void setAmountTransferred(Long amountTransferred) {
+        this.amountTransferred = amountTransferred;
+    }
+
+    public Long getReconcilingUserId() {
+        return reconcilingUserId;
+    }
+
+    public void setReconcilingUserId(Long reconcilingUserId) {
+        this.reconcilingUserId = reconcilingUserId;
+    }
+
+    public TransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransferStatus status) {
+        this.status = status;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
 }

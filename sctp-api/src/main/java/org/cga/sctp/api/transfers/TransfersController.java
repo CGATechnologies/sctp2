@@ -32,13 +32,24 @@
 
 package org.cga.sctp.api.transfers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.cga.sctp.api.core.IncludeGeneralResponses;
+import org.cga.sctp.api.targeting.community.PreEligibilityVerificationSessionResponse;
+import org.cga.sctp.api.user.ApiUserDetails;
+import org.cga.sctp.transfers.Transfer;
 import org.cga.sctp.transfers.TransferService;
+import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
+import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static java.util.Collections.singletonMap;
 
 @RestController
 @RequestMapping("/transfers")
@@ -47,23 +58,52 @@ public class TransfersController {
     @Autowired
     private TransferService transferService;
 
-    @PostMapping
-    @RequestMapping("/close")
-    public ResponseEntity<Object> closeTransfers(@RequestBody Object transferCloseRequestDto) {
-        // TODO: Implement me!
-        return ResponseEntity.badRequest().build();
+    @GetMapping("/pending")
+    @Operation(description = "Retrieves Transfer List for the given Geolocation. Does not include full household detail")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TransferListResponse.class)))
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> getTransferListForLocation(@AuthenticatedUserDetails ApiUserDetails user,
+                                                        @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
+                                                        @RequestParam(value = "village-cluster-code", required = false, defaultValue = "0") Long villageCluster,
+                                                        @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
+                                                        @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
+
+        long districtCode = user.getAccessTokenClaims().getDistrictCode().longValue();
+        Page<Transfer> transferListSummary = transferService.fetchPendingTransferListByLocation(districtCode, taCode, villageCluster, zone, village);
+        return ResponseEntity.ok(new TransferListResponse(transferListSummary));
     }
 
+    /**
+     * This endpoint is mostly intended for use by the App client
+     * @param request detail fo transfers to update
+     * @return
+     */
     @PostMapping
-    @RequestMapping("/reconcile/manual")
-    public ResponseEntity<Object> reconcileTransfers(@RequestBody Object reconciliationDto) {
-        // TODO: Implement me!
-        return ResponseEntity.badRequest().build();
+    @RequestMapping("/manual")
+    @Operation(
+            description = "Updates/performs Transfers with amounts disbursed, dates and personnel.  Applies only to manual transfers",
+            tags = { "transfers", "manual-transfers" })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<Object> postUploadTransfers(@AuthenticatedUserDetails ApiUserDetails user,
+                                                      @RequestBody TransferReconciliationRequest request) {
+        // TODO: publish general event here about transfer being updated
+        int noUpdated = transferService.performManualTransfers(request, user.getUserId());
+        // TODO: better response structure...
+        return ResponseEntity.ok(singletonMap("message", String.format("Updated %i Transfer records", noUpdated)));
     }
 
-    @PostMapping
+    @GetMapping
+    @Operation(
+            description = "Gets status of E-Payment/automated transfers",
+            tags = { "transfers", "epayment-transfers" })
     @RequestMapping("/epayments")
-    public ResponseEntity<Object> initiateEPaymentTransfers(@RequestBody Object epaymentTransferRequestDto) {
+    public ResponseEntity<Object> getEPaymentTransfersStatus(@RequestBody Object epaymentTransferRequestDto) {
         // TODO: Implement me!
         return ResponseEntity.badRequest().build();
     }
