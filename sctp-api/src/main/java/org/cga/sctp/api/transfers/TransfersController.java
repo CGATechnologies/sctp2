@@ -30,45 +30,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.api.transfers;
 
-import org.cga.sctp.targeting.importation.parameters.UbrParameterValue;
+import org.cga.sctp.transfers.TransferService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Indicates status of a  Transfer event.
- */
-public enum TransferStatus implements UbrParameterValue {
-    /**
-     * Transfer has not yet occurred i.e. cash has not been disbursed.
-     */
-    OPEN(19, "Open"),
-    /**
-     * Cash has been disbursed but Transfer is pending reconciliation and scrutiny
-     */
-    PRE_CLOSE(20, "Pre-Close"),
-    /**
-     * Cash disbursed and finances have been reconciled. Transfer cannot be re-opened.
-     */
-    CLOSED(21, "Close");
+@RestController
+@RequestMapping("/transfers")
+public class TransfersController {
 
-    private final int code;
-    private final String name;
+    @Autowired
+    private TransferService transferService;
 
-    TransferStatus(int code, String name) {
-        this.code = code;
-        this.name = name;
+    @PostMapping
+    @RequestMapping("/close")
+    public ResponseEntity<Object> closeTransfers(@RequestBody Object transferCloseRequestDto) {
+        // TODO: Implement me!
+        return ResponseEntity.badRequest().build();
     }
 
-    public int getCode() {
-        return code;
+    @PostMapping
+    @RequestMapping("/reconcile/manual")
+    public ResponseEntity<Object> reconcileTransfers(@RequestBody Object reconciliationDto) {
+        // TODO: Implement me!
+        return ResponseEntity.badRequest().build();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
+    @PostMapping
+    @RequestMapping("/epayments")
+    public ResponseEntity<Object> initiateEPaymentTransfers(@RequestBody Object epaymentTransferRequestDto) {
+        // TODO: Implement me!
+        return ResponseEntity.badRequest().build();
     }
 }

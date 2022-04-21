@@ -42,33 +42,5 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TransferSessionServiceTest {
 
-    private static HouseholdTransferParameter createParam(int members, Long amount, HouseholdParameterCondition condition) {
-       HouseholdTransferParameter p = new HouseholdTransferParameter();
-       p.setAmount(amount);
-       p.setNumberOfMembers(members);
-       p.setCondition(condition);
-       return p;
-    }
-    @Test
-    void determineAmountByHouseholdSize() {
 
-        TransferSessionService transferSessionService = new TransferSessionService();
-
-        List<HouseholdTransferParameter> params = List.of(
-            createParam(1, 1000L, HouseholdParameterCondition.EQUALS),
-            createParam(2, 2000L, HouseholdParameterCondition.EQUALS),
-            createParam(3, 3000L, HouseholdParameterCondition.EQUALS),
-            createParam(4, 4000L, HouseholdParameterCondition.GREATER_THAN_OR_EQUAL)
-        );
-
-        assertEquals(1000, transferSessionService.determineAmountByHouseholdSize(1, params));
-
-        assertEquals(2000, transferSessionService.determineAmountByHouseholdSize(2, params));
-
-        assertEquals(3000, transferSessionService.determineAmountByHouseholdSize(3, params));
-
-        assertEquals(4000, transferSessionService.determineAmountByHouseholdSize(4, params));
-
-        assertEquals(4000, transferSessionService.determineAmountByHouseholdSize(5, params));
-    }
 }

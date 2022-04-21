@@ -37,6 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Controller
-@RequestMapping("/transfers")
+@RequestMapping("/transfers/admin")
 public class TransfersController {
 }

@@ -30,45 +30,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.parameters;
 
-import org.cga.sctp.targeting.importation.parameters.UbrParameterValue;
+import org.junit.jupiter.api.Test;
 
-/**
- * Indicates status of a  Transfer event.
- */
-public enum TransferStatus implements UbrParameterValue {
-    /**
-     * Transfer has not yet occurred i.e. cash has not been disbursed.
-     */
-    OPEN(19, "Open"),
-    /**
-     * Cash has been disbursed but Transfer is pending reconciliation and scrutiny
-     */
-    PRE_CLOSE(20, "Pre-Close"),
-    /**
-     * Cash disbursed and finances have been reconciled. Transfer cannot be re-opened.
-     */
-    CLOSED(21, "Close");
+import java.util.List;
 
-    private final int code;
-    private final String name;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    TransferStatus(int code, String name) {
-        this.code = code;
-        this.name = name;
+class TransferParametersServiceTest {
+    private static HouseholdTransferParameter createParam(int members, Long amount, HouseholdParameterCondition condition) {
+        HouseholdTransferParameter p = new HouseholdTransferParameter();
+        p.setAmount(amount);
+        p.setNumberOfMembers(members);
+        p.setCondition(condition);
+        return p;
     }
+    @Test
+    void determineAmountByHouseholdSize() {
 
-    public int getCode() {
-        return code;
-    }
+        TransferParametersService service = new TransferParametersService();
 
-    public String getName() {
-        return name;
-    }
+        List<HouseholdTransferParameter> params = List.of(
+                createParam(1, 1000L, HouseholdParameterCondition.EQUALS),
+                createParam(2, 2000L, HouseholdParameterCondition.EQUALS),
+                createParam(3, 3000L, HouseholdParameterCondition.EQUALS),
+                createParam(4, 4000L, HouseholdParameterCondition.GREATER_THAN_OR_EQUAL)
+        );
 
-    @Override
-    public String toString() {
-        return this.name;
+        assertEquals(1000, service.determineAmountByHouseholdSize(1, params));
+
+        assertEquals(2000, service.determineAmountByHouseholdSize(2, params));
+
+        assertEquals(3000, service.determineAmountByHouseholdSize(3, params));
+
+        assertEquals(4000, service.determineAmountByHouseholdSize(4, params));
+
+        assertEquals(4000, service.determineAmountByHouseholdSize(5, params));
     }
 }

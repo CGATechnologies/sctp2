@@ -38,22 +38,17 @@ import org.cga.sctp.location.LocationService;
 import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
-import org.cga.sctp.targeting.CbtRanking;
 import org.cga.sctp.targeting.EnrollmentService;
 import org.cga.sctp.targeting.EnrollmentSessionView;
-import org.cga.sctp.targeting.EnrolmentSessionRepository;
 import org.cga.sctp.transfers.TransferEventHouseholdView;
-import org.cga.sctp.transfers.TransfersRepository;
+import org.cga.sctp.transfers.TransferPeriod;
+import org.cga.sctp.transfers.TransferService;
 import org.cga.sctp.transfers.TransferSession;
-import org.cga.sctp.transfers.TransferSessionService;
 import org.cga.sctp.transfers.parameters.EducationTransferParameter;
-import org.cga.sctp.user.AuthenticatedUser;
-import org.cga.sctp.user.AuthenticatedUserDetails;
-import org.cga.sctp.user.RoleConstants;
+import org.cga.sctp.transfers.parameters.TransferParametersService;
+import org.cga.sctp.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -61,8 +56,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/transfers/sessions")
@@ -78,20 +75,20 @@ public class TransferSessionsController extends BaseController  {
     private LocationService locationService;
 
     @Autowired
-    private TransferSessionService transferSessionService;
+    private TransferService transferService;
 
     @Autowired
-    private TransfersRepository transfersRepository;
-
-    @Autowired
-    private EnrolmentSessionRepository enrolmentSessionRepository;
+    private TransferParametersService transferParametersService;
 
     @Autowired
     private EnrollmentService enrollmentService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping
     public ModelAndView list(Pageable pageable) {
-        var transferSessions = transferSessionService.findAllActive(pageable);
+        var transferSessions = transferService.findAllActiveSessions(pageable);
         return view("transfers/calculation/list")
                 .addObject("transferSessions", transferSessions);
     }
@@ -101,6 +98,7 @@ public class TransferSessionsController extends BaseController  {
     public String initiateNewTransferFromEnrollment(@AuthenticatedUserDetails AuthenticatedUser user,
                                                     @RequestParam("enrollment") Long enrollmentSessionId,
                                                     RedirectAttributes attributes) {
+
         EnrollmentSessionView sessionView = enrollmentService.getEnrollmentSession(enrollmentSessionId);
         if (sessionView == null) {
             return redirectWithDangerMessage(format("/targeting/enrolment?invalidSession=%s", enrollmentSessionId),
@@ -114,24 +112,30 @@ public class TransferSessionsController extends BaseController  {
                     attributes);
         }
 
-        TransferSession session = new TransferSession();
-        session.setEnrollmentSessionId(enrollmentSessionId);
-        session.setProgramId(-1L);
-        session.setActive(true);
-        session.setCreatedAt(LocalDateTime.now());
-        session.setModifiedAt(session.getCreatedAt());
+        TransferSession transferSession = new TransferSession();
+        transferSession.setEnrollmentSessionId(enrollmentSessionId);
+        transferSession.setProgramId(-1L);
+        transferSession.setActive(true);
+        transferSession.setCreatedAt(LocalDateTime.now());
+        transferSession.setModifiedAt(transferSession.getCreatedAt());
 
-        transferSessionService.getTranferSessionRepository().save(session);
-        transferSessionService.initiateTransfersForHouseholds(
-                session.getId(),
-                enrollmentSessionId,
-                session.getProgramId(),
-                user.id(),
-                Collections.emptyList()
+        transferService.getTranferSessionRepository().save(transferSession);
+
+        Program program = programService.getProgramById(transferSession.getProgramId()); // TODO: get program proper
+        Location location = null; // TODO: Get location proper
+        TransferPeriod transferPeriod = null; // TODO: Get period proper
+        User userData = userService.findById(user.id()); // FIXME: don't require another db call?
+        transferService.initiateTransfers(
+                program,
+                location,
+                transferPeriod,
+                transferSession,
+                sessionView,
+                userData
         );
 
         // See {@see #viewPerformCalculationPage}
-        return redirectWithSuccessMessage(format("/transfers/sessions/%s/pre-calculation", session.getId()),
+        return redirectWithSuccessMessage(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()),
             "New Transfer Session initiated successfully from enrolled households",
             attributes);
     }
@@ -140,24 +144,24 @@ public class TransferSessionsController extends BaseController  {
     public ModelAndView viewPerformCalculationPage(@PathVariable("session-id") Long sessionId,
                                                    RedirectAttributes attributes) {
 
-        Optional<TransferSession> sessionOptional = transferSessionService.getTranferSessionRepository().findById(sessionId);
+        Optional<TransferSession> sessionOptional = transferService.getTranferSessionRepository().findById(sessionId);
         if (sessionOptional.isEmpty()) {
             setDangerFlashMessage("Transfer Session does not exist or is not valid", attributes);
             return redirect("/transfers/sessions");
         }
         EnrollmentSessionView enrollmentSessionView = enrollmentService.getEnrollmentSession(sessionOptional.get().getEnrollmentSessionId());
 
-        List<TransferEventHouseholdView> transferEvents = transferSessionService.findAllHouseholdsInSession(sessionId);
+        List<TransferEventHouseholdView> transferEvents = transferService.findAllHouseholdsInSession(sessionId);
 
         TransferCalculationPageData pageData = new TransferCalculationPageData();
         pageData.setProgramInfo(null); // TODO: Get program id somewhere);
         pageData.setTransferSession(sessionOptional.get());
         pageData.setEnrollmentSession(enrollmentSessionView);
         pageData.setHouseholdRows(transferEvents);
-        pageData.setHouseholdParams(transferSessionService.findAllActiveHouseholdParameters());
+        pageData.setHouseholdParams(transferParametersService.findAllActiveHouseholdParameters());
 
         Map<String, EducationTransferParameter> educationParamsMap = new HashMap<>();
-        transferSessionService.findAllEducationTransferParameters().forEach(entry -> {
+        transferParametersService.findAllEducationTransferParameters().forEach(entry -> {
             educationParamsMap.put(entry.getEducationLevel().toString().toLowerCase(), entry);
         });
 

@@ -30,28 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.parameters;
 
-import org.cga.sctp.transfers.agencies.TransferMethod;
 import org.cga.sctp.transfers.parameters.*;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class TransferSessionService {
-
-    @Autowired
-    private TransferSessionRepository tranferSessionRepository;
-
-    @Autowired
-    private TransfersRepository transferRepository;
-
+public class TransferParametersService {
     @Autowired
     private HouseholdTransferParametersRepository householdTransferParametersRepository;
 
@@ -61,61 +49,10 @@ public class TransferSessionService {
     @Autowired
     private EducationTransferParameterRepository educationTransferParameterRepository;
 
-    public TransferSessionRepository getTranferSessionRepository() {
-        return tranferSessionRepository;
-    }
-
-    /**
-     * Initiates Transfer Entries for households in the given session coming from a completed/closed enrollment.
-     * The Transfer entries are created with default data for amounts, etc...
-     *
-     * @param transferSessionId session under which to perform the operations
-     * @param householdIds the list of household ids assign transfers too
-     * @param enrollmentSessionId the enrollment under which the households belong.
-     */
-    @Transactional
-    public void initiateTransfersForHouseholds(Long transferSessionId,
-                                               Long enrollmentSessionId,
-                                               Long programId,
-                                               Long initiatedBy,
-                                               List<Long> householdIds) {
-
-        // transferSessionId
-        transferRepository.initiateTransfersForEnrolledHouseholds(enrollmentSessionId, transferSessionId, initiatedBy);
-//        for(Long householdId: householdIds) {
-//            Transfer transfer = new Transfer();
-//
-//            transfer.setProgramId(null /* TODO */);
-//            transfer.setEnrollmentSessionId(enrollmentSessionId);
-//            transfer.setTransferSessionId(transferSessionId);
-//            transfer.setHouseholdId(householdId);
-//            transfer.setRecipientId(null /* TODO */);
-//            transfer.setZoneId(null /* TODO */);
-//            transfer.setVillageClusterId(null /* TODO */);
-//            transfer.setAccountNumber(null /* TODO */);
-//            transfer.setModality(TransferMethod.Manual); // until transfer agency is assigned that does EFT
-//
-//            transfer.setCreatedAt(LocalDateTime.now());
-//            transfer.setModifiedAt(transfer.getCreatedAt());
-//
-//            transferRepository.save(transfer);
-//        }
-    }
-
-    public List<TransferSessionDetailView> findAllActive(Pageable pageable) {
-        return tranferSessionRepository.findAllActiveAsView(pageable.getPageNumber(), pageable.getPageSize());
-    }
-
-    public List<TransferEventHouseholdView> findAllHouseholdsInSession(Long sessionId) {
-        return transferRepository.findAllHouseholdsByTransferSessionId(sessionId);
-    }
-
-    // TODO(zikani03) move this method to an appropriate service
     public List<HouseholdTransferParameter> findAllActiveHouseholdParameters() {
         return householdTransferParametersRepository.findAll();
     }
 
-    // TODO(zikani03) move this method to an appropriate service
     public List<EducationTransferParameter> findAllEducationTransferParameters() {
         return educationTransferParameterRepository.findAll();
     }
@@ -156,6 +93,4 @@ public class TransferSessionService {
 
         return -1L;
     }
-
 }
-

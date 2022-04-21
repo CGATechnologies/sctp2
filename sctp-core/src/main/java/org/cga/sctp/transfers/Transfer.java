@@ -185,6 +185,7 @@ public class Transfer {
     // BIGINT NOT NULL COMMENT 'The user who approved/reviewed the transfer record should not be == created_by',
     @Column private Long reviewedBy;
 
+
     public Long getId() {
         return id;
     }
@@ -239,6 +240,14 @@ public class Transfer {
 
     public void setTransferAgencyId(Long transferAgencyId) {
         this.transferAgencyId = transferAgencyId;
+    }
+
+    public Long getTransferPeriodId() {
+        return transferPeriodId;
+    }
+
+    public void setTransferPeriodId(Long transferPeriodId) {
+        this.transferPeriodId = transferPeriodId;
     }
 
     public Long getDistrictId() {
