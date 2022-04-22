@@ -38,6 +38,8 @@ import org.cga.sctp.location.Location;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.targeting.EnrollmentSessionView;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
+import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
+import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TransferServiceImpl implements TransferService {
@@ -80,36 +83,43 @@ public class TransferServiceImpl implements TransferService {
 
     @Transactional
     @Override
-    public void initiateTransfers(Program program, Location location, TransferPeriod period, TransferSession transferSession, EnrollmentSessionView enrollmentSession, User user) {
+    public TransferSession initiateTransfers(Location location, TransferSession transferSession, long userId) {
         // TODO: refactor the initiation logic and use the other arguments provided
-        transfersRepository.initiateTransfersForEnrolledHouseholds(
-                enrollmentSession.getId(),
-                transferSession.getId(),
-                user.getId()
-        );
+        Objects.requireNonNull(location);
+        Objects.requireNonNull(transferSession);
+        if (getTranferSessionRepository().save(transferSession) == null) {
+            // TODO check
+        }
+        transfersRepository.initiateTransfersInDistrict(transferSession.getProgramId(), location.getId(), transferSession.getId(), userId);
+        return transferSession;
     }
 
     @Override
-    public Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village) {
+    public Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable) {
         return transfersRepository.findAllByStatusByLocationToVillageLevel(
                 TransferStatus.OPEN.getCode(),
-                districtCode, taCode, villageCluster, zone, village
+                districtCode,
+                taCode,
+                villageCluster,
+                zone,
+                village,
+                pageable
         );
     }
 
     @Override
     public void removeHouseholdFromTransfers(Household household, TransferPeriod transferPeriod, String reason) {
-        throw new UnsupportedOperationException("not yet implemented");
+        throw new UnsupportedOperationException("not yet implemented"); // TODO: implement me
     }
 
     @Override
     public int reconcileTransfers(TransferReconciliationRequest transferReconciliationRequest) {
-        throw new UnsupportedOperationException("not yet implemented");
+        throw new UnsupportedOperationException("not yet implemented"); // TODO: implement me
     }
 
     @Override
     public int updateTransferCalculations(TransferPeriod transferPeriod) {
-        throw new UnsupportedOperationException("not yet implemented");
+        throw new UnsupportedOperationException("not yet implemented"); // TODO: implement me
     }
 
     @Override
@@ -129,7 +139,12 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public int closeTransfers(List<Transfer> transferList, User user) {
-        throw new UnsupportedOperationException("not yet implemented");
+        throw new UnsupportedOperationException("not yet implemented"); // TODO: implement me
+    }
+
+    @Override
+    public int assignAccountNumbers(TransferSession session, TransferPeriod period, TransferAccountNumberList transferAccountNumberList) {
+        throw new UnsupportedOperationException("not yet implemented"); // TODO: implement me
     }
 
     @Override

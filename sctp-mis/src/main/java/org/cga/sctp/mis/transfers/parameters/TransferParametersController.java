@@ -30,41 +30,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.mis.transfers;
+package org.cga.sctp.mis.transfers.parameters;
 
 import org.cga.sctp.mis.core.BaseController;
-import org.cga.sctp.user.AdminAccessOnly;
-import org.cga.sctp.user.AuthenticatedUser;
-import org.cga.sctp.user.AuthenticatedUserDetails;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RequestMapping("/transfer/periods")
-public class TransferPeriodController extends BaseController {
-
-    @GetMapping("/open-new")
-    @AdminAccessOnly
-    public ModelAndView viewCreateTransferPeriod() {
-        return view("/transfers/periods/new");
+@Controller
+@RequestMapping("/transfers/parameters")
+public class TransferParametersController extends BaseController {
+    @GetMapping
+    public ModelAndView getParametersList() {
+        return view("transfers/parameters/index");
     }
-
-    @PostMapping("/open-new")
-    @AdminAccessOnly
-    public ModelAndView handleCreateTransferPeriod(@AuthenticatedUserDetails AuthenticatedUser user,
-                                                   @Validated @ModelAttribute TransferPeriodForm form,
-                                                   RedirectAttributes attributes) {
-        long id = -1;// transfer period ID
-        // TODO: Create a new transfer period for the enrolled households in the enrollment session
-        // Check if the transfer period is valid (start to end dates)
-        // Check if we don't have another period already running
-        // Check if the program is allowed to have a new period
-        // Check if the households
-        return redirect(String.format("/transfers/periods/%d", id));
-    }
-
 }

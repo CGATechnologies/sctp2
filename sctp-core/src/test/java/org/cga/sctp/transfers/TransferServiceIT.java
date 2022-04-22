@@ -32,24 +32,54 @@
 
 package org.cga.sctp.transfers;
 
-import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
 
-public interface TransferSessionDetailView {
-    Long getId();
+import static org.junit.jupiter.api.Assertions.*;
 
-    Long getProgramId();
 
-    String getProgramName();
+class TransferServiceIT {
 
-    //Long totalHouseholds();
+    @Test
+    void initiateTransfers() {
+    }
 
-    Integer getNumOfDistricts();
+    @Test
+    void fetchPendingTransferListByLocation() {
+    }
 
-    // Long totalAmountCalculated();
+    @Test
+    void removeHouseholdFromTransfers() {
+    }
 
-    // String initiatedBy();
+    @Test
+    void reconcileTransfers() {
+    }
 
-    String getStatus();
+    @Test
+    void updateTransferCalculations() {
+    }
 
-    LocalDateTime getCreatedAt();
+    @Test
+    void updatePerformedTransfers() {
+    }
+
+    @Test
+    void performManualTransfers() {
+    }
+
+    @Test
+    void closeTransfers() {
+    }
+
+    @Test
+    void exportTransferList() {
+    }
+
+    @Test
+    void findAllActiveSessions() {
+    }
+
+    @Test
+    void findAllHouseholdsInSession() {
+    }
 }

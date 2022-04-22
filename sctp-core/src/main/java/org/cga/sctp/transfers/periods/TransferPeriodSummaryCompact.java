@@ -30,26 +30,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.periods;
 
-import java.time.LocalDateTime;
-
-public interface TransferSessionDetailView {
-    Long getId();
-
-    Long getProgramId();
-
-    String getProgramName();
-
-    //Long totalHouseholds();
-
-    Integer getNumOfDistricts();
-
-    // Long totalAmountCalculated();
-
-    // String initiatedBy();
-
-    String getStatus();
-
-    LocalDateTime getCreatedAt();
+public interface TransferPeriodSummaryCompact {
+    String getName();
+    String getDistrictName();
+    String getStartDate();
+    String getEndDate();
+    String getTransferAgencyName();
+    String getTransferMethod();
+    Long getNumHouseholds();
+    Long getTotalDisbursed();
+    Long getTotalArrears();
+    Boolean getActive();
 }

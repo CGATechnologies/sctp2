@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.periods;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -60,6 +60,12 @@ public class TransferPeriod {
 
     @Column
     private String description;
+
+    @Column
+    private Long bonusPrimary;
+
+    @Column
+    private Long bonusSecondary;
 
     @Column
     private long createdBy;
@@ -124,6 +130,22 @@ public class TransferPeriod {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getBonusPrimary() {
+        return bonusPrimary;
+    }
+
+    public void setBonusPrimary(Long bonusPrimary) {
+        this.bonusPrimary = bonusPrimary;
+    }
+
+    public Long getBonusSecondary() {
+        return bonusSecondary;
+    }
+
+    public void setBonusSecondary(Long bonusSecondary) {
+        this.bonusSecondary = bonusSecondary;
     }
 
     public long getCreatedBy() {

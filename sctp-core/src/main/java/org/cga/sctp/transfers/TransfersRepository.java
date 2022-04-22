@@ -34,6 +34,7 @@ package org.cga.sctp.transfers;
 
 import org.hibernate.annotations.SQLUpdate;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -89,6 +90,14 @@ public interface TransfersRepository extends JpaRepository<Transfer, Long> {
                                                 @Param("userId") Long userId);
 
 
+    @Modifying
+    @Query(nativeQuery = true, value = "CALL initiateTransfersInDistrict(:programId, :districtId, :transferSessionId, :userId)")
+    void initiateTransfersInDistrict(@Param("programId") Long programId,
+                                     @Param("districtId") Long districtId,
+                                     @Param("transferSessionId") Long transferSessionId,
+                                     @Param("userId") Long userId);
+
+
     @Query(nativeQuery = true, value = """
             SELECT t.*
             FROM transfers t
@@ -105,12 +114,15 @@ public interface TransfersRepository extends JpaRepository<Transfer, Long> {
                 AND l2.code = :taCode
                 AND l3.code = :clusterCode
                 AND l4.code = :zoneCode
-                AND l5.code = :villageCode );
+                AND l5.code = :villageCode )
+              LIMIT :page.pageNumber, :page.pageSize
+            ;
             """)
     Page<Transfer> findAllByStatusByLocationToVillageLevel(@Param("transferStatusCode") int transferStatusCode,
                                                            @Param("districtCode") long districtCode,
                                                            @Param("taCode") Long taCode,
                                                            @Param("clusterCode") Long clusterCode,
                                                            @Param("zoneCode") Long zoneCode,
-                                                           @Param("villageCode") Long villageCode);
+                                                           @Param("villageCode") Long villageCode,
+                                                           Pageable page);
 }

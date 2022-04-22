@@ -1,0 +1,114 @@
+{% extends "../base" %}
+{% block title %}
+{{ parent() }} - Cash Transfer Calculations - Step 1
+{% endblock %}
+{% block contextMenu %}
+<div class="container context-nav-container">
+    <div class="buttons is-left">
+        <a href="{{ href('/transfers/sessions') }}" class="button is-danger">
+    <span class="icon-text">
+        <span class="icon">
+            <i class="fa fa-chevron-left"></i>
+        </span>
+        <span>Back to Sessions</span>
+    </span>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div id="transfers-select-transfer-options">
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">Perform Transfer Calculations</p>
+            </header>
+            <div class="card-content">
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                <form id="addRoleForm" action="/transfers/sessions/initiate/step1" method="post"
+                      enctype="application/x-www-form-urlencoded">
+                    {{ csrf(_csrf) }}
+                    <div class="field">
+                        <div class="field-label is-normal">
+                            <label class="label is-required">Program</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                            {{ selectField('programId', programs, form.programId, true) }}
+                                    </div>
+                                </div>
+                                {{ printFieldErrors(getFieldErrors('form', 'programId')) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label is-normal">
+                            <label class="label is-required">District</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                            {{ selectField('districtId', districts, form.districtId, true) }}
+                                    </div>
+                                </div>
+                                {{ printFieldErrors(getFieldErrors('form', 'districtId')) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-body">
+                            <p>The following parameters will be used for the Transfers</p>.
+                            <div class="parameters-section">
+                                <div class="param-section">
+                                    <h3 class="subtitle">Basic Subsidy Amounts</h3>
+                                    <div class="basic-household-params">
+                                        <ul>
+                                            {% for param in householdParameters %}
+                                            <li><span>MWK {{ param.amount | numberformat("#,###.##") }}</span> when members {{  param.condition.description }} {{  param.numberOfMembers }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="param-section">
+                                    <h3 class="subtitle">School Incentives</h3>
+                                    <div class="incentive-parameters">
+                                        <ul>
+                                                {% for p in educationIncentives %}
+                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
+                                                {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="param-section">
+                                    <h3 class="subtitle">School Bonuses</h3>
+                                    <div class="bonus-parameters">
+                                        <ul>
+                                                {% for p in educationBonuses %}
+                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
+                                                {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="notification is-info">
+                                You can update parameters before performing final Transfer calculations.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="actions action-buttons">
+                        <p class="notification is-warning">
+                            TODO: Message about the effects of initiating transfers on a district.
+                        </p>
+                        <button class="button is-primary">Open District for Transfers</button>
+                    </div>
+                </form>
+            </div>
+    </div>
+{% endblock %}
+{% block footerScripts %}
+<script src="/assets/js/transfers.calculate.js"></script>
+{% endblock %}

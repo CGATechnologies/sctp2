@@ -39,18 +39,21 @@ import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
 import org.cga.sctp.targeting.EnrollmentService;
-import org.cga.sctp.targeting.EnrollmentSessionView;
 import org.cga.sctp.transfers.TransferEventHouseholdView;
-import org.cga.sctp.transfers.TransferPeriod;
 import org.cga.sctp.transfers.TransferService;
 import org.cga.sctp.transfers.TransferSession;
 import org.cga.sctp.transfers.parameters.EducationTransferParameter;
 import org.cga.sctp.transfers.parameters.TransferParametersService;
-import org.cga.sctp.user.*;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
+import org.cga.sctp.user.AuthenticatedUser;
+import org.cga.sctp.user.AuthenticatedUserDetails;
+import org.cga.sctp.user.UserService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -87,60 +90,89 @@ public class TransferSessionsController extends BaseController  {
     private UserService userService;
 
     @GetMapping
-    public ModelAndView list(Pageable pageable) {
+    @AdminAndStandardAccessOnly
+    public ModelAndView index(Pageable pageable) {
         var transferSessions = transferService.findAllActiveSessions(pageable);
-        return view("transfers/calculation/list")
-                .addObject("transferSessions", transferSessions);
+        // TODO: Remember transfer Summaries and transfer sessions are two different concepts
+        return view("transfers/summary")
+                .addObject("transferSessions", transferSessions)
+                .addObject("transferSummaries", new Object()); // FIXME: fetch summary
     }
 
-    @PostMapping("/initiate")
-    @Secured({RoleConstants.ROLE_ADMINISTRATOR})
-    public String initiateNewTransferFromEnrollment(@AuthenticatedUserDetails AuthenticatedUser user,
-                                                    @RequestParam("enrollment") Long enrollmentSessionId,
-                                                    RedirectAttributes attributes) {
+    // TODO: make different from the #index action
+    @GetMapping("/summary")
+    @AdminAndStandardAccessOnly
+    public ModelAndView summary(Pageable pageable) {
+        var transferSessions = transferService.findAllActiveSessions(pageable);
+        // TODO: Remember transfer Summaries and transfer sessions are two different concepts
+        return view("transfers/summary")
+                .addObject("transferSessions", transferSessions)
+                .addObject("transferSummaries", new Object()); // FIXME: fetch summary
+    }
 
-        EnrollmentSessionView sessionView = enrollmentService.getEnrollmentSession(enrollmentSessionId);
-        if (sessionView == null) {
-            return redirectWithDangerMessage(format("/targeting/enrolment?invalidSession=%s", enrollmentSessionId),
-                "Enrollment session was not found or not active",
-                attributes);
+    @GetMapping("/initiate/step1")
+    @AdminAndStandardAccessOnly
+    public ModelAndView getInitiateStep1() {
+        List<Program> programs = programService.getActivePrograms();
+        List<Location> districts = locationService.getActiveDistricts();
+
+        return view("/transfers/initiate/step1")
+                .addObject("programs", programs)
+                .addObject("districts", districts)
+                .addObject("householdParameters", transferParametersService.findAllActiveHouseholdParameters())
+                .addObject("educationBonuses", transferParametersService.findAllEducationTransferParameters())
+                .addObject("educationIncentives", transferParametersService.findAllEducationTransferParameters());
+    }
+
+    @PostMapping("/initiate/step1")
+    @AdminAndStandardAccessOnly
+    public ModelAndView postInitiateStep1(@AuthenticatedUserDetails AuthenticatedUser user,
+                                         @Validated @ModelAttribute InitiateTransferForm form,
+                                         BindingResult result,
+                                         RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            LoggerFactory.getLogger(getClass()).error("Failed to initiate transfers: {}", result.getAllErrors());
+            return withDangerMessage("/transfers/initiate/step1", "Failed to create Transfer records. Please fix the errors on the form")
+                    .addObject("programs", programService.getActivePrograms())
+                    .addObject("districts", locationService.getActiveDistricts())
+                    .addObject("householdParameters", transferParametersService.findAllActiveHouseholdParameters())
+                    .addObject("educationBonuses", transferParametersService.findAllEducationTransferParameters())
+                    .addObject("educationIncentives", transferParametersService.findAllEducationTransferParameters());
+
         }
 
-        if (enrollmentService.sessionHasPendingHouseholdsToEnroll(enrollmentSessionId)) {
-            return redirectWithDangerMessage(format("/targeting/enrolment?invalidSession=%s", enrollmentSessionId),
-                    "Enrollment Session contains Households that have not been enrolled or marked ineligible",
-                    attributes);
+        boolean householdsPendingEnrollment = false;
+        if (form.getEnrollmentSessionId() != null && form.getEnrollmentSessionId() > 0L) {
+            householdsPendingEnrollment = enrollmentService.sessionHasHouseholdsWithPreEligibleOrNotYetEnrolled(form.getEnrollmentSessionId());
+        }
+
+        if (householdsPendingEnrollment) {
+            LoggerFactory.getLogger(getClass()).error("Failed to update agency: {}", attributes);
+            return withDangerMessage("/transfers/initiate/step1", "Some households have not yet been enrolled or marked Ineligible.")
+                    .addObject("programs", programService.getActivePrograms())
+                    .addObject("districts", locationService.getActiveDistricts())
+                    .addObject("householdParameters", transferParametersService.findAllActiveHouseholdParameters())
+                    .addObject("educationBonuses", transferParametersService.findAllEducationTransferParameters())
+                    .addObject("educationIncentives", transferParametersService.findAllEducationTransferParameters());
         }
 
         TransferSession transferSession = new TransferSession();
-        transferSession.setEnrollmentSessionId(enrollmentSessionId);
-        transferSession.setProgramId(-1L);
+        transferSession.setProgramId(form.getProgramId());
         transferSession.setActive(true);
         transferSession.setCreatedAt(LocalDateTime.now());
         transferSession.setModifiedAt(transferSession.getCreatedAt());
 
-        transferService.getTranferSessionRepository().save(transferSession);
+        Program program = programService.getProgramById(form.getProgramId());
+        Location location = locationService.findById(form.getDistrictId());
 
-        Program program = programService.getProgramById(transferSession.getProgramId()); // TODO: get program proper
-        Location location = null; // TODO: Get location proper
-        TransferPeriod transferPeriod = null; // TODO: Get period proper
-        User userData = userService.findById(user.id()); // FIXME: don't require another db call?
-        transferService.initiateTransfers(
-                program,
-                location,
-                transferPeriod,
-                transferSession,
-                sessionView,
-                userData
-        );
+        transferService.initiateTransfers(location, transferSession,  user.id());
 
-        // See {@see #viewPerformCalculationPage}
-        return redirectWithSuccessMessage(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()),
-            "New Transfer Session initiated successfully from enrolled households",
-            attributes);
+        setSuccessFlashMessage("New Transfer Session initiated successfully from enrolled households", attributes);
+        return redirect(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()));
     }
 
     @GetMapping("/{session-id}/pre-calculation")
+    @AdminAndStandardAccessOnly
     public ModelAndView viewPerformCalculationPage(@PathVariable("session-id") Long sessionId,
                                                    RedirectAttributes attributes) {
 
@@ -149,14 +181,11 @@ public class TransferSessionsController extends BaseController  {
             setDangerFlashMessage("Transfer Session does not exist or is not valid", attributes);
             return redirect("/transfers/sessions");
         }
-        EnrollmentSessionView enrollmentSessionView = enrollmentService.getEnrollmentSession(sessionOptional.get().getEnrollmentSessionId());
-
         List<TransferEventHouseholdView> transferEvents = transferService.findAllHouseholdsInSession(sessionId);
 
         TransferCalculationPageData pageData = new TransferCalculationPageData();
         pageData.setProgramInfo(null); // TODO: Get program id somewhere);
         pageData.setTransferSession(sessionOptional.get());
-        pageData.setEnrollmentSession(enrollmentSessionView);
         pageData.setHouseholdRows(transferEvents);
         pageData.setHouseholdParams(transferParametersService.findAllActiveHouseholdParameters());
 
@@ -167,17 +196,24 @@ public class TransferSessionsController extends BaseController  {
 
         pageData.setEducationParams(educationParamsMap);
 
-        return view("/transfers/calculation/perform_precalculation")
+        return view("/transfers/calculation/pre-calculation")
                 .addObject("pageData", pageData)
                 .addObject("objectMapper", objectMapper); // for serializing data to JSON in the template
     }
 
-    @GetMapping("/calculations/step1")
-    public ModelAndView viewCalculationStep1() {
-        List<Program> programs = programService.getActivePrograms();
-        List<Location> districts = locationService.getActiveDistricts();
-        return view("/transfers/calculation/calculations_step_1")
-                .addObject("programs", programs)
-                .addObject("districts", districts);
+
+    // TODO: implement
+    @GetMapping("/initiate/step2")
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewCalculationStep2() {
+        // TODO: implement me!
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    @GetMapping("/initiate/step3")
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewCalculationStep3() {
+        // TODO: implement me!
+        throw new UnsupportedOperationException("not yet implemented");
     }
 }

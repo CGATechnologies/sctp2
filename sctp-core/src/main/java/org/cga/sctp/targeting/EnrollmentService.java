@@ -136,16 +136,19 @@ public class EnrollmentService extends TransactionalService {
     }
 
     public void setEnrollmentHouseholdEnrolled(Long householdId) {
-        enrolmentSessionRepository.setEnrolledHouseholdToEnrolled(householdId);
+        enrolmentSessionRepository.updateHouseholdEnrollmentStatus(householdId,CbtStatus.Enrolled.code);
     }
 
     public void updateHouseholdEnrollmentStatus(Long householdId, CbtStatus status) {
         enrolmentSessionRepository.updateHouseholdEnrollmentStatus(householdId, status.code);
     }
 
+    public boolean sessionHasPreEligibleHouseholds(Long enrollmentSessionId) {
+        return enrolmentSessionRepository.countHouseholdsInSessionByStatus(enrollmentSessionId, CbtStatus.PreEligible.code) > 0;
+    }
 
-    public boolean sessionHasPendingHouseholdsToEnroll(Long enrollmentSessionId) {
-        return enrolmentSessionRepository.countUnenrolledHouseholds(enrollmentSessionId) > 0;
+    public boolean sessionHasHouseholdsWithPreEligibleOrNotYetEnrolled(Long enrollmentSessionId) {
+        return enrolmentSessionRepository.countPreEligibleOrNotEnrolled(enrollmentSessionId) > 0;
     }
 
 

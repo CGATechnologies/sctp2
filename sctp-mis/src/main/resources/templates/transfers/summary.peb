@@ -1,9 +1,28 @@
-{% extends "../base" %}
+{% extends "./base" %}
 {% import "../utils/form" %}
 {% block contextMenu %}
 <div class="container context-nav-container">
-    <div class="buttons is-right">
-        <a href="{{ href('calculation/new') }}" class="button is-primary">New Cash Transfer Amount Calculation</a>
+    <div class="navigation-cards">
+        <div class="columns">
+            <div class="column"><div class="box is-center-aligned">
+                <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/sessions/list-transfers') }}" class="is-text-4">Transfers</a>
+            </div></div>
+            <div class="column"><div class="box is-center-aligned">
+                <i class="fa fa-pencil">&nbsp;</i><a href="" class="is-text-4">Transfer Periods</a>
+            </div></div>
+            <div class="column"><div class="box is-center-aligned">
+                <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/agencies') }}" class="is-text-4">Transfer Agencies</a>
+            </div></div>
+            <div class="column"><div class="box is-center-aligned">
+                <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/sessions/initiate/step1') }}" class="is-text-4">Initiate Transfer</a>
+            </div></div>
+            <div class="column"><div class="box is-center-aligned">
+                <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/parameters') }}" class="is-text-4">Transfer Parameters</a>
+            </div></div>
+            <div class="column"><div class="box is-center-aligned">
+                <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/reports') }}" class="is-text-4">Reports</a>
+            </div></div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -14,7 +33,7 @@
         <div class="card-title">Transfers Summary</div>
     </div>
     <div class="card-content">
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>District</th>

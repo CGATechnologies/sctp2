@@ -16,6 +16,7 @@
         <div class="card-content">
             <form action="">
                 {{ csrf(_csrf) }}
+
                 <div class="define-period is-input">
                     <div class="start-month">
                         <label for="">Start Month</label>

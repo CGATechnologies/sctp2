@@ -30,26 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.mis.transfers.topups;
 
-import java.time.LocalDateTime;
+import org.cga.sctp.mis.core.SecuredBaseController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-public interface TransferSessionDetailView {
-    Long getId();
-
-    Long getProgramId();
-
-    String getProgramName();
-
-    //Long totalHouseholds();
-
-    Integer getNumOfDistricts();
-
-    // Long totalAmountCalculated();
-
-    // String initiatedBy();
-
-    String getStatus();
-
-    LocalDateTime getCreatedAt();
+@Controller
+@RequestMapping("/transfers/topups")
+public class TransferTopUpsController extends SecuredBaseController {
+    // TODO: Implement me!
 }

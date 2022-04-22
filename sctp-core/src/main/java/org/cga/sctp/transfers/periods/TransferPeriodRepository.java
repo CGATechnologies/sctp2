@@ -30,26 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.periods;
 
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TransferSessionDetailView {
-    Long getId();
-
-    Long getProgramId();
-
-    String getProgramName();
-
-    //Long totalHouseholds();
-
-    Integer getNumOfDistricts();
-
-    // Long totalAmountCalculated();
-
-    // String initiatedBy();
-
-    String getStatus();
-
-    LocalDateTime getCreatedAt();
+public interface TransferPeriodRepository extends JpaRepository<TransferPeriod, Long> {
 }

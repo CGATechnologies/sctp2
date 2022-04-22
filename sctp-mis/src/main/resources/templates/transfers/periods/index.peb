@@ -1,0 +1,64 @@
+    {% import "../../utils/form" %}
+        {% extends "../base" %}
+        {% block title %}
+        {{ parent() }} - Transfer Periods / Terms
+        {% endblock %}
+        {% set canCreate = hasRole("ADMINISTRATOR") %}
+        {% set canModify = hasRole("ADMINISTRATOR") %}
+        {% block contextMenu %}
+            {% if canCreate  %}
+            <div class="container context-nav-container">
+                <div class="buttons is-right">
+                    <a href="{{ href('/transfers/periods/open-new') }}" class="button is-primary">Open New Transfer Period</a>
+                    <a href="{{ href('/transfers/agencies/assign') }}" class="button is-primary">Assign Transfer Agency</a>
+                </div>
+            </div>
+            {% endif %}
+        {% endblock %}
+
+    {% block content %}
+    <div class="container">
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">Transfer Periods</p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <table class="table is-narrow is-striped is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>District</th>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Transfer Agency</th>
+                            <th>Method</th>
+                            <th>No Of Households</th>
+                            <th>Amount</th>
+                            <th>Arrears</th>
+                            <th>Open?</th>
+                            <th width="20%">Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in transferPeriods %}
+                            <tr>
+                                <th>{{ p.name }}</th>
+                                <th>{{ p.districtName }}</th>
+                                <th>{{ p.startDate }}</th>
+                                <th>{{ p.endDate }}</th>
+                                <th>{{ p.transferAgencyName }}</th>
+                                <th>{{ p.transferMethod }}</th>
+                                <th>{{ p.numHouseholds }}</th>
+                                <th>{{ p.totalDisbursed }}</th>
+                                <th>{{ p.totalArrears }}</th>
+                                <th>{{ p.active }}</th>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

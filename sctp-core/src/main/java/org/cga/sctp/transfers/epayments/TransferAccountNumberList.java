@@ -30,26 +30,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.epayments;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-public interface TransferSessionDetailView {
-    Long getId();
+public class TransferAccountNumberList {
+    private List<HouseholdAccountNumber> accountNumberList;
 
-    Long getProgramId();
+    public List<HouseholdAccountNumber> getAccountNumberList() {
+        return accountNumberList;
+    }
 
-    String getProgramName();
+    public void setAccountNumberList(List<HouseholdAccountNumber> accountNumberList) {
+        this.accountNumberList = accountNumberList;
+    }
 
-    //Long totalHouseholds();
+    public static class HouseholdAccountNumber {
+        private Long householdId;
+        private Long transferPeriodId;
+        private String accountNumber;
+        private String description;
 
-    Integer getNumOfDistricts();
+        public Long getHouseholdId() {
+            return householdId;
+        }
 
-    // Long totalAmountCalculated();
+        public void setHouseholdId(Long householdId) {
+            this.householdId = householdId;
+        }
 
-    // String initiatedBy();
+        public Long getTransferPeriodId() {
+            return transferPeriodId;
+        }
 
-    String getStatus();
+        public void setTransferPeriodId(Long transferPeriodId) {
+            this.transferPeriodId = transferPeriodId;
+        }
 
-    LocalDateTime getCreatedAt();
+        public String getAccountNumber() {
+            return accountNumber;
+        }
+
+        public void setAccountNumber(String accountNumber) {
+            this.accountNumber = accountNumber;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
 }

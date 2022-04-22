@@ -38,7 +38,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.cga.sctp.api.core.IncludeGeneralResponses;
-import org.cga.sctp.api.targeting.community.PreEligibilityVerificationSessionResponse;
 import org.cga.sctp.api.user.ApiUserDetails;
 import org.cga.sctp.transfers.Transfer;
 import org.cga.sctp.transfers.TransferService;
@@ -46,7 +45,9 @@ import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static java.util.Collections.singletonMap;
@@ -54,6 +55,8 @@ import static java.util.Collections.singletonMap;
 @RestController
 @RequestMapping("/transfers")
 public class TransfersController {
+
+    private final int PAGE_SIZE = 100;
 
     @Autowired
     private TransferService transferService;
@@ -65,13 +68,15 @@ public class TransfersController {
     })
     @IncludeGeneralResponses
     public ResponseEntity<?> getTransferListForLocation(@AuthenticatedUserDetails ApiUserDetails user,
+                                                        @RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
                                                         @RequestParam(value = "village-cluster-code", required = false, defaultValue = "0") Long villageCluster,
                                                         @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
                                                         @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
 
+        Pageable pageable = Pageable.ofSize(PAGE_SIZE).withPage(page);
         long districtCode = user.getAccessTokenClaims().getDistrictCode().longValue();
-        Page<Transfer> transferListSummary = transferService.fetchPendingTransferListByLocation(districtCode, taCode, villageCluster, zone, village);
+        Page<Transfer> transferListSummary = transferService.fetchPendingTransferListByLocation(districtCode, taCode, villageCluster, zone, village, pageable);
         return ResponseEntity.ok(new TransferListResponse(transferListSummary));
     }
 
@@ -91,7 +96,7 @@ public class TransfersController {
     })
     @IncludeGeneralResponses
     public ResponseEntity<Object> postUploadTransfers(@AuthenticatedUserDetails ApiUserDetails user,
-                                                      @RequestBody TransferReconciliationRequest request) {
+                                                      @Validated @RequestBody TransferReconciliationRequest request) {
         // TODO: publish general event here about transfer being updated
         int noUpdated = transferService.performManualTransfers(request, user.getUserId());
         // TODO: better response structure...

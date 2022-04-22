@@ -54,9 +54,6 @@ public class Transfer {
     private Long transferSessionId;
 
     @Column
-    private Long enrollmentSessionId;
-
-    @Column
     @Enumerated(EnumType.ORDINAL)
     private TransferStatus transferState;
 
@@ -216,14 +213,6 @@ public class Transfer {
 
     public void setTransferSessionId(Long transferSessionId) {
         this.transferSessionId = transferSessionId;
-    }
-
-    public Long getEnrollmentSessionId() {
-        return enrollmentSessionId;
-    }
-
-    public void setEnrollmentSessionId(Long enrollmentSessionId) {
-        this.enrollmentSessionId = enrollmentSessionId;
     }
 
     public TransferStatus getTransferState() {

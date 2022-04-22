@@ -32,11 +32,30 @@
 
 package org.cga.sctp.mis.transfers;
 
+import org.cga.sctp.mis.core.SecuredBaseController;
+import org.cga.sctp.transfers.Transfer;
+import org.cga.sctp.transfers.TransferService;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/transfers/admin")
-public class TransfersController {
+@RequestMapping("/transfers/index")
+public class TransfersController extends SecuredBaseController {
+
+    @Autowired
+    private TransferService transferService;
+
+    @GetMapping
+    @AdminAndStandardAccessOnly
+    public ModelAndView listTransfers() {
+        Page<Transfer> transferList = transferService.getTransfersRepository().findAll(Pageable.ofSize(10));
+        return view("/transfers/index")
+                .addObject("transfers", transferList);
+    }
 }

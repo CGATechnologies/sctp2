@@ -30,26 +30,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.mis.transfers;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
-public interface TransferSessionDetailView {
-    Long getId();
+public class InitiateTransferForm {
+    @NotNull
+    private Long programId;
 
-    Long getProgramId();
+    // TODO: Should this be optional?
+    private Long enrollmentSessionId;
 
-    String getProgramName();
+    @NotNull
+    private Long districtId;
 
-    //Long totalHouseholds();
+    private boolean applySchoolBonusParameter = true;
 
-    Integer getNumOfDistricts();
+    private boolean applySchoolIncentiveParameter = true;
 
-    // Long totalAmountCalculated();
+    public Long getProgramId() {
+        return programId;
+    }
 
-    // String initiatedBy();
+    public void setProgramId(Long programId) {
+        this.programId = programId;
+    }
 
-    String getStatus();
+    public Long getEnrollmentSessionId() {
+        return enrollmentSessionId;
+    }
 
-    LocalDateTime getCreatedAt();
+    public void setEnrollmentSessionId(Long enrollmentSessionId) {
+        this.enrollmentSessionId = enrollmentSessionId;
+    }
+
+    public Long getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
+    }
+
+    public boolean isApplySchoolBonusParameter() {
+        return applySchoolBonusParameter;
+    }
+
+    public void setApplySchoolBonusParameter(boolean applySchoolBonusParameter) {
+        this.applySchoolBonusParameter = applySchoolBonusParameter;
+    }
+
+    public boolean isApplySchoolIncentiveParameter() {
+        return applySchoolIncentiveParameter;
+    }
+
+    public void setApplySchoolIncentiveParameter(boolean applySchoolIncentiveParameter) {
+        this.applySchoolIncentiveParameter = applySchoolIncentiveParameter;
+    }
 }

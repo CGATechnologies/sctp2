@@ -38,6 +38,8 @@ import org.cga.sctp.program.Program;
 import org.cga.sctp.targeting.CbtStatus;
 import org.cga.sctp.targeting.EnrollmentSessionView;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
+import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
+import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
 import org.springframework.data.domain.Page;
@@ -71,16 +73,13 @@ public interface TransferService {
      * Initiates Transfer Entries for households in the given session coming from a completed/closed enrollment.
      * The Transfer entries are created with default data for amounts, etc...
      *
-     * @param program program under which to initiate the transfers
      * @param location the location transfers will be performed in
-     * @param period the period when the transfers will be done
      * @param transferSession transferSession
-     * @param enrollmentSession enrollmentSession
-     * @param user user who performed activity
+     * @param userId user who performed activity
      */
-    void initiateTransfers(Program program, Location location, TransferPeriod period, TransferSession transferSession, EnrollmentSessionView enrollmentSession, User user);
+    TransferSession initiateTransfers(Location location, TransferSession transferSession, long userId);
 
-    Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village);
+    Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable);
 
     /**
      * Removes a household from transfer with given reason
@@ -130,6 +129,14 @@ public interface TransferService {
      * @return number of transfers successfully closed
      */
     int closeTransfers(List<Transfer> transferList, User user);
+
+
+    /**
+     * Assign account numbers to transfers in a given TransferSession and TransferPeriod
+     * @param transferAccountNumberList
+     * @return
+     */
+    int assignAccountNumbers(TransferSession session, TransferPeriod period, TransferAccountNumberList transferAccountNumberList);
 
     /**
      * Exports transfers list to the given directory

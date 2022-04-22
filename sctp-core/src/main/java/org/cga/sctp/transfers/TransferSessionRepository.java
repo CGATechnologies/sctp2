@@ -42,11 +42,8 @@ public interface TransferSessionRepository extends JpaRepository<TransferSession
     @Query(nativeQuery = true, value = """
             SELECT 
               pg.name as programName,
-              es.id as enrolmentSessionId,
-              trs.* 
-            FROM transfers_sessions trs
-            INNER JOIN enrollment_sessions es ON es.id = trs.enrollment_session_id
-            INNER JOIN targeting_sessions ts ON ts.id = es.target_session_id
+              ts.* 
+            FROM transfers_sessions ts
             INNER JOIN programs pg ON pg.id = ts.program_id
             LIMIT :page , :pageSize ;
             """)

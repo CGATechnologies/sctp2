@@ -30,37 +30,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.mis.transfers.periods;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
-@Entity
-@Table(name="transfers_sessions")
-public class TransferSession {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class TransferPeriodForm {
+    @NotEmpty
+    private String name;
 
-    @Column
+    @NotNull
+    private Long transferSessionId;
+
+    @NotNull
     private Long programId;
 
-    @Column
-    private Boolean active;
+    @NotNull
+    private Long locationId;
 
-    @Column
-    private LocalDateTime createdAt;
+    @NotNull
+    private Long transferAgencyId;
 
-    @Column
-    private LocalDateTime modifiedAt;
+    @NotNull
+    private LocalDate startDate;
 
-    public Long getId() {
-        return id;
+    @NotNull
+    private LocalDate endDate;
+
+
+    public String getName() {
+        return name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getTransferSessionId() {
+        return transferSessionId;
+    }
+
+    public void setTransferSessionId(Long transferSessionId) {
+        this.transferSessionId = transferSessionId;
     }
 
     public Long getProgramId() {
@@ -71,27 +84,35 @@ public class TransferSession {
         this.programId = programId;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Long getLocationId() {
+        return locationId;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Long getTransferAgencyId() {
+        return transferAgencyId;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setTransferAgencyId(Long transferAgencyId) {
+        this.transferAgencyId = transferAgencyId;
     }
 
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }
