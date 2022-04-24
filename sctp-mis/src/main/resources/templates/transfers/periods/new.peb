@@ -1,49 +1,127 @@
 {% extends "../base" %}
-{% import "../utils/form" %}
+{% import "../../utils/form" %}
 {% block contextMenu %}
 <div class="container context-nav-container">
     <div class="buttons is-right">
-        <a href="{{ href('calculation/new') }}" class="button is-primary">New Cash Transfer Amount Calculation</a>
+    {# TODO: Add context menu/actions here... #}
     </div>
 </div>
 {% endblock %}
 {% block content %}
 <div class="content-container">
-    <div class="card card-default">
+    <div class="card">
         <div class="card-header">
-            <div class="card-title">Define Transfer Period</div>
+            <div class="column">
+                <h2 class="title">Create a Transfer Period</h2>
+            </div>
         </div>
         <div class="card-content">
-            <form action="">
-                {{ csrf(_csrf) }}
-
-                <div class="program">
-
-                </div>
-                <div class="location summary">
-
-                </div>
-                <div class="transfer-agency">
-
-                </div>
-                <div class="define-period is-input">
-                    <div class="start-month">
-                        <label for="">Start Month</label>
-                        <div class="field">
-                            <input type="text" name="startMonth" id="endMonth" class="control"/>
+            <div class="columns">
+                <div class="column is-one-third">
+                    <div class="transfer-agency">
+                        <label class="label">Transfer Agency</label>
+                        <span>{{ transferAgency.name }}</span>
+                        <div class="block">
+                            <a href="" class="is-size-7">Select different Agency</a>
                         </div>
                     </div>
-                    <div class="end-month">
-                        <label for="">End Month</label>
-                        <div class="field">
-                            <input type="text" name="endMonth" id="endMonth" class="control"/>
+                    <div class="district location">
+                        <label class="label">District</label>
+                        <span>{{ location.name }}</span>
+                        <div class="block">
+                            <a href="" class="is-size-7">Select different District</a>
                         </div>
                     </div>
-                    <div class="create-transfer-period">
-                        <button>Open New Transfer Period</button>
+                    <div class="district location">
+                        <label class="label">Program</label>
+                        <span>{{ program.name }}</span>
                     </div>
                 </div>
-            </form>
+                <div class="column">
+                    <h3 class="subtitle">Transfer Period Parameters</h3>
+                    <div class="columns">
+                        <div class="column is-half">
+                            <div class="last-period">
+                                <label for="" class="label">Last Transfer Period Ended</label>
+                                <span>{{ lastPeriod.endDate }}</span>
+                            </div>
+                        </div>
+                        <div class="column is-half">
+                            <div class="field">
+                                <label for="" class="label">Number of Months in New Period</label>
+                                <div class="control">
+                                    <input type="number" value="1" class="input is-numeric" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="period-parameters">
+                        <div class="new-transfer-period-params has-text-centered">
+                            <div class="month-preview">
+                                <table class="table is-full-width is-striped">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Jan</th>
+                                        <th>Feb</th>
+                                        <th>Mar</th>
+                                        <th>Apr</th>
+                                        <th>May</th>
+                                        <th>Jun</th>
+                                        <th>Jul</th>
+                                        <th>Aug</th>
+                                        <th>Sep</th>
+                                        <th>Oct</th>
+                                        <th>Nov</th>
+                                        <th>Dec</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>2022</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                        <td>&times;</td>
+                                    </tr>
+                                    </tbody>
+                                    <tr class=""></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="buttons is-right">
+                    <button class="button is-default">&lt;&lt; Cancel</button>
+                    <button class="button is-success">Open Transfer Period &gt;&gt;</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
