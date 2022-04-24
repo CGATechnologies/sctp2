@@ -54,7 +54,7 @@ public class Transfer {
     private Long transferSessionId;
 
     @Column
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = TransferStatus.Converter.class)
     private TransferStatus transferState;
 
     @Column

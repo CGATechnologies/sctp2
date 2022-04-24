@@ -34,6 +34,8 @@ package org.cga.sctp.transfers.agencies;
 
 import org.cga.sctp.location.Location;
 
+import java.util.Optional;
+
 public interface TransferAgencyService {
     /**
      * Assign a transfer agency to a location
@@ -46,4 +48,6 @@ public interface TransferAgencyService {
                                           Location location,
                                           TransferMethod transferMethod,
                                           Long assignedBy) throws TransferAgencyAlreadyAssignedException;
+
+    Optional<TransferAgency> findById(Long transferAgencyId);
 }

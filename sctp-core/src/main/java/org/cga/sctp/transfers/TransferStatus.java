@@ -34,6 +34,8 @@ package org.cga.sctp.transfers;
 
 import org.cga.sctp.targeting.importation.parameters.UbrParameterValue;
 
+import javax.persistence.AttributeConverter;
+
 /**
  * Indicates status of a  Transfer event.
  */
@@ -70,5 +72,33 @@ public enum TransferStatus implements UbrParameterValue {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public static TransferStatus valueOf(int code) {
+        for (TransferStatus status : values()) {
+            if (status.code == code) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Code " + code + " not found in " + TransferStatus.class.getCanonicalName());
+    }
+
+    @javax.persistence.Converter(autoApply = true)
+    public static class Converter implements AttributeConverter<TransferStatus, Integer> {
+        @Override
+        public Integer convertToDatabaseColumn(TransferStatus attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            return attribute.code;
+        }
+
+        @Override
+        public TransferStatus convertToEntityAttribute(Integer dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            return TransferStatus.valueOf(dbData);
+        }
     }
 }

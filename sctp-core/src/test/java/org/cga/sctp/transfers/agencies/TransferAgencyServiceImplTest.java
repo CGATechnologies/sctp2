@@ -30,52 +30,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.periods;
+package org.cga.sctp.transfers.agencies;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Entity
-@Table(name = "transfer_periods")
-public class TransferPeriod {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Column
-    private long programId;
+@SpringBootTest
+class TransferAgencyServiceImplTest {
+    @Autowired
+    private TransferAgenciesRepository transferAgenciesRepository;
 
-    @Column
-    private long transferAgencyId;
+    @Test
+    public void testCanCreateAgency() {
 
-    @Column
-    private LocalDate startDate;
+    }
 
-    @Column
-    private LocalDate endDate;
-
-    @Column
-    private String name;
-
-    @Column
-    private String description;
-
-    @Column
-    private Long bonusPrimary;
-
-    @Column
-    private Long bonusSecondary;
-
-    @Column
-    private boolean closed;
-
-    @Column
-    private long createdBy;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
 }

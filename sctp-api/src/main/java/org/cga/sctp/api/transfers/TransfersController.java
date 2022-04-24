@@ -50,6 +50,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static java.util.Collections.singletonMap;
 
 @RestController
@@ -61,7 +63,7 @@ public class TransfersController {
     @Autowired
     private TransferService transferService;
 
-    @GetMapping("/pending")
+    @GetMapping
     @Operation(description = "Retrieves Transfer List for the given Geolocation. Does not include full household detail")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TransferListResponse.class)))
@@ -76,8 +78,27 @@ public class TransfersController {
 
         Pageable pageable = Pageable.ofSize(PAGE_SIZE).withPage(page);
         long districtCode = user.getAccessTokenClaims().getDistrictCode().longValue();
-        Page<Transfer> transferListSummary = transferService.fetchPendingTransferListByLocation(districtCode, taCode, villageCluster, zone, village, pageable);
-        return ResponseEntity.ok(new TransferListResponse(transferListSummary));
+        List<Transfer> transferListSummary = transferService.fetchTransferList(districtCode, taCode, villageCluster, zone, village, pageable);
+        return ResponseEntity.ok(new TransferListResponse(page, PAGE_SIZE, transferListSummary.size(), transferListSummary));
+    }
+
+    @GetMapping("/pending")
+    @Operation(description = "Retrieves Transfer List for the given Geolocation. Does not include full household detail")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TransferListResponse.class)))
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> getPendingTransferListForLocation(@AuthenticatedUserDetails ApiUserDetails user,
+                                                        @RequestParam(value = "page", defaultValue = "0") int page,
+                                                        @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
+                                                        @RequestParam(value = "village-cluster-code", required = false, defaultValue = "0") Long villageCluster,
+                                                        @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
+                                                        @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
+
+        Pageable pageable = Pageable.ofSize(PAGE_SIZE).withPage(page);
+        long districtCode = user.getAccessTokenClaims().getDistrictCode().longValue();
+        List<Transfer> transferListSummary = transferService.fetchPendingTransferListByLocation(districtCode, taCode, villageCluster, zone, village, pageable);
+        return ResponseEntity.ok(new TransferListResponse(page, PAGE_SIZE, transferListSummary.size(), transferListSummary));
     }
 
     /**
@@ -86,7 +107,7 @@ public class TransfersController {
      * @return
      */
     @PostMapping
-    @RequestMapping("/manual")
+    @RequestMapping({ "/update", "/perform" })
     @Operation(
             description = "Updates/performs Transfers with amounts disbursed, dates and personnel.  Applies only to manual transfers",
             tags = { "transfers", "manual-transfers" })
@@ -95,12 +116,12 @@ public class TransfersController {
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     @IncludeGeneralResponses
-    public ResponseEntity<Object> postUploadTransfers(@AuthenticatedUserDetails ApiUserDetails user,
+    public ResponseEntity<Object> postUpdateTransfers(@AuthenticatedUserDetails ApiUserDetails user,
                                                       @Validated @RequestBody TransferReconciliationRequest request) {
         // TODO: publish general event here about transfer being updated
         int noUpdated = transferService.performManualTransfers(request, user.getUserId());
         // TODO: better response structure...
-        return ResponseEntity.ok(singletonMap("message", String.format("Updated %i Transfer records", noUpdated)));
+        return ResponseEntity.ok(singletonMap("message", String.format("Updated %s Transfer records", noUpdated)));
     }
 
     @GetMapping

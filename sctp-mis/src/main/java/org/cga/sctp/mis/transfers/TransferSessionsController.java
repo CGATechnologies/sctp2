@@ -165,10 +165,11 @@ public class TransferSessionsController extends BaseController  {
         Program program = programService.getProgramById(form.getProgramId());
         Location location = locationService.findById(form.getDistrictId());
 
-        transferService.initiateTransfers(location, transferSession,  user.id());
+//        transferService.initiateTransfers(location, transferSession,  user.id());
 
-        setSuccessFlashMessage("New Transfer Session initiated successfully from enrolled households", attributes);
-        return redirect(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()));
+//        setSuccessFlashMessage("New Transfer Session initiated successfully from enrolled households", attributes);
+//        return redirect(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()));
+        return redirect(format("/transfers/initiate/step2?program=%s&district=%s", program.getId(), location.getId()));
     }
 
     @GetMapping("/{session-id}/pre-calculation")
@@ -200,7 +201,6 @@ public class TransferSessionsController extends BaseController  {
                 .addObject("pageData", pageData)
                 .addObject("objectMapper", objectMapper); // for serializing data to JSON in the template
     }
-
 
     // TODO: implement
     @GetMapping("/initiate/step2")

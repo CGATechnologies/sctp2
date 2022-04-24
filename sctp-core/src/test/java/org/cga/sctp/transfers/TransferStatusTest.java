@@ -30,52 +30,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.periods;
+package org.cga.sctp.transfers;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
 
-@Entity
-@Table(name = "transfer_periods")
-public class TransferPeriod {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Column
-    private long programId;
+class TransferStatusTest {
 
-    @Column
-    private long transferAgencyId;
+    @Test
+    public void testConverterCanConvertToStatus() {
+        TransferStatus.Converter converter = new TransferStatus.Converter();
 
-    @Column
-    private LocalDate startDate;
+        assertEquals(TransferStatus.OPEN, converter.convertToEntityAttribute(19));
+        assertEquals(TransferStatus.PRE_CLOSE, converter.convertToEntityAttribute(20));
+        assertEquals(TransferStatus.CLOSED, converter.convertToEntityAttribute(21));
+    }
 
-    @Column
-    private LocalDate endDate;
+    @Test
+    public void testConverterCanConvertFromStatus() {
+        TransferStatus.Converter converter = new TransferStatus.Converter();
 
-    @Column
-    private String name;
+        assertEquals(19, converter.convertToDatabaseColumn(TransferStatus.OPEN));
+        assertEquals(20, converter.convertToDatabaseColumn(TransferStatus.PRE_CLOSE));
+        assertEquals(21, converter.convertToDatabaseColumn(TransferStatus.CLOSED));
+    }
 
-    @Column
-    private String description;
-
-    @Column
-    private Long bonusPrimary;
-
-    @Column
-    private Long bonusSecondary;
-
-    @Column
-    private boolean closed;
-
-    @Column
-    private long createdBy;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
 }

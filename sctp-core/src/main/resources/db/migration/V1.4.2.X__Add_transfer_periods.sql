@@ -12,6 +12,7 @@ CREATE TABLE transfer_periods (
     bonus_primary bigint,
     bonus_secondary bigint,
     opened_by bigint not null comment 'User who opened the transfer period',
+    closed int(1) comment 'Whether the Transfer Period is open or closed',
     created_at timestamp,
     updated_at timestamp
 );

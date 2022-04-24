@@ -34,15 +34,12 @@ package org.cga.sctp.transfers;
 
 import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.location.Location;
-import org.cga.sctp.program.Program;
 import org.cga.sctp.targeting.CbtStatus;
-import org.cga.sctp.targeting.EnrollmentSessionView;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
 import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.nio.file.Path;
@@ -79,7 +76,7 @@ public interface TransferService {
      */
     TransferSession initiateTransfers(Location location, TransferSession transferSession, long userId);
 
-    Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable);
+    List<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable);
 
     /**
      * Removes a household from transfer with given reason
@@ -145,4 +142,6 @@ public interface TransferService {
      * @throws Exception any error that occurs during the process
      */
     void exportTransferList(TransferPeriod transferPeriod, Path destinationPath) throws Exception;
+
+    List<Transfer> fetchTransferList(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable);
 }

@@ -33,53 +33,82 @@
 package org.cga.sctp.mis.transfers.periods;
 
 import org.cga.sctp.mis.core.BaseController;
+import org.cga.sctp.transfers.agencies.TransferAgency;
+import org.cga.sctp.transfers.agencies.TransferAgencyService;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.periods.TransferPeriodRepository;
+import org.cga.sctp.transfers.periods.TransferPeriodService;
 import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.cga.sctp.user.AuthenticatedUser;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/transfers/periods")
 public class TransferPeriodController extends BaseController {
+    @Autowired
+    private TransferAgencyService transferAgencyService;
 
     @Autowired
-    private TransferPeriodRepository transferPeriodRepository;
+    private TransferPeriodService transferPeriodService;
 
-    @GetMapping("/all")
+    @GetMapping
     @AdminAndStandardAccessOnly
     public ModelAndView index() {
-        List<TransferPeriod> transferPeriodList = transferPeriodRepository.findAll();
+        List<TransferPeriod> transferPeriodList = transferPeriodService.findAll();
         return view("/transfers/periods/index")
                 .addObject("transferPeriods", transferPeriodList);
     }
 
     @GetMapping("/open-new")
     @AdminAndStandardAccessOnly
-    public ModelAndView viewCreateTransferPeriod() {
-        return view("/transfers/periods/new");
+    public ModelAndView viewCreateTransferPeriod(@RequestParam("transfer-agency-id") Long transferAgencyId) {
+        Optional<TransferAgency> transferAgency = transferAgencyService.findById(transferAgencyId);
+        if (transferAgency.isEmpty()) {
+            return redirect("/transfers/periods");
+        }
+        return view("/transfers/periods/new")
+                .addObject("transferAgency", transferAgency.get());
     }
 
     @PostMapping("/open-new")
     @AdminAndStandardAccessOnly
     public ModelAndView handleCreateTransferPeriod(@AuthenticatedUserDetails AuthenticatedUser user,
+                                                   @RequestParam("agency") Long transferAgencyId,
                                                    @Validated @ModelAttribute TransferPeriodForm form,
                                                    RedirectAttributes attributes) {
-        long id = -1;// transfer period ID
+
+
+        TransferPeriod newPeriod = new TransferPeriod();
+
+        newPeriod.setTransferAgencyId(form.getTransferAgencyId());
+        newPeriod.setStartDate(form.getStartDate());
+        newPeriod.setEndDate(form.getEndDate());
+        //   TODO:
+//        newPeriod.setTransferSessionId(form.getTransferSessionId());
+//        newPeriod.setLocationId(form.getLocationId());
+        newPeriod.setName(form.getName());
+        newPeriod.setProgramId(form.getProgramId());
+
+        transferPeriodService.openNewPeriod(newPeriod);
+
         // TODO: Create a new transfer period for the enrolled households in the enrollment session
         // Check if the transfer period is valid (start to end dates)
         // Check if we don't have another period already running
         // Check if the program is allowed to have a new period
         // Check if the households
-        return redirect(String.format("/transfers/periods/%d", id));
+        return redirect(String.format("/transfers/periods/%d", newPeriod.getId()));
+    }
+
+    @GetMapping("/close")
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewCloseTransferPeriod() {
+        return view("/transfers/periods/close");
     }
 }

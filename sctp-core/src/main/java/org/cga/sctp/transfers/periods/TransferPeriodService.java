@@ -32,50 +32,39 @@
 
 package org.cga.sctp.transfers.periods;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Entity
-@Table(name = "transfer_periods")
-public class TransferPeriod {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+import java.util.List;
 
-    @Column
-    private long programId;
+@Service
+public class TransferPeriodService {
+    @Autowired
+    private TransferPeriodRepository transferPeriodRepository;
 
-    @Column
-    private long transferAgencyId;
+    /**
+     * Creates a new transfer period if possible.
+     *
+     * The following preconditions must be met:
+     *
+     * * Transfer Agency must be assigned to the location the period is being created
+     * * Previously opened periods must be closed before this one can be created.
+     * * The Period must have start date after the end date of the previous period
+     *
+     * @param newPeriod
+     * @return
+     */
+    public TransferPeriod openNewPeriod(TransferPeriod newPeriod) {
+        // TODO: check preconditions
+        return transferPeriodRepository.save(newPeriod);
+    }
 
-    @Column
-    private LocalDate startDate;
+    public List<TransferPeriod> findAll() {
+        return transferPeriodRepository.findAll();
+    }
 
-    @Column
-    private LocalDate endDate;
-
-    @Column
-    private String name;
-
-    @Column
-    private String description;
-
-    @Column
-    private Long bonusPrimary;
-
-    @Column
-    private Long bonusSecondary;
-
-    @Column
-    private boolean closed;
-
-    @Column
-    private long createdBy;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
+    public List<TransferPeriod> findAllOpen() {
+        // TODO: implement me
+        throw new UnsupportedOperationException("not yet implemented");
+    }
 }

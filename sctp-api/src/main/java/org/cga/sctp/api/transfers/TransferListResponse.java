@@ -36,8 +36,14 @@ import org.cga.sctp.api.core.pagination.PagedResponse;
 import org.cga.sctp.transfers.Transfer;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public class TransferListResponse extends PagedResponse<Transfer> {
     public TransferListResponse(Page<Transfer> page) {
         super(page);
+    }
+
+    public TransferListResponse(int page, int totalItems, int totalPages, List<Transfer> items) {
+        super(page, totalItems, totalPages, items);
     }
 }

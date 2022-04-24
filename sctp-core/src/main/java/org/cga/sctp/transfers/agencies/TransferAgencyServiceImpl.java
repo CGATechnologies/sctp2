@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransferAgencyServiceImpl implements TransferAgencyService {
@@ -103,5 +104,10 @@ public class TransferAgencyServiceImpl implements TransferAgencyService {
         agencyAssignment.setModifiedAt(agencyAssignment.getCreatedAt());
 
         return transferAgencyAssignmentRepository.save(agencyAssignment);
+    }
+
+    @Override
+    public Optional<TransferAgency> findById(Long transferAgencyId) {
+        return transferAgenciesRepository.findById(transferAgencyId);
     }
 }

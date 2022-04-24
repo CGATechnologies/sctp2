@@ -108,21 +108,53 @@ public interface TransfersRepository extends JpaRepository<Transfer, Long> {
             LEFT JOIN locations l4 ON l4.code = h.cluster_code
             LEFT JOIN locations l5 ON l5.code = h.village_code
             LEFT JOIN individuals i ON i.household_id = h.household_id AND i.relationship_to_head = 1
-            LEFT JOIN individuals i2 ON i2.id = t.receiver_id
-            WHERE t.status = :transferStatusCode
+            LEFT JOIN individuals i2 ON i2.id = t.recipient_id
+            ;
+            """)
+    /*
+                WHERE t.status = :transferStatusCode
               AND (  l.code = :districtCode
                 AND l2.code = :taCode
                 AND l3.code = :clusterCode
                 AND l4.code = :zoneCode
                 AND l5.code = :villageCode )
-              LIMIT :page.pageNumber, :page.pageSize
-            ;
-            """)
-    Page<Transfer> findAllByStatusByLocationToVillageLevel(@Param("transferStatusCode") int transferStatusCode,
+              LIMIT :pageNumber, :pageSize
+     */
+    List<Transfer> findAllByStatusByLocationToVillageLevel(@Param("transferStatusCode") int transferStatusCode,
                                                            @Param("districtCode") long districtCode,
                                                            @Param("taCode") Long taCode,
                                                            @Param("clusterCode") Long clusterCode,
                                                            @Param("zoneCode") Long zoneCode,
                                                            @Param("villageCode") Long villageCode,
-                                                           Pageable page);
+                                                           @Param("pageNumber") int pageNumber,
+                                                           @Param("pageSize") int pageSize);
+
+
+    @Query(nativeQuery = true, value = """
+            SELECT t.*
+            FROM transfers t
+            INNER JOIN households h ON h.household_id = t.household_id
+            LEFT JOIN locations l ON l.code = h.location_code
+            LEFT JOIN locations l2 ON l2.code = h.ta_code
+            LEFT JOIN locations l3 ON l3.code = h.zone_code
+            LEFT JOIN locations l4 ON l4.code = h.cluster_code
+            LEFT JOIN locations l5 ON l5.code = h.village_code
+            LEFT JOIN individuals i ON i.household_id = h.household_id AND i.relationship_to_head = 1
+            LEFT JOIN individuals i2 ON i2.id = t.recipient_id
+            WHERE (  l.code = :districtCode
+                  AND l2.code = :taCode
+                  AND l3.code = :clusterCode
+                  AND l4.code = :zoneCode
+                  AND l5.code = :villageCode )
+                LIMIT :pageNumber, :pageSize ;
+            """)
+    List<Transfer> findAllByLocationToVillageLevel(@Param("districtCode") long districtCode,
+                                                   @Param("taCode") Long taCode,
+                                                   @Param("clusterCode") Long clusterCode,
+                                                   @Param("zoneCode") Long zoneCode,
+                                                   @Param("villageCode") Long villageCode,
+                                                   @Param("pageNumber") int pageNumber,
+                                                   @Param("pageSize") int pageSize);
+
+
 }

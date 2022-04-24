@@ -35,15 +35,12 @@ package org.cga.sctp.transfers;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.location.Location;
-import org.cga.sctp.program.Program;
-import org.cga.sctp.targeting.EnrollmentSessionView;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
 import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +92,20 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public Page<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable) {
+    public List<Transfer> fetchTransferList(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable) {
+        return transfersRepository.findAllByLocationToVillageLevel(
+                districtCode,
+                taCode,
+                villageCluster,
+                zone,
+                village,
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+    }
+
+    @Override
+    public List<Transfer> fetchPendingTransferListByLocation(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable) {
         return transfersRepository.findAllByStatusByLocationToVillageLevel(
                 TransferStatus.OPEN.getCode(),
                 districtCode,
@@ -103,7 +113,8 @@ public class TransferServiceImpl implements TransferService {
                 villageCluster,
                 zone,
                 village,
-                pageable
+                pageable.getPageNumber(),
+                pageable.getPageSize()
         );
     }
 

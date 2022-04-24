@@ -17,6 +17,15 @@
             <form action="">
                 {{ csrf(_csrf) }}
 
+                <div class="program">
+
+                </div>
+                <div class="location summary">
+
+                </div>
+                <div class="transfer-agency">
+
+                </div>
                 <div class="define-period is-input">
                     <div class="start-month">
                         <label for="">Start Month</label>
@@ -30,11 +39,8 @@
                             <input type="text" name="endMonth" id="endMonth" class="control"/>
                         </div>
                     </div>
-                    <div class="preview-period">
-
-                    </div>
                     <div class="create-transfer-period">
-                        <button>Create Transfer Period</button>
+                        <button>Open New Transfer Period</button>
                     </div>
                 </div>
             </form>

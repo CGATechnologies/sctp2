@@ -30,52 +30,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.periods;
+package org.cga.sctp;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "transfer_periods")
-public class TransferPeriod {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-    @Column
-    private long programId;
+@SpringBootTest
+public class SctpCodeTests {
 
-    @Column
-    private long transferAgencyId;
+    @Test
+    public void contextLoads() {
 
-    @Column
-    private LocalDate startDate;
-
-    @Column
-    private LocalDate endDate;
-
-    @Column
-    private String name;
-
-    @Column
-    private String description;
-
-    @Column
-    private Long bonusPrimary;
-
-    @Column
-    private Long bonusSecondary;
-
-    @Column
-    private boolean closed;
-
-    @Column
-    private long createdBy;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
+    }
 }
