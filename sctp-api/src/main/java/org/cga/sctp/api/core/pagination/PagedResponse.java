@@ -54,7 +54,7 @@ public class PagedResponse<T> {
         this.items = page.toList();
     }
 
-    public PagedResponse(int page, int totalItems, int totalPages, List<T> items) {
+    public PagedResponse(int page, long totalItems, int totalPages, List<T> items) {
         this.page = page;
         this.totalItems = totalItems;
         this.totalPages = totalPages;

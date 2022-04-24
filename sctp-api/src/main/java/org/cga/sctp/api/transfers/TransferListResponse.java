@@ -43,7 +43,7 @@ public class TransferListResponse extends PagedResponse<Transfer> {
         super(page);
     }
 
-    public TransferListResponse(int page, int totalItems, int totalPages, List<Transfer> items) {
+    public TransferListResponse(int page, long totalItems, int totalPages, List<Transfer> items) {
         super(page, totalItems, totalPages, items);
     }
 }
