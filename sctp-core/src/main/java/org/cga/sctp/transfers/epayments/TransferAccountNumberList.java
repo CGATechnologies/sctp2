@@ -46,10 +46,19 @@ public class TransferAccountNumberList {
     }
 
     public static class HouseholdAccountNumber {
+        private Long transferId;
         private Long householdId;
         private Long transferPeriodId;
         private String accountNumber;
         private String description;
+
+        public Long getTransferId() {
+            return transferId;
+        }
+
+        public void setTransferId(Long transferId) {
+            this.transferId = transferId;
+        }
 
         public Long getHouseholdId() {
             return householdId;

@@ -42,6 +42,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TransfersRepository extends JpaRepository<Transfer, Long> {
 
@@ -157,4 +158,6 @@ public interface TransfersRepository extends JpaRepository<Transfer, Long> {
                                                    @Param("pageSize") int pageSize);
 
 
+    @Query
+    Optional<Transfer> findByHouseholdIdAndIsOpen(Long householdId);
 }

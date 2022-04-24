@@ -35,22 +35,29 @@ package org.cga.sctp.transfers;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.location.Location;
+import org.cga.sctp.targeting.CbtStatus;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
 import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TransferServiceImpl implements TransferService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransferServiceImpl.class);
 
     @Autowired
     private TransfersRepository transfersRepository;
@@ -140,11 +147,41 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public int performManualTransfers(TransferReconciliationRequest transferUpdates, long userId) {
-        // TODO: Verify each transfer is still 'Open' state
-        // TODO: Verify each household for transfer is not 'Suspended'
-        // TODO: Validate amount for the transfer
-        // TODO: Calculate the arrears for each transfer
-        // TODO:
+        for (TransferReconciliationRequest.TransferReconciliation reconciliation : transferUpdates.getReconciliationList()) {
+            Optional<Transfer> transferOptional = this.transfersRepository.findById(reconciliation.getTransferId());
+            if (transferOptional.isEmpty()) {
+                continue;
+            }
+            // TODO: Validate amount for the transfer
+            Transfer transfer = transferOptional.get();
+            Household household = beneficiaryService.findHouseholdById(transfer.getHouseholdId());
+
+            if (household.getCbtStatus().equals(CbtStatus.NonRecertified)) {
+                // TODO: last transfer they will ever receive, so lock them out somehow
+            }
+            // TODO: Verify each household for transfer is not 'Suspended'
+            if (transfer.getTransferState().equals(TransferStatus.CLOSED)) {
+                LOGGER.warn("Cannot update CLOSED Transfer transfer.id={}", transfer.getId());
+                continue;
+            }
+            if (transfer.getHouseholdId() != reconciliation.getHouseholdId()) {
+                LOGGER.warn("Transfer reconciliation has different household than database record. transfer.householdId={} reconciliation.householdId={}", transfer.getHouseholdId(), reconciliation.getHouseholdId());
+                continue;
+            }
+            if (reconciliation.getAmountTransferred() < 0L) {
+                LOGGER.warn("Transfer reconciliation has invalid amount transfer.id={} reconciliation.amountTransferred={}", transfer.getId(), reconciliation.getAmountTransferred());
+                continue;
+            }
+
+            transfer.setRecipientId(reconciliation.getRecipientId());
+            transfer.setDisbursementDate(reconciliation.getTimestamp().toLocalDateTime());
+            transfer.setAmountDisbursed(reconciliation.getAmountTransferred());
+            transfer.setCollected(true);
+            // TODO: Calculate the arrears for each transfer
+            transfer.setArrearsAmount(transfer.getAmountDisbursed() - transfer.getTotalAmountToTransfer());
+            // TODO: we need to have somewhere else to track arrears?
+            transfer.setDisbursedByUserId(reconciliation.getReconcilingUserId());
+        }
         return 0;
     }
 
@@ -155,7 +192,24 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public int assignAccountNumbers(TransferSession session, TransferPeriod period, TransferAccountNumberList transferAccountNumberList) {
-        throw new UnsupportedOperationException("not yet implemented"); // TODO: implement me
+        // TODO: validate the session, check if the the period is open and check transfer agency for E-Payments which is the valid reason to assign account numbers
+        List<Long> householdsAssigned = new ArrayList<>();
+        for (TransferAccountNumberList.HouseholdAccountNumber hh : transferAccountNumberList.getAccountNumberList()) {
+            transfersRepository.findByHouseholdIdAndIsOpen(hh.getHouseholdId())
+                    .ifPresent(transfer -> {
+                        // TODO: Check if the transfer period matches the period in the request
+                        if (transfer.getTransferPeriodId() != period.getId()) {
+                            transfer.setAccountNumber(hh.getAccountNumber());
+                            transfer.setModifiedAt(LocalDateTime.now());
+                            transfersRepository.save(transfer);
+
+                            householdsAssigned.add(hh.getHouseholdId());
+                        }
+                    });
+        }
+        LoggerFactory.getLogger(getClass()).info("Assigned {} account numbers", householdsAssigned.size());
+        // TODO: return the actual list?
+        return householdsAssigned.size();
     }
 
     @Override

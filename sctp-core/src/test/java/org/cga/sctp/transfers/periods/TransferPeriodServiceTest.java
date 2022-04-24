@@ -30,17 +30,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp;
-
+package org.cga.sctp.transfers.periods;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@SpringBootTest
-public class SctpCodeTests {
+import static org.junit.jupiter.api.Assertions.fail;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class TransferPeriodServiceTest {
 
     @Test
-    public void contextLoads() {
+    void openNewPeriod() {
+        fail("not implemented yet");
+    }
 
+    @Test
+    void findAll() {
+        fail("not implemented yet");
+    }
+
+    @Test
+    void findAllOpen() {
+        fail("not implemented yet");
     }
 }

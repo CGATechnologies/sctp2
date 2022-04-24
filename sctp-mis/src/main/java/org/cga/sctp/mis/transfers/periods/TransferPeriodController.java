@@ -32,6 +32,8 @@
 
 package org.cga.sctp.mis.transfers.periods;
 
+import org.cga.sctp.location.Location;
+import org.cga.sctp.location.LocationService;
 import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.transfers.agencies.TransferAgency;
 import org.cga.sctp.transfers.agencies.TransferAgencyService;
@@ -42,6 +44,7 @@ import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.cga.sctp.user.AuthenticatedUser;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,8 +53,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 
+@Controller
 @RequestMapping("/transfers/periods")
 public class TransferPeriodController extends BaseController {
+    @Autowired
+    private LocationService locationService;
+
     @Autowired
     private TransferAgencyService transferAgencyService;
 
@@ -68,13 +75,25 @@ public class TransferPeriodController extends BaseController {
 
     @GetMapping("/open-new")
     @AdminAndStandardAccessOnly
-    public ModelAndView viewCreateTransferPeriod(@RequestParam("transfer-agency-id") Long transferAgencyId) {
+    public ModelAndView viewCreateTransferPeriod(@RequestParam("transfer-agency-id") Long transferAgencyId,
+                                                 @RequestParam("location-id") Long locationId) {
+
+        // TODO: flash message
+        if (transferAgencyId == null || locationId == null) {
+            return redirect("/transfers/periods");
+        }
+
         Optional<TransferAgency> transferAgency = transferAgencyService.findById(transferAgencyId);
         if (transferAgency.isEmpty()) {
             return redirect("/transfers/periods");
         }
+
+        Location location = locationService.findById(locationId);
+
         return view("/transfers/periods/new")
-                .addObject("transferAgency", transferAgency.get());
+                .addObject("transferAgency", transferAgency.get())
+                .addObject("location", location)
+                .addObject("lastPeriod", null);
     }
 
     @PostMapping("/open-new")

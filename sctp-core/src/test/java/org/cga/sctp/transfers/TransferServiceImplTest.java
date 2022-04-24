@@ -32,54 +32,93 @@
 
 package org.cga.sctp.transfers;
 
+import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
+import org.cga.sctp.transfers.periods.TransferPeriod;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class TransferServiceImplTest {
 
-class TransferServiceIT {
+    @Autowired
+    private TransferServiceImpl transferService;
+
+    @BeforeEach
+    void setUp() {
+    }
+
+    @AfterEach
+    void tearDown() {
+    }
 
     @Test
     void initiateTransfers() {
+        fail("not implemented yet");
+    }
+
+    @Test
+    void fetchTransferList() {
+        fail("not implemented yet");
     }
 
     @Test
     void fetchPendingTransferListByLocation() {
-    }
-
-    @Test
-    void removeHouseholdFromTransfers() {
+        fail("not implemented yet");
     }
 
     @Test
     void reconcileTransfers() {
+        fail("not implemented yet");
     }
 
     @Test
     void updateTransferCalculations() {
+        fail("not implemented yet");
     }
 
     @Test
     void updatePerformedTransfers() {
+        fail("not implemented yet");
     }
 
     @Test
     void performManualTransfers() {
+        TransferSession transferSession = new TransferSession();
+        TransferPeriod transferPeriod = new TransferPeriod();
+        TransferAccountNumberList accountNumberList = new TransferAccountNumberList();
+
+        assertEquals(10, transferService.assignAccountNumbers(transferSession, transferPeriod, accountNumberList));
     }
 
     @Test
     void closeTransfers() {
+        fail("not implemented yet");
+    }
+
+    @Test
+    void assignAccountNumbers() {
+        fail("not implemented yet");
     }
 
     @Test
     void exportTransferList() {
+        fail("not implemented yet");
     }
 
     @Test
     void findAllActiveSessions() {
+        fail("not implemented yet");
     }
 
     @Test
     void findAllHouseholdsInSession() {
+        fail("not implemented yet");
     }
 }

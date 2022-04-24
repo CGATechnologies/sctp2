@@ -71,6 +71,11 @@ public class TransferAgencyServiceImpl implements TransferAgencyService {
         return transferAgenciesRepository.getOne(transferAgencyId);
     }
 
+    @Override
+    public void save(TransferAgency transferAgency) {
+        transferAgenciesRepository.save(transferAgency);
+    }
+
     /**
      * Assign a Transfer Agency to the given Geolocation area.
      * @param transferAgency the agency to assign to the location

@@ -130,7 +130,7 @@ public class Transfer {
 
     /** VARCHAR(50) NULL COMMENT 'Account number assigned for transfer', */
     @Column
-    private Long accountNumber;
+    private String accountNumber;
 
     /** BIGINT DEFAULT 0 COMMENT 'Amount received by the household', */
     @Column
@@ -142,7 +142,7 @@ public class Transfer {
 
     /** DATE COMMENT 'When the amount was disbursed', */
     @Column
-    private Long disbursementDate;
+    private LocalDateTime disbursementDate;
 
     /** BIGINT null COMMENT 'Amount that is pending from this transfer', */
     @Column
@@ -375,11 +375,11 @@ public class Transfer {
         this.receiverId = receiverId;
     }
 
-    public Long getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -399,11 +399,11 @@ public class Transfer {
         isCollected = collected;
     }
 
-    public Long getDisbursementDate() {
+    public LocalDateTime getDisbursementDate() {
         return disbursementDate;
     }
 
-    public void setDisbursementDate(Long disbursementDate) {
+    public void setDisbursementDate(LocalDateTime disbursementDate) {
         this.disbursementDate = disbursementDate;
     }
 
@@ -493,5 +493,10 @@ public class Transfer {
 
     public void setReviewedBy(Long reviewedBy) {
         this.reviewedBy = reviewedBy;
+    }
+
+    // TODO: Make this a property in the database ? or pre-compute
+    public Long getTotalAmountToTransfer() {
+        return this.basicSubsidyAmount + this.secondaryIncentiveAmount + this.primaryIncentiveAmount;
     }
 }

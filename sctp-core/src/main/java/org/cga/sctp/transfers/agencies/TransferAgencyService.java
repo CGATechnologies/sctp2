@@ -34,6 +34,7 @@ package org.cga.sctp.transfers.agencies;
 
 import org.cga.sctp.location.Location;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TransferAgencyService {
@@ -50,4 +51,8 @@ public interface TransferAgencyService {
                                           Long assignedBy) throws TransferAgencyAlreadyAssignedException;
 
     Optional<TransferAgency> findById(Long transferAgencyId);
+
+    void save(TransferAgency transferAgency);
+
+    List<TransferAgency> fetchAllTransferAgencies();
 }

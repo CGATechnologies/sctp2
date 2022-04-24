@@ -40,6 +40,7 @@ public class TransferUpdateDto {
     private Long householdId;
     private Long transferId;
     private Long transferAgencyId;
+    private Long recipientId;
     private Long amountTransferred;
     private Long reconcilingUserId;
     private TransferStatus status;
@@ -99,5 +100,13 @@ public class TransferUpdateDto {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Long getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(Long recipientId) {
+        this.recipientId = recipientId;
     }
 }
