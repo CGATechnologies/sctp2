@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 
 @Service
 public class FileUploadService extends TransactionalService {
@@ -67,6 +68,17 @@ public class FileUploadService extends TransactionalService {
         } catch (IOException e) {
             LOG.error("Failure moving uploaded file to staging directory", e);
             return false;
+        }
+    }
+
+    public Optional<Path> moveToStagingDirectoryAndGetPath(InputStream inputStream, UploadInfo uploadInfo) {
+        try {
+            Path output = this.importConfig.getStagingDirectory().toPath().resolve(uploadInfo.getId().toString());
+            Files.copy(inputStream, output, StandardCopyOption.REPLACE_EXISTING);
+            return Optional.of(output);
+        } catch (IOException e) {
+            LOG.error("Failure moving uploaded file to staging directory", e);
+            return Optional.empty();
         }
     }
 
