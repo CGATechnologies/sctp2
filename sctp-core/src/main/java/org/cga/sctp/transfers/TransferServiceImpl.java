@@ -88,13 +88,14 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     @Override
     public TransferSession initiateTransfers(Location location, TransferSession transferSession, long userId) {
-        // TODO: refactor the initiation logic and use the other arguments provided
         Objects.requireNonNull(location);
         Objects.requireNonNull(transferSession);
         if (getTranferSessionRepository().save(transferSession) == null) {
             // TODO check
         }
         transfersRepository.initiateTransfersInDistrict(transferSession.getProgramId(), location.getId(), transferSession.getId(), userId);
+        // TODO: Mark household status as Beneficiary
+        // TODO: Close the district for other operations
         return transferSession;
     }
 
@@ -195,7 +196,7 @@ public class TransferServiceImpl implements TransferService {
         // TODO: validate the session, check if the the period is open and check transfer agency for E-Payments which is the valid reason to assign account numbers
         List<Long> householdsAssigned = new ArrayList<>();
         for (TransferAccountNumberList.HouseholdAccountNumber hh : transferAccountNumberList.getAccountNumberList()) {
-            transfersRepository.findByHouseholdIdAndIsOpen(hh.getHouseholdId())
+            transfersRepository.findByHouseholdId(hh.getHouseholdId())
                     .ifPresent(transfer -> {
                         // TODO: Check if the transfer period matches the period in the request
                         if (transfer.getTransferPeriodId() != period.getId()) {
