@@ -55,7 +55,19 @@ public class TransferPeriodService {
      * @return
      */
     public TransferPeriod openNewPeriod(TransferPeriod newPeriod) {
-        // TODO: check preconditions
+        // Check if the transfer period is valid (start to end dates)
+        if (newPeriod.getStartDate().isBefore(newPeriod.getEndDate())) {
+            // TODO: throw an exception here
+            return null;
+        }
+        // Check if we don't have another period already running
+        // Check if the program is allowed to have a new period
+        if (transferPeriodRepository.countAllOpenInProgram(newPeriod.getProgramId()) > 0L) {
+            // TODO: throw an exception here
+            return null;
+        }
+
+        // Check if the households
         return transferPeriodRepository.save(newPeriod);
     }
 

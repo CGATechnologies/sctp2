@@ -33,18 +33,27 @@
 package org.cga.sctp.transfers.periods;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TransferPeriodServiceTest {
 
+    @Autowired
+    private TransferPeriodService transferPeriodService;
+
     @Test
     void openNewPeriod() {
-        fail("not implemented yet");
+        TransferPeriod period1 = new TransferPeriod();
+        TransferPeriod period2 = new TransferPeriod();
+
+        assertNotNull(transferPeriodService.openNewPeriod(period1));
+        assertNotNull(transferPeriodService.openNewPeriod(period1));
     }
 
     @Test
