@@ -21,11 +21,61 @@
         <div id="transfers-select-transfer-options">
             <div class="card no-overlap">
                 <header class="card-header">
-                    <p class="card-header-title">Perform Transfer Calculations</p>
+                    <p class="card-header-title">Cash Transfer Parameters</p>
                 </header>
                 <div class="card-content">
-                    In order to initiate transfers you need to assign Transfer Agencies.
+                    <form action="/transfers/sessions/initiate/step3" method="post" enctype="application/x-www-form-urlencoded">
+                        {{ csrf(_csrf) }}
+                        <input type="hidden" name="programId" value="{{ program.id }}" />
+                        <input type="hidden" name="districtId" value="{{ district.id }}" />
+                        <input type="hidden" name="useCurrentParameters" value="true" />
 
+                        <div class="section">
+                        <div class="section-body">
+                            <p>The following parameters will be used for the Transfers</p>.
+                            <div class="parameters-section">
+                                <div class="param-section">
+                                    <h3 class="subtitle">Basic Subsidy Amounts</h3>
+                                    <div class="basic-household-params">
+                                        <ul>
+                                                {% for param in householdParameters %}
+                                                <li><span>MWK {{ param.amount | numberformat("#,###.##") }}</span> when members {{  param.condition.description }} {{  param.numberOfMembers }}</li>
+                                                {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="param-section">
+                                    <h3 class="subtitle">School Incentives</h3>
+                                    <div class="incentive-parameters">
+                                        <ul>
+                                                {% for p in educationIncentives %}
+                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
+                                                {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="param-section">
+                                    <h3 class="subtitle">School Bonuses</h3>
+                                    <div class="bonus-parameters">
+                                        <ul>
+                                                {% for p in educationBonuses %}
+                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
+                                                {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="notification is-info">
+                                You can update parameters before performing final Transfer calculations.
+                            </p>
+                        </div>
+                    </div>
+
+                        <div class="action-buttons is-right">
+                            <a href="/transfers/parameters">&lt; Update Transfer Parameters First</a>
+                            <button type="submit" class="button is-danger">Accept Parameters and Initiate Transfers</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         {% endblock %}

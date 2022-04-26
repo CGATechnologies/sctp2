@@ -25,7 +25,7 @@
             </header>
             <div class="card-content">
                 {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
-                <form id="addRoleForm" action="/transfers/sessions/initiate/step1" method="post"
+                <form id="addRoleForm" action="/transfers/sessions/initiate/step2" method="get"
                       enctype="application/x-www-form-urlencoded">
                     {{ csrf(_csrf) }}
                     <div class="field">
@@ -59,46 +59,6 @@
                         </div>
                     </div>
 
-                    <div class="section">
-                        <div class="section-body">
-                            <p>The following parameters will be used for the Transfers</p>.
-                            <div class="parameters-section">
-                                <div class="param-section">
-                                    <h3 class="subtitle">Basic Subsidy Amounts</h3>
-                                    <div class="basic-household-params">
-                                        <ul>
-                                            {% for param in householdParameters %}
-                                            <li><span>MWK {{ param.amount | numberformat("#,###.##") }}</span> when members {{  param.condition.description }} {{  param.numberOfMembers }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="param-section">
-                                    <h3 class="subtitle">School Incentives</h3>
-                                    <div class="incentive-parameters">
-                                        <ul>
-                                                {% for p in educationIncentives %}
-                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
-                                                {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="param-section">
-                                    <h3 class="subtitle">School Bonuses</h3>
-                                    <div class="bonus-parameters">
-                                        <ul>
-                                                {% for p in educationBonuses %}
-                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
-                                                {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="notification is-info">
-                                You can update parameters before performing final Transfer calculations.
-                            </p>
-                        </div>
-                    </div>
                     <div class="actions action-buttons">
                         <p class="notification is-warning">
                             TODO: Message about the effects of initiating transfers on a district.
