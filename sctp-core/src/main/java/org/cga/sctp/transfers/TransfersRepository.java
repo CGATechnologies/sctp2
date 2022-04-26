@@ -157,7 +157,6 @@ public interface TransfersRepository extends JpaRepository<Transfer, Long> {
                                                    @Param("pageNumber") int pageNumber,
                                                    @Param("pageSize") int pageSize);
 
-
     @Query
-    Optional<Transfer> findByHouseholdIdAndIsOpen(Long householdId);
+    Optional<Transfer> findByHouseholdId(Long householdId);
 }
