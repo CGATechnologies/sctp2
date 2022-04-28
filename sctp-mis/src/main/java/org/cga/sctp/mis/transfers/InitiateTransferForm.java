@@ -35,17 +35,18 @@ package org.cga.sctp.mis.transfers;
 import javax.validation.constraints.NotNull;
 
 public class InitiateTransferForm {
-    @NotNull
+    @NotNull(message = "Program must be specified")
     private Long programId;
 
-    // TODO: Should this be optional?
+    @NotNull(message = "Enrollment Session must be specified")
     private Long enrollmentSessionId;
 
-    @NotNull
+    @NotNull(message = "District must be specified")
     private Long districtId;
 
+    // TODO: do we need this? re-evaluate
     private boolean applySchoolBonusParameter = true;
-
+    // TODO: do we need this? re-evaluate
     private boolean applySchoolIncentiveParameter = true;
 
     public Long getProgramId() {
