@@ -66,7 +66,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/transfers/sessions")
-public class TransferSessionsController extends BaseController  {
+public class TransferSessionsController extends BaseController {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -118,18 +118,30 @@ public class TransferSessionsController extends BaseController  {
 
         return view("/transfers/initiate/step1")
                 .addObject("programs", programs)
-                .addObject("districts", districts)
+                .addObject("districts", districts);
+    }
+
+    @GetMapping("/initiate/step2")
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewCalculationStep2(@RequestParam("programId") Long programId,
+                                             @RequestParam("districtId") Long districtId) {
+        Program program = programService.getProgramById(programId);
+        Location district = locationService.findById(districtId);
+
+        return view("/transfers/initiate/step2")
+                .addObject("program", program)
+                .addObject("district", district)
                 .addObject("householdParameters", transferParametersService.findAllActiveHouseholdParameters())
                 .addObject("educationBonuses", transferParametersService.findAllEducationTransferParameters())
                 .addObject("educationIncentives", transferParametersService.findAllEducationTransferParameters());
     }
 
-    @PostMapping("/initiate/step1")
+    @PostMapping("/initiate/step3")
     @AdminAndStandardAccessOnly
-    public ModelAndView postInitiateStep1(@AuthenticatedUserDetails AuthenticatedUser user,
-                                         @Validated @ModelAttribute InitiateTransferForm form,
-                                         BindingResult result,
-                                         RedirectAttributes attributes) {
+    public ModelAndView postInitiateStep2(@AuthenticatedUserDetails AuthenticatedUser user,
+                                          @Validated @ModelAttribute InitiateTransferForm form,
+                                          BindingResult result,
+                                          RedirectAttributes attributes) {
         if (result.hasErrors()) {
             LoggerFactory.getLogger(getClass()).error("Failed to initiate transfers: {}", result.getAllErrors());
             return withDangerMessage("/transfers/initiate/step1", "Failed to create Transfer records. Please fix the errors on the form")
@@ -165,11 +177,9 @@ public class TransferSessionsController extends BaseController  {
         Program program = programService.getProgramById(form.getProgramId());
         Location location = locationService.findById(form.getDistrictId());
 
-//        transferService.initiateTransfers(location, transferSession,  user.id());
+        transferService.initiateTransfers(location, transferSession, user.id());
 
-//        setSuccessFlashMessage("New Transfer Session initiated successfully from enrolled households", attributes);
-//        return redirect(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()));
-        return redirect(format("/transfers/initiate/step2?program=%s&district=%s", program.getId(), location.getId()));
+        return redirect(format("/transfers/sessions/%s/pre-calculation", transferSession.getId()));
     }
 
     @GetMapping("/{session-id}/pre-calculation")
@@ -202,18 +212,5 @@ public class TransferSessionsController extends BaseController  {
                 .addObject("objectMapper", objectMapper); // for serializing data to JSON in the template
     }
 
-    // TODO: implement
-    @GetMapping("/initiate/step2")
-    @AdminAndStandardAccessOnly
-    public ModelAndView viewCalculationStep2() {
-        // TODO: implement me!
-        throw new UnsupportedOperationException("not yet implemented");
-    }
 
-    @GetMapping("/initiate/step3")
-    @AdminAndStandardAccessOnly
-    public ModelAndView viewCalculationStep3() {
-        // TODO: implement me!
-        throw new UnsupportedOperationException("not yet implemented");
-    }
 }
