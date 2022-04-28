@@ -33,6 +33,11 @@
 package org.cga.sctp.transfers.periods;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface TransferPeriodRepository extends JpaRepository<TransferPeriod, Long> {
+
+    @Query("SELECT COUNT(id) FROM TransferPeriod WHERE programId = :programId AND closed = false")
+    int countAllOpenInProgram(@Param("programId") long programId);
 }
