@@ -177,11 +177,12 @@ public class Transfer {
     private LocalDateTime modifiedAt;
 
     // BIGINT NOT NULL COMMENT 'The user who created/initiated this transfer record',
-    @Column private Long createdBy;
+    @Column
+    private Long createdBy;
 
     // BIGINT NOT NULL COMMENT 'The user who approved/reviewed the transfer record should not be == created_by',
-    @Column private Long reviewedBy;
-
+    @Column
+    private Long reviewedBy;
 
     public Long getId() {
         return id;

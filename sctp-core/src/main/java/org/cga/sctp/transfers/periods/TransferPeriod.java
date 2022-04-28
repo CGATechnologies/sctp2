@@ -47,7 +47,7 @@ public class TransferPeriod {
     private long programId;
 
     @Column
-    private long transferAgencyId;
+    private long transferSessionId;
 
     @Column
     private LocalDate startDate;
@@ -62,10 +62,10 @@ public class TransferPeriod {
     private String description;
 
     @Column
-    private Long bonusPrimary;
+    private Long bonusPrimaryParameterId;
 
     @Column
-    private Long bonusSecondary;
+    private Long bonusSecondaryParameterId;
 
     @Column
     private boolean closed;
@@ -95,12 +95,12 @@ public class TransferPeriod {
         this.programId = programId;
     }
 
-    public long getTransferAgencyId() {
-        return transferAgencyId;
+    public long getTransferSessionId() {
+        return transferSessionId;
     }
 
-    public void setTransferAgencyId(long transferAgencyId) {
-        this.transferAgencyId = transferAgencyId;
+    public void setTransferSessionId(long transferSessionId) {
+        this.transferSessionId = transferSessionId;
     }
 
     public LocalDate getStartDate() {
@@ -135,20 +135,20 @@ public class TransferPeriod {
         this.description = description;
     }
 
-    public Long getBonusPrimary() {
-        return bonusPrimary;
+    public Long getBonusPrimaryParameterId() {
+        return bonusPrimaryParameterId;
     }
 
-    public void setBonusPrimary(Long bonusPrimary) {
-        this.bonusPrimary = bonusPrimary;
+    public void setBonusPrimaryParameterId(Long bonusPrimaryParameterId) {
+        this.bonusPrimaryParameterId = bonusPrimaryParameterId;
     }
 
-    public Long getBonusSecondary() {
-        return bonusSecondary;
+    public Long getBonusSecondaryParameterId() {
+        return bonusSecondaryParameterId;
     }
 
-    public void setBonusSecondary(Long bonusSecondary) {
-        this.bonusSecondary = bonusSecondary;
+    public void setBonusSecondaryParameterId(Long bonusSecondaryParameterId) {
+        this.bonusSecondaryParameterId = bonusSecondaryParameterId;
     }
 
     public boolean isClosed() {
