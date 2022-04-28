@@ -88,6 +88,11 @@
                 <version>${jjwt.version}</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>com.creditdatamw.labs</groupId>
+                <artifactId>zerocell-core</artifactId>
+                <version>0.5.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
