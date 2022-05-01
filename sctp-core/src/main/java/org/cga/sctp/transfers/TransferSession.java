@@ -44,6 +44,9 @@ public class TransferSession {
     private Long id;
 
     @Column
+    private Long enrollmentSessionId;
+
+    @Column
     private Long programId;
 
     @Column
@@ -61,6 +64,14 @@ public class TransferSession {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getEnrollmentSessionId() {
+        return enrollmentSessionId;
+    }
+
+    public void setEnrollmentSessionId(Long enrollmentSessionId) {
+        this.enrollmentSessionId = enrollmentSessionId;
     }
 
     public Long getProgramId() {

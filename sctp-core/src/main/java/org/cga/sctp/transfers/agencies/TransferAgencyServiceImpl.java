@@ -115,4 +115,9 @@ public class TransferAgencyServiceImpl implements TransferAgencyService {
     public Optional<TransferAgency> findById(Long transferAgencyId) {
         return transferAgenciesRepository.findById(transferAgencyId);
     }
+
+    @Override
+    public List<TransferAgency> findAllByTransferModality(String transferMethod) {
+        return transferAgenciesRepository.findAllByTransferMethod(TransferMethod.valueOf(transferMethod));
+    }
 }

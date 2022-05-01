@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS id_counters(
 INSERT INTO id_counters(name, counter)
 VALUES ('household_id', 300000);
 
+-- the function has none of DETERMINISTIC, NO SQL, or READS SQL DATA in its declaration and binary logging is enabled
+SET GLOBAL log_bin_trust_function_creators = 1;
+
 -- Create function to increment and return the ID counter
 DROP FUNCTION IF EXISTS getAndIncrementHouseholdId;
 

@@ -1,6 +1,6 @@
----
---- Table for temporarily holding information before being imported into main population table
----
+--
+-- Table for temporarily holding information before being imported into main population table
+--
 
 CREATE TABLE IF NOT EXISTS ubr_csv_imports (
 	id bigint AUTO_INCREMENT NOT NULL,

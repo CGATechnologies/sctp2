@@ -29,39 +29,49 @@
                         <input type="hidden" name="programId" value="{{ program.id }}" />
                         <input type="hidden" name="districtId" value="{{ district.id }}" />
                         <input type="hidden" name="useCurrentParameters" value="true" />
-
-                        <div class="section">
-                        <div class="section-body">
-                            <p>The following parameters will be used for the Transfers</p>.
+                        <div class="paramters-preview-body">
+                            <span>The following parameters will be used for the Transfers</span>.
                             <div class="parameters-section">
                                 <div class="param-section">
                                     <h3 class="subtitle">Basic Subsidy Amounts</h3>
                                     <div class="basic-household-params">
-                                        <ul>
+                                        <table class="table is-striped is-narrow is-fullwidth">
+                                            <tbody>
                                                 {% for param in householdParameters %}
-                                                <li><span>MWK {{ param.amount | numberformat("#,###.##") }}</span> when members {{  param.condition.description }} {{  param.numberOfMembers }}</li>
+                                                <tr>
+                                                    <td><span>MWK {{ param.amount | numberformat("#,###.##") }}</span> when number of Household members {{  param.condition.description }} {{  param.numberOfMembers }}</td>
+                                                </tr>
                                                 {% endfor %}
-                                        </ul>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                                 <div class="param-section">
                                     <h3 class="subtitle">School Incentives</h3>
                                     <div class="incentive-parameters">
-                                        <ul>
+                                        <table class="table is-striped is-narrow is-fullwidth">
+                                            <tbody>
                                                 {% for p in educationIncentives %}
-                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
+                                                <tr>
+                                                <td><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</td>
+                                                </tr>
                                                 {% endfor %}
-                                        </ul>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                                 <div class="param-section">
                                     <h3 class="subtitle">School Bonuses</h3>
                                     <div class="bonus-parameters">
-                                        <ul>
+                                        <table class="table is-striped is-narrow is-fullwidth">
+                                            <tbody>
                                                 {% for p in educationBonuses %}
-                                                <li><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</li>
+                                                <tr>
+                                                <td><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</td>
+                                                </tr>
                                                 {% endfor %}
-                                        </ul>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -69,8 +79,6 @@
                                 You can update parameters before performing final Transfer calculations.
                             </p>
                         </div>
-                    </div>
-
                         <div class="action-buttons is-right">
                             <a href="/transfers/parameters">&lt; Update Transfer Parameters First</a>
                             <button type="submit" class="button is-danger">Accept Parameters and Initiate Transfers</button>

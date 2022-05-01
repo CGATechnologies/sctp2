@@ -1,0 +1,170 @@
+    {% extends "transfers/base" %}
+    {% block contextMenu %}
+        {% set canModify = hasRole("ADMINISTRATOR") and isSessionOpen %}
+        {% set useWideContainer = true %}
+        <div class="context-nav-container">
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <a href="{{ href('/targeting/enrolment') }}" class="button is-danger">
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa fa-chevron-left"></i>
+                                </span>
+                                <span>Back</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                <div class="level-right">
+
+                    <div class="level-item">
+                        <div class="dropdown is-hoverable is-right">
+                            <div class="dropdown-trigger">
+                                <button class="button is-primary" aria-haspopup="true" aria-controls="ibd">
+                                    <span>Export Options</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="ibd" role="menu">
+                                <div class="dropdown-content">
+                                    <a onclick="exportToCsv()"
+                                       class="dropdown-item">Save As CSV</a>
+                                    <a onclick="firstDataTable.print()" class="dropdown-item">Print</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if not sessionHasTransfers %}
+                    {% import "../../utils/form" %}
+                    <div class="level-item">
+                        <form method="post" action="/transfers/sessions/initiate?enrollment={{ sessionInfo.id }}&program={{ sessionInfo.id }}&district={{ sessionInfo.districtId }}"
+                              enctype="application/x-www-form-urlencoded">
+                            {{ csrf(_csrf) }}
+                            <input type="hidden" value="{{ sessionInfo.id }}" name="enrollment"/>
+                            <input type="hidden" value="{{ sessionInfo.id }}" name="program"/> {# TODO: use right fields #}
+                            <input type="hidden" value="{{ sessionInfo.id }}" name="district"/> {# TODO: use right fields #}
+                            <button class="button is-warning">Send Enrolled Households to Transfers</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block content %}
+    <div class="card no-overlap">
+        <div class="card-header">Filter</div>
+        <div class="card-content">
+            <form action="" method="get">
+                {{ csrf(_csrft) }}
+                <input type="text" name="district" placeholder="District or Location Name or ID e.g. Blantyre" />
+                <button class="button is-default">Filter</button>
+            </form>
+        </div >
+    </div>
+
+    <div>
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">Transfers - {{ sessionInfo.programName }} / {{ sessionInfo.districtName }}</p>
+            </header>
+            <div class="card-content">
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                <div class="content">
+                    <table class="table dataTable is-narrow is-striped is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>ML Code</th>
+                            <th># of Members</th>
+                            <th>Head of Household</th>
+                            <th>TA</th>
+                            <th>GVH Name</th>
+                            <th>VG Cluster</th>
+                            <th>Zone</th>
+                            <th>Pre-Printed Num</th>
+                            <th>Status</th>
+                            <th>Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for ranking in households %}
+                            <tr>
+                                <td>ML-{{ ranking.mlCode }}</td>
+                                <td>{{ ranking.memberCount | numberformat("#,###") }}</td>
+                                <td>{{ ranking.householdHead }}</td>
+                                <td>{{ ranking.taName }}</td>
+                                <td>{{ ranking.villageHeadName }}</td>
+                                <td>{{ ranking.clusterName }}</td>
+                                <td>{{ ranking.zoneName }}</td>
+                                <td>{{ ranking.formNumber }}</td>
+                                <td>{{ ranking.status }}</td>
+                                <td>
+                                    <div class="dropdown is-hoverable is-right">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-info is-inverted is-options"
+                                                    aria-haspopup="true" aria-controls="dropdown-menu2">
+                                                <span>Options</span>
+                                                <span class="icon is-small">
+                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                            <div class="dropdown-content">
+                                                <a href="/targeting/enrolment/{{ ranking.status.code == 5 ? 'view' : 'details' }}?session={{ sessionInfo.id }}&id={{ ranking.householdId }}"
+                                                   class="dropdown-item">View household </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+    {% block footerScripts %}
+    <script>
+        window.exportToCsv = function(){
+            firstDataTable.export({type:'csv', download:true, skipColumn: [1,9]});
+        }
+        window.removeHH = function(frm){
+            if(confirm("Mark as ineligible?")){
+                frm.submit();
+            }
+        }
+        window.changeRank = function(hhid, rank){
+            var response = prompt(`Enter new rank for household ${hhid}.`, rank);
+            if(response === null){
+                return;
+            }
+            var newRank = parseInt(response);
+            if(!isNaN(newRank)){
+                var _form = query('#edit' + hhid);
+                _form.rank.value = newRank;
+                _form.submit();
+            }else{
+                alert('Invalid value entered. Input must be a number');
+            }
+        }
+        window.dlgRankEditor = Bulma('#rank-editor-dlg').modal({
+            buttons: [
+                {
+                    label: 'Save',
+                    classes: ['button', 'is-success'],
+                    onClick: function() { dlgRankEditor.close(); }
+                }
+            ]
+        });
+    </script>
+    {% endblock %}

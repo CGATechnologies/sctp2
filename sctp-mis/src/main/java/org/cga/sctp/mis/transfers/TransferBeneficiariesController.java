@@ -30,15 +30,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.agencies;
+package org.cga.sctp.mis.transfers;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.cga.sctp.beneficiaries.Household;
+import org.cga.sctp.mis.core.SecuredBaseController;
+import org.cga.sctp.transfers.TransferEventHouseholdView;
+import org.cga.sctp.transfers.TransferService;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Collections;
 import java.util.List;
 
-public interface TransferAgenciesRepository extends JpaRepository<TransferAgency, Long> {
+@Controller
+@RequestMapping("/transfers/beneficiaries")
+public class TransferBeneficiariesController extends SecuredBaseController {
+    @Autowired
+    private TransferService transferService;
 
-    @Query
-    List<TransferAgency> findAllByTransferMethod(TransferMethod transferMethod);
+    @GetMapping
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewListBeneficiaries(@RequestParam(value = "sessionId", required = false) Long sessionId) {
+        List<TransferEventHouseholdView> householdList = Collections.emptyList();
+        if (sessionId != null) {
+            householdList = transferService.findAllHouseholdsInSession(sessionId);
+        }
+        return view("/transfers/beneficiaries/households")
+                .addObject("households", householdList);
+    }
 }

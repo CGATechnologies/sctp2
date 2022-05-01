@@ -93,7 +93,13 @@ public class TransferServiceImpl implements TransferService {
         if (getTranferSessionRepository().save(transferSession) == null) {
             // TODO check
         }
-        transfersRepository.initiateTransfersInDistrict(transferSession.getProgramId(), location.getId(), transferSession.getId(), userId);
+        // transfersRepository.initiateTransfersInDistrict(transferSession.getProgramId(), location.getId(), transferSession.getId(), userId);
+        transfersRepository.initiateTransfersForEnrolledHouseholds(
+                transferSession.getEnrollmentSessionId(),
+                transferSession.getId(),
+                location.getId(),
+                userId
+        );
         // TODO: Mark household status as Beneficiary
         // TODO: Close the district for other operations
         return transferSession;

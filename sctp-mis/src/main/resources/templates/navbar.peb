@@ -88,6 +88,9 @@
                     <a class="navbar-item" href="{{ href('/transfers/sessions/initiate/step1') }}">
                         Calculate Cash Transfer Amounts
                     </a>
+                    <a class="navbar-item" href="{{ href('/transfers/beneficiaries') }}">
+                        Beneficiaries
+                    </a>
 {#                    <a class="navbar-item" href="/transfers/generation">#}
 {#                        Generate Transfers#}
 {#                    </a>#}

@@ -55,4 +55,6 @@ public interface TransferAgencyService {
     void save(TransferAgency transferAgency);
 
     List<TransferAgency> fetchAllTransferAgencies();
+
+    List<TransferAgency> findAllByTransferModality(String transferMethod);
 }

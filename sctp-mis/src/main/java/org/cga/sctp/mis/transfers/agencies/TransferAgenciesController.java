@@ -32,9 +32,12 @@
 
 package org.cga.sctp.mis.transfers.agencies;
 
-import org.cga.sctp.location.*;
+import org.cga.sctp.location.Location;
+import org.cga.sctp.location.LocationService;
+import org.cga.sctp.location.LocationType;
 import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.Booleans;
+import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.transfers.agencies.TransferAgency;
 import org.cga.sctp.transfers.agencies.TransferAgencyAlreadyAssignedException;
 import org.cga.sctp.transfers.agencies.TransferAgencyServiceImpl;
@@ -45,6 +48,7 @@ import org.cga.sctp.user.AuthenticatedUser;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -54,6 +58,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -79,6 +84,21 @@ public class TransferAgenciesController extends BaseController {
         return view("/transfers/agencies/new")
                 .addObject("options", Booleans.VALUES)
                 .addObject("locations", locations);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchAgencies(@RequestParam("transferMethod") String transferMethod) {
+        List<TransferAgency> agencies = Collections.emptyList();
+        if (transferMethod != null) {
+            agencies = transferAgencyService.findAllByTransferModality(transferMethod);
+        }
+        List<SelectOptionItem> agencyList = agencies.stream()
+                .map(agency -> {
+                    return new SelectOptionItem(agency.getId(),agency.getName());
+                })
+                .toList();
+
+        return ResponseEntity.ok(agencyList);
     }
 
     @PostMapping("/new")
@@ -129,7 +149,7 @@ public class TransferAgenciesController extends BaseController {
 
         form.setId(transferAgency.getId());
         form.setName(transferAgency.getName());
-        form.setActive(Booleans.of(transferAgency.isActive()));
+        form.setActive(Booleans.of(transferAgency.getActive()));
         form.setLocationId(transferAgency.getLocationId());
         form.setWebsite(transferAgency.getWebsite());
         form.setBranch(transferAgency.getBranch());
@@ -212,6 +232,7 @@ public class TransferAgenciesController extends BaseController {
                                          RedirectAttributes attributes) {
         if (result.hasErrors()) {
             setWarningFlashMessage("Invalid request, please fix errors and try again", attributes);
+            LoggerFactory.getLogger(getClass()).info("Failed to assign {}", form);
             return redirect("/transfers/agencies/assign");
         }
 

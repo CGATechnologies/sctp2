@@ -8,7 +8,7 @@
 </div>
 {% endblock %}
 {% block content %}
-<div class="content-container">
+<div id="transfers:CreateNewPeriodApp" class="content-container">
     <div class="card">
         <div class="card-header">
             <div class="column">
@@ -18,13 +18,6 @@
         <div class="card-content">
             <div class="columns">
                 <div class="column is-one-third">
-                    <div class="transfer-agency">
-                        <label class="label">Transfer Agency</label>
-                        <span>{{ transferAgency.name }}</span>
-                        <div class="block">
-                            <a href="" class="is-size-7">Select different Agency</a>
-                        </div>
-                    </div>
                     <div class="district location">
                         <label class="label">District</label>
                         <span>{{ location.name }}</span>
@@ -125,4 +118,7 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block footerScripts %}
+<script type="text/javascript" src="public/js/transfers.periods.js"></script>
 {% endblock %}

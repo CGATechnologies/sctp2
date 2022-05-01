@@ -43,6 +43,11 @@ public class TransferAgency {
     private Long id;
     @Column
     private String name;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private TransferMethod transferMethod;
+
     @Column
     private Boolean active;
     @Column
@@ -86,20 +91,20 @@ public class TransferAgency {
         this.name = name;
     }
 
-    public Boolean isActive() {
+    public TransferMethod getTransferMethod() {
+        return transferMethod;
+    }
+
+    public void setTransferMethod(TransferMethod transferMethod) {
+        this.transferMethod = transferMethod;
+    }
+
+    public Boolean getActive() {
         return active;
     }
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getWebsite() {
@@ -116,6 +121,14 @@ public class TransferAgency {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getRepresentativeName() {

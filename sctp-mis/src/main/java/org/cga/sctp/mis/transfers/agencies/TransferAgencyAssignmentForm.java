@@ -67,4 +67,13 @@ public class TransferAgencyAssignmentForm {
     public void setTransferMethod(TransferMethod transferMethod) {
         this.transferMethod = transferMethod;
     }
+
+    @Override
+    public String toString() {
+        return "TransferAgencyAssignmentForm{" +
+                "transferAgencyId=" + transferAgencyId +
+                ", locationId=" + locationId +
+                ", transferMethod=" + transferMethod +
+                '}';
+    }
 }

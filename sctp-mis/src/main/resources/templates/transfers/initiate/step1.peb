@@ -60,10 +60,10 @@
                     </div>
 
                     <div class="actions action-buttons">
-                        <p class="notification is-warning">
-                            TODO: Message about the effects of initiating transfers on a district.
-                        </p>
-                        <button class="button is-primary">Open District for Transfers</button>
+{#                        <p class="notification is-warning">#}
+{#                            TODO: Message about the effects of initiating transfers on a district.#}
+{#                        </p>#}
+                        <button class="button is-primary">Next &gt;&gt;</button>
                     </div>
                 </form>
             </div>
