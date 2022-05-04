@@ -6,12 +6,12 @@
             <div class="level">
                 <div class="level-left">
                     <div class="level-item">
-                        <a href="{{ href('/targeting/enrolment') }}" class="button is-danger">
+                        <a href="{{ href('/transfers/summary') }}" class="button is-danger">
                             <span class="icon-text">
                                 <span class="icon">
                                     <i class="fa fa-chevron-left"></i>
                                 </span>
-                                <span>Back</span>
+                                <span>Back to Transfer Summary</span>
                             </span>
                         </a>
                     </div>
@@ -40,14 +40,7 @@
                     {% if not sessionHasTransfers %}
                     {% import "../../utils/form" %}
                     <div class="level-item">
-                        <form method="post" action="/transfers/sessions/initiate?enrollment={{ sessionInfo.id }}&program={{ sessionInfo.id }}&district={{ sessionInfo.districtId }}"
-                              enctype="application/x-www-form-urlencoded">
-                            {{ csrf(_csrf) }}
-                            <input type="hidden" value="{{ sessionInfo.id }}" name="enrollment"/>
-                            <input type="hidden" value="{{ sessionInfo.id }}" name="program"/> {# TODO: use right fields #}
-                            <input type="hidden" value="{{ sessionInfo.id }}" name="district"/> {# TODO: use right fields #}
-                            <button class="button is-warning">Send Enrolled Households to Transfers</button>
-                        </form>
+                        <a href="/transfers/assign-accounts">Assign Account Numbers</a>
                     </div>
                     {% endif %}
                 </div>
@@ -55,18 +48,7 @@
         </div>
     {% endblock %}
 
-    {% block content %}
-    <div class="card no-overlap">
-        <div class="card-header">Filter</div>
-        <div class="card-content">
-            <form action="" method="get">
-                {{ csrf(_csrft) }}
-                <input type="text" name="district" placeholder="District or Location Name or ID e.g. Blantyre" />
-                <button class="button is-default">Filter</button>
-            </form>
-        </div >
-    </div>
-
+{% block content %}
     <div>
         <div class="card no-overlap">
             <header class="card-header">
@@ -91,17 +73,17 @@
                         </tr>
                         </thead>
                         <tbody>
-                            {% for ranking in households %}
+                            {% for household in households %}
                             <tr>
-                                <td>ML-{{ ranking.mlCode }}</td>
-                                <td>{{ ranking.memberCount | numberformat("#,###") }}</td>
-                                <td>{{ ranking.householdHead }}</td>
-                                <td>{{ ranking.taName }}</td>
-                                <td>{{ ranking.villageHeadName }}</td>
-                                <td>{{ ranking.clusterName }}</td>
-                                <td>{{ ranking.zoneName }}</td>
-                                <td>{{ ranking.formNumber }}</td>
-                                <td>{{ ranking.status }}</td>
+                                <td>ML-{{ household.mlCode }}</td>
+                                <td>{{ household.memberCount | numberformat("#,###") }}</td>
+                                <td>{{ household.householdHead }}</td>
+                                <td>{{ household.taName }}</td>
+                                <td>{{ household.villageHeadName }}</td>
+                                <td>{{ household.clusterName }}</td>
+                                <td>{{ household.zoneName }}</td>
+                                <td>{{ household.formNumber }}</td>
+                                <td>{{ household.status }}</td>
                                 <td>
                                     <div class="dropdown is-hoverable is-right">
                                         <div class="dropdown-trigger">
@@ -115,9 +97,8 @@
                                         </div>
                                         <div class="dropdown-menu" id="dropdown-menu2" role="menu">
                                             <div class="dropdown-content">
-                                                <a href="/targeting/enrolment/{{ ranking.status.code == 5 ? 'view' : 'details' }}?session={{ sessionInfo.id }}&id={{ ranking.householdId }}"
+                                                <a href="/transfers/beneficiaries/view?session={{ sessionInfo.id }}&id={{ household.householdId }}"
                                                    class="dropdown-item">View household </a>
-
                                             </div>
                                         </div>
                                     </div>
@@ -130,41 +111,4 @@
             </div>
         </div>
     </div>
-
-    {% endblock %}
-
-    {% block footerScripts %}
-    <script>
-        window.exportToCsv = function(){
-            firstDataTable.export({type:'csv', download:true, skipColumn: [1,9]});
-        }
-        window.removeHH = function(frm){
-            if(confirm("Mark as ineligible?")){
-                frm.submit();
-            }
-        }
-        window.changeRank = function(hhid, rank){
-            var response = prompt(`Enter new rank for household ${hhid}.`, rank);
-            if(response === null){
-                return;
-            }
-            var newRank = parseInt(response);
-            if(!isNaN(newRank)){
-                var _form = query('#edit' + hhid);
-                _form.rank.value = newRank;
-                _form.submit();
-            }else{
-                alert('Invalid value entered. Input must be a number');
-            }
-        }
-        window.dlgRankEditor = Bulma('#rank-editor-dlg').modal({
-            buttons: [
-                {
-                    label: 'Save',
-                    classes: ['button', 'is-success'],
-                    onClick: function() { dlgRankEditor.close(); }
-                }
-            ]
-        });
-    </script>
-    {% endblock %}
+{% endblock %}
