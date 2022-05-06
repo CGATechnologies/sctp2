@@ -1,5 +1,5 @@
-{% extends "./base" %}
-{% import "../utils/form" %}
+{% extends "transfers/base" %}
+{% import "../../utils/form" %}
 {% block title %}
 {{ parent() }} - Assign Account Numbers
 {% endblock %}
@@ -40,7 +40,7 @@
                             <input id="dataFile"
                                    type="file"
                                    class="input"
-                                   accept=".csv"
+                                   accept=".xslx"
                                    required="required"
                                    name="dataFile" />
                         </div>

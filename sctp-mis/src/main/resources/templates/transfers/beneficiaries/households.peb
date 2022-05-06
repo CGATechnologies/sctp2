@@ -30,17 +30,17 @@
                             </div>
                             <div class="dropdown-menu" id="ibd" role="menu">
                                 <div class="dropdown-content">
-                                    <a onclick="exportToCsv()"
-                                       class="dropdown-item">Save As CSV</a>
-                                    <a onclick="firstDataTable.print()" class="dropdown-item">Print</a>
+                                    <a href="/transfers/beneficiaries/export-accounts-template?district={{ districtId }}"
+                                       class="dropdown-item">Export Account Template</a>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     {% if not sessionHasTransfers %}
                     {% import "../../utils/form" %}
                     <div class="level-item">
-                        <a href="/transfers/assign-accounts">Assign Account Numbers</a>
+                        <a class="button" href="/transfers/assign-accounts">Assign Account Numbers</a>
                     </div>
                     {% endif %}
                 </div>
@@ -49,6 +49,26 @@
     {% endblock %}
 
 {% block content %}
+
+    <div class="card no-overlap">
+        <div class="card-content">
+            <form>
+                {{ csrf(_csrf) }}
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                    {{ selectField('district', districts, form.district, true) }}
+                            </div>
+                        </div>
+                        {{ printFieldErrors(getFieldErrors('form', 'district')) }}
+                    </div>
+                </div>
+                <button class="button is-primary">Filter</button>
+            </form>
+        </div>
+    </div>
+
     <div>
         <div class="card no-overlap">
             <header class="card-header">
