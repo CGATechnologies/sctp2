@@ -44,6 +44,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Orchestrates and manages Transfers
@@ -56,10 +57,8 @@ public interface TransferService {
 
     TransfersRepository getTransfersRepository();
 
-    // TODO: document and figure out if in right place...
     List<TransferSessionDetailView> findAllActiveSessions(Pageable pageable);
 
-    // TODO: document and figure out if in right place...
     List<TransferEventHouseholdView> findAllHouseholdsInSession(Long sessionId);
 
     /**
@@ -144,4 +143,6 @@ public interface TransferService {
     void exportTransferList(TransferPeriod transferPeriod, Path destinationPath) throws Exception;
 
     List<Transfer> fetchTransferList(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable);
+
+    Optional<TransferSession> findLatestSessionInDistrict(Long districtId);
 }

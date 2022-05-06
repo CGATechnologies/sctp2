@@ -91,7 +91,7 @@ public class TransferServiceImpl implements TransferService {
         Objects.requireNonNull(location);
         Objects.requireNonNull(transferSession);
         if (getTranferSessionRepository().save(transferSession) == null) {
-            // TODO check
+            throw new IllegalArgumentException("transferSession must be valid to initiate transfers");
         }
         // transfersRepository.initiateTransfersInDistrict(transferSession.getProgramId(), location.getId(), transferSession.getId(), userId);
         transfersRepository.initiateTransfersForEnrolledHouseholds(
@@ -232,5 +232,10 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public List<TransferEventHouseholdView> findAllHouseholdsInSession(Long sessionId) {
         return transfersRepository.findAllHouseholdsByTransferSessionId(sessionId);
+    }
+
+    @Override
+    public Optional<TransferSession> findLatestSessionInDistrict(Long districtId) {
+        return getTranferSessionRepository().findOneByDistrictId(districtId);
     }
 }

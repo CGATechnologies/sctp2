@@ -171,6 +171,7 @@ public class TransferSessionsController extends BaseController {
         TransferSession transferSession = new TransferSession();
         transferSession.setProgramId(form.getProgramId());
         transferSession.setActive(true);
+        transferSession.setDistrictId(form.getDistrictId());
         transferSession.setCreatedAt(LocalDateTime.now());
         transferSession.setModifiedAt(transferSession.getCreatedAt());
 

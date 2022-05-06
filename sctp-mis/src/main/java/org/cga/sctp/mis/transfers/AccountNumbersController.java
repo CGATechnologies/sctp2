@@ -80,7 +80,7 @@ public class AccountNumbersController extends SecuredBaseController {
     @GetMapping
     @AdminAndStandardAccessOnly
     public ModelAndView getAssignAccounts() {
-        return view("/transfers/assign-accounts")
+        return view("/transfers/beneficiaries/assign-accounts")
                 .addObject("program", new Object())
                 .addObject("location", new Object())
                 .addObject("accountsSummary", new Object())

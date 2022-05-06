@@ -38,7 +38,7 @@ public class InitiateTransferForm {
     @NotNull(message = "Program must be specified")
     private Long programId;
 
-    @NotNull(message = "Enrollment Session must be specified")
+//    @NotNull(message = "Enrollment Session must be specified")
     private Long enrollmentSessionId;
 
     @NotNull(message = "District must be specified")

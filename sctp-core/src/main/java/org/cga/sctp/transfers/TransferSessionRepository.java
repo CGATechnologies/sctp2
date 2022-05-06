@@ -37,6 +37,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TransferSessionRepository extends JpaRepository<TransferSession, Long> {
     @Query(nativeQuery = true, value = """
@@ -48,4 +49,7 @@ public interface TransferSessionRepository extends JpaRepository<TransferSession
             LIMIT :page , :pageSize ;
             """)
     List<TransferSessionDetailView> findAllActiveAsView(@Param("page") int page, @Param("pageSize") int pageSize);
+
+    @Query
+    Optional<TransferSession> findOneByDistrictId(Long districtId);
 }

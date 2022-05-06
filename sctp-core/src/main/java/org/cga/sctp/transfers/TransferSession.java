@@ -50,6 +50,9 @@ public class TransferSession {
     private Long programId;
 
     @Column
+    private Long districtId;
+
+    @Column
     private Boolean active;
 
     @Column
@@ -80,6 +83,14 @@ public class TransferSession {
 
     public void setProgramId(Long programId) {
         this.programId = programId;
+    }
+
+    public Long getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
     }
 
     public Boolean getActive() {
