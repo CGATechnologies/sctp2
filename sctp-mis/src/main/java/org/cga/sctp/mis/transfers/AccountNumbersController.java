@@ -32,17 +32,13 @@
 
 package org.cga.sctp.mis.transfers;
 
-import com.creditdatamw.zerocell.Reader;
 import me.desair.tus.server.TusFileUploadService;
 import me.desair.tus.server.exception.TusException;
 import me.desair.tus.server.upload.UploadInfo;
-import org.cga.sctp.beneficiaries.BeneficiaryService;
-import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.mis.core.SecuredBaseController;
 import org.cga.sctp.mis.file_upload.FileUploadService;
-import org.cga.sctp.transfers.TransferService;
+import org.cga.sctp.transfers.BeneficiaryAccountService;
 import org.cga.sctp.transfers.TransferSession;
-import org.cga.sctp.transfers.epayments.AccountNumberImportRow;
 import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.user.AdminAndStandardAccessOnly;
@@ -58,8 +54,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -72,10 +66,7 @@ public class AccountNumbersController extends SecuredBaseController {
     private TusFileUploadService tusFileUploadService;
 
     @Autowired
-    private BeneficiaryService beneficiaryService;
-
-    @Autowired
-    private TransferService transferService;
+    private BeneficiaryAccountService beneficiaryAccountService;
 
     @GetMapping
     @AdminAndStandardAccessOnly
@@ -110,8 +101,8 @@ public class AccountNumbersController extends SecuredBaseController {
                         if (uploadedFilePath.isEmpty()) {
                             TransferSession transferSession = null;
                             TransferPeriod transferPeriod = null;
-                            TransferAccountNumberList accountNumberList = extractAccountNumberFromCSV(uploadedFilePath.get());
-                            transferService.assignAccountNumbers(transferSession, transferPeriod, accountNumberList);
+                            TransferAccountNumberList accountNumberList = beneficiaryAccountService.extractAccountNumberFromCSV(uploadedFilePath.get());
+                            beneficiaryAccountService.assignAccountNumbers(transferSession, transferPeriod, accountNumberList);
                         }
                     }
                     // upload is finished, move to staging directory, Update to processing
@@ -123,33 +114,5 @@ public class AccountNumbersController extends SecuredBaseController {
             LOG.error("Error getting upload information", e);
             servletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Extract data from CSV
-     * @param uploadedFilePath path to uploaded file
-     * @return transfer account number list
-     */
-    public TransferAccountNumberList extractAccountNumberFromCSV(Path uploadedFilePath) {
-        TransferAccountNumberList transferAccountNumberList = new TransferAccountNumberList();
-        List<AccountNumberImportRow> rows = Reader.of(AccountNumberImportRow.class)
-                .skipFirstNRows(1)
-                .from(uploadedFilePath.toFile())
-                .list();
-
-        transferAccountNumberList.setAccountNumberList(new ArrayList<>());
-        rows.forEach(accountRow -> {
-            TransferAccountNumberList.HouseholdAccountNumber hh = new TransferAccountNumberList.HouseholdAccountNumber();
-            // hh.setTransferId(); //TODO: Get the transfer id
-            // TODO: We can use a record here, `record TransferIdAndHouseholdCode(Long transferId, String mlCode, Long householdId)`
-            Optional<Household> household = beneficiaryService.findHouseholdByMLCode(accountRow.getHouseholdCode());
-            if (household.isEmpty())
-                return;
-            hh.setHouseholdId(household.get().getHouseholdId());
-            hh.setAccountNumber(accountRow.getAccountNumber());
-            transferAccountNumberList.getAccountNumberList().add(hh);
-        });
-        //  TODO: extract account numbers from the CSV file
-        return transferAccountNumberList;
     }
 }

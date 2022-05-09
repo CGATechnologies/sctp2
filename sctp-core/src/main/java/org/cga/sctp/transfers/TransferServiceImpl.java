@@ -71,6 +71,9 @@ public class TransferServiceImpl implements TransferService {
     @Autowired
     private BeneficiaryService beneficiaryService;
 
+    @Autowired
+    private BeneficiaryAccountService beneficiaryAccountService;
+
     public TransferSessionRepository getTranferSessionRepository() {
         return transferSessionRepository;
     }
@@ -200,23 +203,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public int assignAccountNumbers(TransferSession session, TransferPeriod period, TransferAccountNumberList transferAccountNumberList) {
         // TODO: validate the session, check if the the period is open and check transfer agency for E-Payments which is the valid reason to assign account numbers
-        List<Long> householdsAssigned = new ArrayList<>();
-        for (TransferAccountNumberList.HouseholdAccountNumber hh : transferAccountNumberList.getAccountNumberList()) {
-            transfersRepository.findByHouseholdId(hh.getHouseholdId())
-                    .ifPresent(transfer -> {
-                        // TODO: Check if the transfer period matches the period in the request
-                        if (transfer.getTransferPeriodId() != period.getId()) {
-                            transfer.setAccountNumber(hh.getAccountNumber());
-                            transfer.setModifiedAt(LocalDateTime.now());
-                            transfersRepository.save(transfer);
-
-                            householdsAssigned.add(hh.getHouseholdId());
-                        }
-                    });
-        }
-        LoggerFactory.getLogger(getClass()).info("Assigned {} account numbers", householdsAssigned.size());
-        // TODO: return the actual list?
-        return householdsAssigned.size();
+        return beneficiaryAccountService.assignAccountNumbers(session, period, transferAccountNumberList);
     }
 
     @Override
