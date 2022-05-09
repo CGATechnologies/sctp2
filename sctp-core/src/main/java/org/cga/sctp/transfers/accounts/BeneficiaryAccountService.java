@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.transfers.accounts;
 
 import com.creditdatamw.zerocell.Reader;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,8 +41,11 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Household;
-import org.cga.sctp.transfers.epayments.AccountNumberImportRow;
-import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
+import org.cga.sctp.transfers.TransferEventHouseholdView;
+import org.cga.sctp.transfers.TransferSession;
+import org.cga.sctp.transfers.TransfersRepository;
+import org.cga.sctp.transfers.accounts.AccountNumberImportRow;
+import org.cga.sctp.transfers.accounts.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

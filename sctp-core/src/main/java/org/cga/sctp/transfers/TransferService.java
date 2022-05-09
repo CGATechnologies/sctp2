@@ -36,7 +36,7 @@ import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.location.Location;
 import org.cga.sctp.targeting.CbtStatus;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
-import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
+import org.cga.sctp.transfers.accounts.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;

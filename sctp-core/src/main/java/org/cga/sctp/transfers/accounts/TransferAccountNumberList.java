@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers.epayments;
+package org.cga.sctp.transfers.accounts;
 
 import java.util.List;
 

@@ -32,7 +32,7 @@
 
 package org.cga.sctp.transfers;
 
-import org.cga.sctp.transfers.epayments.TransferAccountNumberList;
+import org.cga.sctp.transfers.accounts.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
