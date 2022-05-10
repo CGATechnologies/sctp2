@@ -44,12 +44,11 @@ import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.transfers.TransferEventHouseholdView;
 import org.cga.sctp.transfers.TransferSession;
 import org.cga.sctp.transfers.TransfersRepository;
-import org.cga.sctp.transfers.accounts.AccountNumberImportRow;
-import org.cga.sctp.transfers.accounts.TransferAccountNumberList;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -65,6 +64,7 @@ import java.util.Optional;
  * Handles exporting and importing of account numbers for Transfer Beneficiaries.
  * @since 1.4.0
  */
+@Service
 public class BeneficiaryAccountService {
     /**
      * Directory to use to store temporary files for the exports
@@ -84,7 +84,7 @@ public class BeneficiaryAccountService {
      * @return transfer account number list
      */
     public TransferAccountNumberList extractAccountNumberFromCSV(Path uploadedFilePath) {
-        TransferAccountNumberList transferAccountNumberList = new TransferAccountNumberList();
+        final TransferAccountNumberList transferAccountNumberList = new TransferAccountNumberList();
         List<AccountNumberImportRow> rows = Reader.of(AccountNumberImportRow.class)
                 .skipFirstNRows(1)
                 .from(uploadedFilePath.toFile())
