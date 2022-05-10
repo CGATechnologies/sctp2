@@ -79,4 +79,8 @@ public class TransferPeriodService {
         // TODO: implement me
         throw new UnsupportedOperationException("not yet implemented");
     }
+
+    public List<TransferPeriod> findAllByDistrictId(Long districtId) {
+        return transferPeriodRepository.findAllByDistrictId(districtId);
+    }
 }

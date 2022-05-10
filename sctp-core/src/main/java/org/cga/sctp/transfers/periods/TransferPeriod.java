@@ -47,6 +47,9 @@ public class TransferPeriod {
     private long programId;
 
     @Column
+    private long districtId;
+
+    @Column
     private long transferSessionId;
 
     @Column
@@ -71,7 +74,7 @@ public class TransferPeriod {
     private boolean closed;
 
     @Column
-    private long createdBy;
+    private long openedBy;
 
     @Column
     private LocalDateTime createdAt;
@@ -93,6 +96,14 @@ public class TransferPeriod {
 
     public void setProgramId(long programId) {
         this.programId = programId;
+    }
+
+    public long getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(long districtId) {
+        this.districtId = districtId;
     }
 
     public long getTransferSessionId() {
@@ -159,12 +170,12 @@ public class TransferPeriod {
         this.closed = closed;
     }
 
-    public long getCreatedBy() {
-        return createdBy;
+    public long getOpenedBy() {
+        return openedBy;
     }
 
-    public void setCreatedBy(long createdBy) {
-        this.createdBy = createdBy;
+    public void setOpenedBy(long openedBy) {
+        this.openedBy = openedBy;
     }
 
     public LocalDateTime getCreatedAt() {

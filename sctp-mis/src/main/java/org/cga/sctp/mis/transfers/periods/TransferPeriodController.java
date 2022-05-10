@@ -122,4 +122,15 @@ public class TransferPeriodController extends BaseController {
     public ModelAndView viewCloseTransferPeriod() {
         return view("/transfers/periods/close");
     }
+
+    @GetMapping("/in-district/{district-id}")
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewGetTransferPeriodsInDistrict(@PathVariable("district-id") Long districtId) {
+        Location district = locationService.findById(districtId);
+        List<TransferPeriod> transferPeriods = transferPeriodService.findAllByDistrictId(districtId);
+
+        return view("transfers/periods/list_by_district")
+                .addObject("district", district)
+                .addObject("transferPeriods", transferPeriods);
+    }
 }
