@@ -30,16 +30,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.mis.transfers;
+package org.cga.sctp.mis.transfers.accounts;
 
 import me.desair.tus.server.TusFileUploadService;
 import me.desair.tus.server.exception.TusException;
 import me.desair.tus.server.upload.UploadInfo;
+import org.cga.sctp.location.Location;
+import org.cga.sctp.location.LocationService;
 import org.cga.sctp.mis.core.SecuredBaseController;
 import org.cga.sctp.mis.file_upload.FileUploadService;
-import org.cga.sctp.transfers.accounts.BeneficiaryAccountService;
 import org.cga.sctp.transfers.TransferSession;
+import org.cga.sctp.transfers.accounts.BeneficiaryAccountService;
 import org.cga.sctp.transfers.accounts.TransferAccountNumberList;
+import org.cga.sctp.transfers.agencies.TransferAgency;
+import org.cga.sctp.transfers.agencies.TransferAgencyService;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.cga.sctp.user.AuthenticatedUser;
@@ -54,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -68,14 +73,22 @@ public class AccountNumbersController extends SecuredBaseController {
     @Autowired
     private BeneficiaryAccountService beneficiaryAccountService;
 
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
+    private TransferAgencyService transferAgencyService;
+
     @GetMapping
     @AdminAndStandardAccessOnly
-    public ModelAndView getAssignAccounts() {
+    public ModelAndView getAssignAccounts(@RequestParam("district-id") Long districtId) {
+        Location district = locationService.findById(districtId);
+        List<TransferAgency> transferAgencyList = transferAgencyService.fetchAllTransferAgencies();
         return view("/transfers/beneficiaries/assign-accounts")
                 .addObject("program", new Object())
-                .addObject("location", new Object())
                 .addObject("accountsSummary", new Object())
-                .addObject("accounts", new Object());
+                .addObject("district", district)
+                .addObject("transferAgencies", transferAgencyList);
     }
 
     @PostMapping
