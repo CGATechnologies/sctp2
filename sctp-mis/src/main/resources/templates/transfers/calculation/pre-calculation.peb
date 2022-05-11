@@ -43,18 +43,18 @@
                             <span  v-text="enrollmentSession.programName"></span>
                         </div>
                     </div>
-                    <div class="column is-one-third">
-                        <div class="transfer-agency">
-                            <label class="label">District</label>
-                            <span>TODO</span>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="district location">
-                            <label class="label">Period Duration</label>
-                            <span>From <strong v-text="enrollmentSession.programName">{{programInfo.startDate}}</strong> to <strong>{{programInfo.endDate}}</strong></span> (24  months)
-                        </div>
-                    </div>
+{#                    <div class="column is-one-third">#}
+{#                        <div class="transfer-agency">#}
+{#                            <label class="label">District</label>#}
+{#                            <span>TODO</span>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="column">#}
+{#                        <div class="district location">#}
+{#                            <label class="label">Period Duration</label>#}
+{#                            <span>From <strong v-text="enrollmentSession.programName">{{programInfo.startDate}}</strong> to <strong>{{programInfo.endDate}}</strong></span> (24  months)#}
+{#                        </div>#}
+{#                    </div>#}
                 </div>
             </div>
             <div class="card-content">
@@ -62,8 +62,7 @@
                     <div class="column is-one-third">
                         <div class="district location">
                             <div class="period-header">
-                                <label class="label">Transfer Period</label>
-                                <span>From <strong>TODO</strong> to <strong>TODO</strong></span> (7 months)
+                                <label class="label">Transfer Period Months</label>
                             </div>
                             <div class="field">
                                 <label for="numberOfMonths" class="label">Duration (in Months)</label>

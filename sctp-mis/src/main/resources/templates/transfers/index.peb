@@ -1,147 +1,32 @@
-    {% extends "./base" %}
-    {% import "../utils/form" %}
-    {% block contextMenu %}
-    <div class="container context-nav-container">
-    </div>
-    {% endblock %}
-    {% block content %}
-    <div class="content-container">
-        <div class="card card-default">
-            <div class="card-header">
-                <div class="card-title">Transfers</div>
-            </div>
-            <div class="card-content">
-                <p class="notification is-info">
-                    You have to enter parameters to list the Transfers
-                </p>
+{% extends "./base" %}
+{% import "../utils/form" %}
+{% block content %}
+<div class="content-container">
+    <div class="card card-default">
+        <div class="card-header">
+            <div class="card-title">Transfers Module</div>
+        </div>
+        <div class="card-content">
+            <div class="navigation-cards">
+                <div class="columns">
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="/transfers/sessions/summary" class="is-text-4">Summary</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/agencies') }}" class="is-text-4">Transfer Agencies</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/sessions/initiate/step1') }}" class="is-text-4">Initiate Transfer</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/parameters') }}" class="is-text-4">Transfer Parameters</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/reports') }}" class="is-text-4">Reports</a>
+                    </div></div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="content-container">
-        <div class="card card-default">
-            <div class="card-header">
-                <div class="card-title">Search Results</div>
-            </div>
-            <div class="card-content">
-                    <div class="columns">
-                        <div class="column">
-                            <div class="field">
-                                <div class="control">
-                                    <label class="label">Filter Data By</label>
-                                    <div class="control">
-                                        <div class="select">
-                                            <select class="input select" name="" id="">
-                                                <option value="">Select an Option</option>
-                                                <option value="">First Time Transfer Households</option>
-                                                <option value="">Households with Transfers Performed</option>
-                                                <option value="">Households without Transfers</option>
-                                                <option value="">Households with Changes on Transfers</option>
-                                                <option>----</option>
-                                                <option value="">Households with Any Arrears</option>
-                                                <option value="">Households with Uncollected Arrears</option>
-                                                <option value="">Households with Other Arrears</option>
-                                                <option>----</option>
-                                                <option value="">Houses that haven't been Reconciled</option>
-                                            </select>
-                                        </div>
-                                        <button class="button is-success">Filter</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form">
-                                <label class="control label" for="">
-                                    <input class="control" type="radio" name="showHouseholdsOrAmounts" value="all"> Show Households and Amounts
-                                    <input class="control" type="radio" name="showHouseholdsOrAmounts" value="householdsOnly"> Show Only Households
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="columns">
-                        <div class="column">
-                            <div class="action-buttons">
-                                <div class="buttons has-addons are-small is-left">
-                                    <button class="button is-default">Export Households to CSV</button>
-                                    <button class="button is-default">Export Households to Excel</button>
-                                    <button class="button is-default">Export Suspended Households Report</button>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="columns has-text-centered has-80-smaller-font">
-                        <table class="table is-bordered is-narrow is-fullwidth">
-                            <thead>
-                            <tr>
-                                <th>TA</th>
-                                <th>Village Cluster</th>
-                                <th>Zone</th>
-                                <th>HH Code</th>
-                                <th>Receiver Name &amp; Code</th>
-                                <th># of Members</th>
-                                <th>Primary</th>
-                                <th>Primary Incentive</th>
-                                <th>Secondary</th>
-                                <th>Secondary Incentive</th>
-                                <th>Monthly Amount</th>
-                                <th>No. Of Months</th>
-                                <th>Total Monthly Amount</th>
-                                <th rowspan="0.5">Arrears</th>
-                                <th>Total Amount</th>
-                                <th>Is First Transfer</th>
-                                {#                            <th>To Be Delivered</th>#}
-                                {#                            <th>Reconciliation</th>#}
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="row in householdRows">
-                                <td v-text="row.taName"></td>
-                                <td v-text="row.clusterName"></td>
-                                <td v-text="row.zoneName"></td>
-                                <td v-text="row.mlCode"></td>
-                                <td v-text="row.receiverName"></td>
-                                <td v-text="row.memberCount"></td>
-                                <td v-text="row.primaryChildren"></td>
-                                <td v-text="numberFormatter.format(row.primaryIncentive)"></td>
-                                <td v-text="row.secondaryChildren"></td>
-                                <td v-text="numberFormatter.format(row.secondaryIncentive)"></td>
-                                <td v-text="numberFormatter.format(row.monthlyAmount)"></td>
-                                <td v-text="row.numberOfMonths"></td>
-                                <td v-text="numberFormatter.format(row.totalMonthlyAmount)"></td>
-                                <td v-text="numberFormatter.format(row.totalArrears)"></td>
-                                <td v-text="numberFormatter.format(row.totalAmount)"></td>
-                                <td v-text="row.isFirstTransfer"></td>
-                                {#                            <td v-text="row.isDelivered"></td>#}
-                                {#                            <td v-text="row.isReconciled"></td>#}
-                                <td>
-                                    <div class="dropdown is-hoverable">
-                                        <div class="dropdown-trigger">
-                                            <button class="button button is-info is-inverted"
-                                                    aria-haspopup="true" aria-controls="dropdown-menu2">
-                                                <span>Options</span>
-                                                <span class="icon is-small">
-                                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                                </span>
-                                            </button>
-                                        </div>
-                                        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                                            <div class="dropdown-content">
-                                                <a class="dropdown-item">Preview</a>
-                                                <a class="dropdown-item">Add Top Up</a>
-                                                <a class="dropdown-item">Suspend Household</a>
-                                                <a class="dropdown-item">Exit from Transfers</a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-            </div>
-        </div>
-    </div>
-
+</div>
 {% endblock %}

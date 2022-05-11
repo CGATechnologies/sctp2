@@ -37,82 +37,82 @@
                     </div>
                     <div class="tile is-parent">
                         <article class="tile is-child box">
-                            <p class="title">30Bn</p>
+                            <p class="title">MWK 0.00</p>
                             <p class="subtitle">Funding</p>
                         </article>
                     </div>
                     <div class="tile is-parent">
                         <article class="tile is-child box">
-                            <p class="title">25Bn</p>
+                            <p class="title">MWK 0.00</p>
                             <p class="subtitle">Disbursed</p>
                         </article>
                     </div>
                 </div>
             </section>
-            <div class="columns">
-                <div class="column is-6">
-                    <div class="card events-card">
-                        <header class="card-header">
-                            <p class="card-header-title">
-                                Chart #1
-                            </p>
-                        </header>
-                        <div class="card-content">
-                            <div class="content">
-                                <div class="hero">
-                                    <h1>Chart #1 goes here</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="column is-6">
-                    <div class="card no-overlap">
-                        <header class="card-header">
-                            <p class="card-header-title">Chart #2</p>
-                        </header>
-                        <div class="card-content">
-                            <div class="content">
-                                <div class="hero">
-                                    <h1>Chart #2 goes here</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="columns">
-                <div class="column is-6">
-                    <div class="card events-card">
-                        <header class="card-header">
-                            <p class="card-header-title">
-                                Chart #3
-                            </p>
-                        </header>
-                        <div class="card-content">
-                            <div class="content">
-                                <div class="hero">
-                                    <h1>Chart #3 goes here</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="column is-6">
-                    <div class="card no-overlap">
-                        <header class="card-header">
-                            <p class="card-header-title">Even more charts</p>
-                        </header>
-                        <div class="card-content">
-                            <div class="content">
-                                <div class="hero">
-                                    <h1>Stuff</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{#            <div class="columns">#}
+{#                <div class="column is-6">#}
+{#                    <div class="card events-card">#}
+{#                        <header class="card-header">#}
+{#                            <p class="card-header-title">#}
+{#                                Chart #1#}
+{#                            </p>#}
+{#                        </header>#}
+{#                        <div class="card-content">#}
+{#                            <div class="content">#}
+{#                                <div class="hero">#}
+{#                                    <h1>Chart #1 goes here</h1>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="column is-6">#}
+{#                    <div class="card no-overlap">#}
+{#                        <header class="card-header">#}
+{#                            <p class="card-header-title">Chart #2</p>#}
+{#                        </header>#}
+{#                        <div class="card-content">#}
+{#                            <div class="content">#}
+{#                                <div class="hero">#}
+{#                                    <h1>Chart #2 goes here</h1>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="columns">#}
+{#                <div class="column is-6">#}
+{#                    <div class="card events-card">#}
+{#                        <header class="card-header">#}
+{#                            <p class="card-header-title">#}
+{#                                Chart #3#}
+{#                            </p>#}
+{#                        </header>#}
+{#                        <div class="card-content">#}
+{#                            <div class="content">#}
+{#                                <div class="hero">#}
+{#                                    <h1>Chart #3 goes here</h1>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="column is-6">#}
+{#                    <div class="card no-overlap">#}
+{#                        <header class="card-header">#}
+{#                            <p class="card-header-title">Even more charts</p>#}
+{#                        </header>#}
+{#                        <div class="card-content">#}
+{#                            <div class="content">#}
+{#                                <div class="hero">#}
+{#                                    <h1>Stuff</h1>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
         </div>
     </div>
     {% endblock %}
