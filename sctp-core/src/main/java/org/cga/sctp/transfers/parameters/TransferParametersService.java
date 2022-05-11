@@ -80,7 +80,7 @@ public class TransferParametersService {
 
                 return param.getAmount();
 
-            } else if (param.getCondition().equals(HouseholdParameterCondition.GREATER_THAN_OR_EQUAL) &&
+            } else if (param.getCondition().equals(HouseholdParameterCondition.GREATER_THAN_OR_EQUALS) &&
                     householdSize >= param.getNumberOfMembers()) {
 
                 return param.getAmount();

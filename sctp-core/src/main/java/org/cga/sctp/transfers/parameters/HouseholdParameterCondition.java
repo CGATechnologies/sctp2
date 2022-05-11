@@ -35,7 +35,7 @@ package org.cga.sctp.transfers.parameters;
 public enum HouseholdParameterCondition {
     EQUALS("is equal to"),
     GREATER_THAN("is greater than"),
-    GREATER_THAN_OR_EQUAL("is greater than or equals");
+    GREATER_THAN_OR_EQUALS("is greater than or equals");
 
     private String description;
 

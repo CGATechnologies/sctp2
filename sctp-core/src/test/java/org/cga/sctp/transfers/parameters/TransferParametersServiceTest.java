@@ -55,7 +55,7 @@ class TransferParametersServiceTest {
                 createParam(1, 1000L, HouseholdParameterCondition.EQUALS),
                 createParam(2, 2000L, HouseholdParameterCondition.EQUALS),
                 createParam(3, 3000L, HouseholdParameterCondition.EQUALS),
-                createParam(4, 4000L, HouseholdParameterCondition.GREATER_THAN_OR_EQUAL)
+                createParam(4, 4000L, HouseholdParameterCondition.GREATER_THAN_OR_EQUALS)
         );
 
         assertEquals(1000, service.determineAmountByHouseholdSize(1, params));
