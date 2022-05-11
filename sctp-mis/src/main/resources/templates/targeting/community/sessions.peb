@@ -20,7 +20,7 @@
                 <p class="card-header-title">Community-Based Targeting</p>
             </header>
             <div class="card-content">
-                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                {{ showMessages(successMessage, message("targeting.cbt.info"), dangerMessage, warningMessage) }}
                 <div class="content">
                     <table class="table dataTable is-narrow is-striped is-hoverable">
                         <thead>
