@@ -145,4 +145,13 @@ public interface TransferService {
     List<Transfer> fetchTransferList(long districtCode, Long taCode, Long villageCluster, Long zone, Long village, Pageable pageable);
 
     Optional<TransferSession> findLatestSessionInDistrict(Long districtId);
+
+    /**
+     * Fetches District Transfer Summary information from the database.
+     * WARNING this may be a costly operation and therefore we need to cache the results of this call as it has to
+     * do potentially a lot of compute for the amounts.
+     * // TODO: check that there is caching in implementation
+     * @return list of district summaries
+     */
+    List<DistrictTransferSummaryView> fetchDistrictSummaries();
 }

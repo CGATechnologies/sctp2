@@ -224,4 +224,10 @@ public class TransferServiceImpl implements TransferService {
     public Optional<TransferSession> findLatestSessionInDistrict(Long districtId) {
         return getTranferSessionRepository().findOneByDistrictId(districtId);
     }
+
+    @Override
+    public List<DistrictTransferSummaryView> fetchDistrictSummaries() {
+        // TODO: look at caching the results...
+        return transferSessionRepository.fetchDistrictSummary();
+    }
 }

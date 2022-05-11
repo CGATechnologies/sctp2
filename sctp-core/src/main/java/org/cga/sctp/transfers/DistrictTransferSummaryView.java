@@ -32,38 +32,25 @@
 
 package org.cga.sctp.transfers;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface TransferSessionRepository extends JpaRepository<TransferSession, Long> {
-    @Query(nativeQuery = true, value = """
-            SELECT 
-              pg.name as programName,
-              ts.* 
-            FROM transfers_sessions ts
-            INNER JOIN programs pg ON pg.id = ts.program_id
-            LIMIT :page , :pageSize ;
-            """)
-    List<TransferSessionDetailView> findAllActiveAsView(@Param("page") int page, @Param("pageSize") int pageSize);
-
-    @Query
-    Optional<TransferSession> findOneByDistrictId(Long districtId);
-
-    @Query(nativeQuery = true, value = """
-            SELECT
-              district.id as id,
-              district.id as districtId,
-              district.code as districtCode,
-              district.name as districtName,
-              district.created_at as created_at
-            FROM locations AS district
-            LEFT OUTER JOIN transfer_periods tp ON tp.district_id = district.id
-            WHERE district.location_type = 'SUBNATIONAL1'
-            ORDER BY district.name, tp.end_date
-            """)
-    List<DistrictTransferSummaryView> fetchDistrictSummary();
+/**
+ * Provides a summary for Transfers in a District
+ */
+public interface DistrictTransferSummaryView {
+    Long getProgramId();
+    Long getDistrictId();
+    Long getDistrictCode();
+    String getDistrictName();
+    Integer getNumOfTransferPeriods();
+    String getCurrentPeriodStatus();
+    LocalDate getCurrentPeriodStartDate();
+    LocalDate getCurrentPeriodEndDate();
+    Long getNoOfHouseholds();
+    Long getNoOfHouseholdMembers();
+    Long getTotalAmountToDisburse();
+    Long getTotalAmountDisbursed();
+    Long getTotalArrearsAmountNotPaid();
+    Timestamp getLastActiveTimestamp();
 }

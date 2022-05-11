@@ -30,40 +30,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.transfers;
+package org.cga.sctp.mis.transfers;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.cga.sctp.mis.core.SecuredBaseController;
+import org.cga.sctp.transfers.DistrictTransferSummaryView;
+import org.cga.sctp.transfers.TransferService;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface TransferSessionRepository extends JpaRepository<TransferSession, Long> {
-    @Query(nativeQuery = true, value = """
-            SELECT 
-              pg.name as programName,
-              ts.* 
-            FROM transfers_sessions ts
-            INNER JOIN programs pg ON pg.id = ts.program_id
-            LIMIT :page , :pageSize ;
-            """)
-    List<TransferSessionDetailView> findAllActiveAsView(@Param("page") int page, @Param("pageSize") int pageSize);
+@RequestMapping("/transfers/sessions/summary")
+@Controller
+public class TransferSummaryController extends SecuredBaseController {
+    @Autowired
+    private TransferService transferService;
 
-    @Query
-    Optional<TransferSession> findOneByDistrictId(Long districtId);
-
-    @Query(nativeQuery = true, value = """
-            SELECT
-              district.id as id,
-              district.id as districtId,
-              district.code as districtCode,
-              district.name as districtName,
-              district.created_at as created_at
-            FROM locations AS district
-            LEFT OUTER JOIN transfer_periods tp ON tp.district_id = district.id
-            WHERE district.location_type = 'SUBNATIONAL1'
-            ORDER BY district.name, tp.end_date
-            """)
-    List<DistrictTransferSummaryView> fetchDistrictSummary();
+    @GetMapping
+    @AdminAndStandardAccessOnly
+    public ModelAndView viewSummaryPage() {
+        List<DistrictTransferSummaryView> districtSummaries = transferService.fetchDistrictSummaries();
+        return view("transfers/summary")
+                .addObject("districtSummaries", districtSummaries);
+    }
 }

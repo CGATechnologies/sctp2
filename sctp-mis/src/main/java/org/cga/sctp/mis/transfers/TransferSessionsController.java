@@ -94,21 +94,12 @@ public class TransferSessionsController extends BaseController {
     public ModelAndView index(Pageable pageable) {
         var transferSessions = transferService.findAllActiveSessions(pageable);
         // TODO: Remember transfer Summaries and transfer sessions are two different concepts
-        return view("transfers/summary")
+        return view("transfers/index")
                 .addObject("transferSessions", transferSessions)
                 .addObject("transferSummaries", new Object()); // FIXME: fetch summary
     }
 
-    // TODO: make different from the #index action
-    @GetMapping("/summary")
-    @AdminAndStandardAccessOnly
-    public ModelAndView summary(Pageable pageable) {
-        var transferSessions = transferService.findAllActiveSessions(pageable);
-        // TODO: Remember transfer Summaries and transfer sessions are two different concepts
-        return view("transfers/summary")
-                .addObject("transferSessions", transferSessions)
-                .addObject("transferSummaries", new Object()); // FIXME: fetch summary
-    }
+
 
     @GetMapping("/initiate/step1")
     @AdminAndStandardAccessOnly

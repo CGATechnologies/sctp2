@@ -37,6 +37,7 @@
             <thead>
                 <tr>
                     <th>District</th>
+                    <th>No. of Periods</th>
                     <th>Current Period Status</th>
                     <th>Cur. Period Start</th>
                     <th>Cur. Period End</th>
@@ -44,9 +45,31 @@
                     <th>No. of Household Members</th>
                     <th>Amount to Disburse</th>
                     <th>Total Disbursed</th>
+                    <th>Total Arrears</th>
                     <th>Options</th>
                 </tr>
             </thead>
+            <tbody>
+                {% for d in districtSummaries %}
+                <tr data-district-id="{{ d.id }}" data-program-id="{{ d.programId }}">
+                    <td>{{ d.districtName}}<br/>
+                        <small>Last Updated: {{ d.lastActiveTimestamp}}</small>
+                    </td>
+                    <td>{{ d.numOfTransferPeriods}}</td>
+                    <td>{{ d.currentPeriodStatus }}</td>
+                    <td>{{ d.currentPeriodStartDate}}</td>
+                    <td>{{ d.currentPeriodEndDate }}</td>
+                    <td>{{ d.noOfHouseholds}}</td>
+                    <td>{{ d.noOfHouseholdMembers}}</td>
+                    <td>{{ d.totalAmountToDisburse}}</td>
+                    <td>{{ d.totalAmountDisbursed}}</td>
+                    <td>{{ d.totalArrearsAmountNotPaid}}</td>
+                    <td>
+                        <a href="/transfers/periods/in-district/{{ d.districtId }}">View Periods</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </div>
