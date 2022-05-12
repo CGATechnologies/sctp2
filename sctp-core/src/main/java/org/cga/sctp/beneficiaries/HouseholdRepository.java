@@ -38,6 +38,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 interface HouseholdRepository extends JpaRepository<Household, Long> {
     Household findByCbtSessionIdAndHouseholdId(Long cbtSessionId, Long household);
@@ -45,4 +47,7 @@ interface HouseholdRepository extends JpaRepository<Household, Long> {
     @Modifying
     @Query(value = "UPDATE households SET cbt_status = :statusCode, cbt_rank = :rank WHERE household_id = :householdId", nativeQuery = true)
     void updateHouseholdRankAndStatus(@Param("householdId") Long id, @Param("rank") Long rank, @Param("statusCode") int status);
+
+
+    Optional<Household> findOneByMlCode(String mlCode);
 }

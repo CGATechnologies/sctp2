@@ -1,0 +1,92 @@
+    {% extends "../base" %}
+        {% block title %}
+        {{ parent() }} - Cash Transfer Calculations - Step 2
+        {% endblock %}
+        {% block contextMenu %}
+        <div class="container context-nav-container">
+            <div class="buttons is-left">
+                <a href="{{ href('/transfers/sessions') }}" class="button is-danger">
+                <span class="icon-text">
+                    <span class="icon">
+                        <i class="fa fa-chevron-left"></i>
+                    </span>
+                    <span>Back to Sessions</span>
+                </span>
+                </a>
+            </div>
+        </div>
+        {% endblock %}
+
+        {% block content %}
+        <div id="transfers-select-transfer-options">
+            <div class="card no-overlap">
+                <header class="card-header">
+                    <p class="card-header-title">Cash Transfer Parameters</p>
+                </header>
+                <div class="card-content">
+                    <form action="/transfers/sessions/initiate/step3" method="post" enctype="application/x-www-form-urlencoded">
+                        {{ csrf(_csrf) }}
+                        <input type="hidden" name="programId" value="{{ program.id }}" />
+                        <input type="hidden" name="districtId" value="{{ district.id }}" />
+                        <input type="hidden" name="useCurrentParameters" value="true" />
+                        <div class="paramters-preview-body">
+                            <span>The following parameters will be used for the Transfers</span>.
+                            <div class="parameters-section">
+                                <div class="param-section">
+                                    <h3 class="subtitle">Basic Subsidy Amounts</h3>
+                                    <div class="basic-household-params">
+                                        <table class="table is-striped is-narrow is-fullwidth">
+                                            <tbody>
+                                                {% for param in householdParameters %}
+                                                <tr>
+                                                    <td><span>MWK {{ param.amount | numberformat("#,###.##") }}</span> when number of Household members {{  param.condition.description }} {{  param.numberOfMembers }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="param-section">
+                                    <h3 class="subtitle">School Incentives</h3>
+                                    <div class="incentive-parameters">
+                                        <table class="table is-striped is-narrow is-fullwidth">
+                                            <tbody>
+                                                {% for p in educationIncentives %}
+                                                <tr>
+                                                <td><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="param-section">
+                                    <h3 class="subtitle">School Bonuses</h3>
+                                    <div class="bonus-parameters">
+                                        <table class="table is-striped is-narrow is-fullwidth">
+                                            <tbody>
+                                                {% for p in educationBonuses %}
+                                                <tr>
+                                                <td><span>MWK {{ p.amount | numberformat("#,###.##") }}</span> for {{  p.educationLevel }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="notification is-info">
+                                You can update parameters before performing final Transfer calculations.
+                            </p>
+                        </div>
+                        <div class="action-buttons is-right">
+                            <a href="/transfers/parameters">&lt; Update Transfer Parameters First</a>
+                            <button type="submit" class="button is-danger">Accept Parameters and Initiate Transfers</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endblock %}
+    {% block footerScripts %}
+
+    {% endblock %}

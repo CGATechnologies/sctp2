@@ -1,0 +1,32 @@
+{% extends "./base" %}
+{% import "../utils/form" %}
+{% block content %}
+<div class="content-container">
+    <div class="card card-default">
+        <div class="card-header">
+            <div class="card-title">Transfers Module</div>
+        </div>
+        <div class="card-content">
+            <div class="navigation-cards">
+                <div class="columns">
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="/transfers/sessions/summary" class="is-text-4">Summary</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/agencies') }}" class="is-text-4">Transfer Agencies</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/sessions/initiate/step1') }}" class="is-text-4">Initiate Transfer</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/parameters') }}" class="is-text-4">Transfer Parameters</a>
+                    </div></div>
+                    <div class="column"><div class="box is-center-aligned">
+                        <i class="fa fa-pencil">&nbsp;</i><a href="{{ href('/transfers/reports') }}" class="is-text-4">Reports</a>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

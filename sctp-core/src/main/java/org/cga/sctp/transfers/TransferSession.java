@@ -32,8 +32,6 @@
 
 package org.cga.sctp.transfers;
 
-import org.cga.sctp.persistence.DatabaseRecord;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -46,10 +44,13 @@ public class TransferSession {
     private Long id;
 
     @Column
+    private Long enrollmentSessionId;
+
+    @Column
     private Long programId;
 
     @Column
-    private Long enrollmentSessionId;
+    private Long districtId;
 
     @Column
     private Boolean active;
@@ -68,6 +69,14 @@ public class TransferSession {
         this.id = id;
     }
 
+    public Long getEnrollmentSessionId() {
+        return enrollmentSessionId;
+    }
+
+    public void setEnrollmentSessionId(Long enrollmentSessionId) {
+        this.enrollmentSessionId = enrollmentSessionId;
+    }
+
     public Long getProgramId() {
         return programId;
     }
@@ -76,12 +85,12 @@ public class TransferSession {
         this.programId = programId;
     }
 
-    public Long getEnrollmentSessionId() {
-        return enrollmentSessionId;
+    public Long getDistrictId() {
+        return districtId;
     }
 
-    public void setEnrollmentSessionId(Long enrollmentSessionId) {
-        this.enrollmentSessionId = enrollmentSessionId;
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
     }
 
     public Boolean getActive() {

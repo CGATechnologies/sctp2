@@ -33,71 +33,28 @@
 package org.cga.sctp.transfers.agencies;
 
 import org.cga.sctp.location.Location;
-import org.cga.sctp.persistence.StatusCode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-@Service
-public class TransferAgencyService {
-
-    @Value(value = "${sctp.transfers.manualTransferFrequency}")
-    private int manualTransferFrequency = 2;
-
-    @Autowired
-    private TransferAgenciesRepository transferAgenciesRepository;
-
-    @Autowired
-    private TransferAgencyAssignmentRepository transferAgencyAssignmentRepository;
-
-    public TransferAgenciesRepository getTransferAgenciesRepository() {
-        return transferAgenciesRepository;
-    }
-
-    public List<TransferAgency> fetchAllTransferAgencies() {
-        return transferAgenciesRepository.findAll();
-    }
-
-    public TransferAgency findActiveTransferAgencyById(Long transferAgencyId) {
-        return transferAgenciesRepository.getOne(transferAgencyId);
-    }
-
+public interface TransferAgencyService {
     /**
-     * Assign a Transfer Agency to the given Geolocation area.
-     * @param transferAgency the agency to assign to the location
-     * @param location the geolocation area
-     * @param transferMethod the method the agency will use for transfers in the location
-     * @param assignedBy user who assigned the agency
-     * @return transfer agency assignment entity
+     * Assign a transfer agency to a location
+     * @param transferAgency
+     * @param location
+     * @param transferMethod
+     * @return
      */
-    public TransferAgencyAssignment assignAgency(TransferAgency transferAgency,
-                                                 Location location,
-                                                 TransferMethod transferMethod,
-                                                 Long assignedBy) {
-        TransferAgencyAssignment agencyAssignment = new TransferAgencyAssignment();
-        
-        agencyAssignment.setTransferAgencyId(transferAgency.getId());
-        agencyAssignment.setLocationId(location.getId());
-        agencyAssignment.setTransferMethod(transferMethod);
-        agencyAssignment.setAssignedBy(assignedBy);
-        agencyAssignment.setStatus(StatusCode.ACTIVE);
+    TransferAgencyAssignment assignAgency(TransferAgency transferAgency,
+                                          Location location,
+                                          TransferMethod transferMethod,
+                                          Long assignedBy) throws TransferAgencyAlreadyAssignedException;
 
-        if (agencyAssignment.getTransferMethod().equals(TransferMethod.Manual)) {
-            agencyAssignment.setFrequency(manualTransferFrequency);
-        } else if (agencyAssignment.getTransferMethod().equals(TransferMethod.EPayment)) {
-            agencyAssignment.setFrequency(1);
-        }
+    Optional<TransferAgency> findById(Long transferAgencyId);
 
-        agencyAssignment.setCreatedAt(LocalDateTime.now());
-        agencyAssignment.setModifiedAt(agencyAssignment.getCreatedAt());
+    void save(TransferAgency transferAgency);
 
-        return transferAgencyAssignmentRepository.save(agencyAssignment);
-    }
+    List<TransferAgency> fetchAllTransferAgencies();
 
-    public void save(TransferAgency transferAgency) {
-        transferAgenciesRepository.save(transferAgency);
-    }
+    List<TransferAgency> findAllByTransferModality(String transferMethod);
 }

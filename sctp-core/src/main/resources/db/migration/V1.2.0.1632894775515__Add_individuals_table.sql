@@ -1,6 +1,6 @@
----
---- Individuals information
----
+--
+-- Individuals information
+--
 
 CREATE TABLE IF NOT EXISTS `individuals` (
   `id` bigint NOT NULL AUTO_INCREMENT,

@@ -1,0 +1,195 @@
+{% extends "transfers/base" %}
+{% import "../../utils/form" %}
+{% block title %}
+{{ parent() }} - Assign Account Numbers
+{% endblock %}
+{% block contextMenu %}
+<div class="container context-nav-container">
+    <div class="navigation-cards">
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="content-container">
+    <div class="card card-default">
+        <div class="card-header">
+            <div class="card-title">Assign Account Numbers</div>
+        </div>
+        <div class="card-content">
+            <form method="post" enctype="application/x-www-form-urlencoded"
+                  action="/transfers/assign-accounts/{{ session.id }}/upload">
+                {{ csrf(_csrf) }}
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                {{ hiddenField('__uploadToken', __uploadToken) }}
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label for="" class="label">Transfer Agency</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="select is-fullwidth">
+                                {{ selectField('transferAgencyId', transferAgencies, form.transferAgencyId, true) }}
+                        </div>
+                    </div>
+                    {{ printFieldErrors(getFieldErrors('form', 'transferAgencyId')) }}
+                </div>
+{#                <div class="field is-horizontal">#}
+{#                    <div class="field-label">#}
+{#                        <label class="label">Title</label>#}
+{#                    </div>#}
+{#                    <div class="field-body">#}
+{#                        <div class="field">#}
+{#                            <div class="control"><span>{{ dataImport.title }}</span></div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+                <div id="fileInputRow" class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label is-required">Account Numbers File</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input id="dataFile"
+                                       type="file"
+                                       class="input"
+                                       accept=".xslx"
+                                       required="required"
+                                       name="dataFile" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                        <label class="label">Progress</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div id="progressContainer" class="control">
+                                <progress id="progress" class="progress is-primary" value="0" max="100">0%</progress>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label">
+                        <label class="label">Template Files</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <a href="/transfers/assign-accounts/template"
+                                   download="Assign-Accounts.xlsx"
+                                   target="_blank">Account Numbers Template File</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons is-right">
+                    <button type="button"
+                            id="uploadButton"
+                            onclick="uploadFile(__uploadToken.value)"
+                            class="button is-primary">Upload File</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footerScripts %}
+<script src="/assets/js/vendor/tus/tus.min.js"></script>
+<script type="text/javascript">
+    (function(){
+        var MAX_FILE_SIZE = {{ beans.maxUploadSize }};
+        const FILE_SIZE_ERROR = "Selected file is too big. File size must not exceed {{ beans.maxUploadSizeText }}";
+        window.toggleLoadingButton = function(btn){
+            if(btn){
+                btn.classList.toggle('is-loading');
+                btn.disabled = !btn.disabled;
+            }
+        };
+        window.updateCompletionStatus = function(ok){
+            progress.remove();
+            fileInputRow.remove();
+            uploadButton.disabled = false;
+            uploadButton.innerText = ok ? 'Finish' : 'Retry Upload';
+            uploadButton.classList.remove('is-loading');
+            uploadButton.onclick = function(){
+                if(!ok){
+                    location.reload();
+                }else{
+                    location.href = '/transfers/assign-accounts';
+                }
+                return false;
+            };
+            var _span = document.createElement('span');
+            if(!ok){
+                _span.innerText = 'Upload interrupted. Click on "Retry Upload" button to try again.';
+                _span.classList.add('has-text-danger');
+            }else{
+                _span.innerText = 'Upload completed. Click on "Finish" button to proceed.';
+                _span.classList.add('has-text-success');
+            }
+            progressContainer.appendChild(_span);
+        };
+        window.uploadFile = function(__uploadToken__){
+            var _file = dataFile.files.length == 1 ? dataFile.files[0] : null;
+            if(_file == null){
+                alert('Please select a file first');
+            }else{
+                var __csrfTokenValue = query('meta[name="csrf-token"]').content;
+
+                if(_file.size == 0){
+                    alert('You cannot upload empty files.');
+                    return;
+                }
+
+                if(_file.size > MAX_FILE_SIZE){
+                    alert(FILE_SIZE_ERROR);
+                    return;
+                }
+                var endpointUrl = "/transfers/assign-accounts/{{ dataImport.id }}/upload?__uploadToken="
+                                + __uploadToken__;
+                var __upload = createResumableFile(
+                    _file, {
+                        endpoint: endpointUrl,
+                        headers: {"X-CSRF-TOKEN": __csrfTokenValue},
+                        onError: function(error) {
+                            console.log("Error: " + error)
+                            updateCompletionStatus(false);
+                        },
+                        // Callback for reporting upload progress
+                        onProgress: function(bytesUploaded, bytesTotal) {
+                            var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+                            progress.value = percentage;
+                            console.log(bytesUploaded, bytesTotal, percentage + "%")
+                        },
+                        // Callback for once the upload is completed
+                        onSuccess: function(p) {
+                            console.log("Download %s from %s", __upload.file.name, __upload.url, p);
+                            updateCompletionStatus(true);
+                        }
+                    }
+                );
+
+                toggleLoadingButton(uploadButton);
+
+                // Check if there are any previous uploads to continue.
+                __upload.findPreviousUploads().then(function (previousUploads) {
+                    // Found previous uploads so we select the first one.
+                    if (previousUploads.length) {
+                        __upload.resumeFromPreviousUpload(previousUploads[0])
+                    }
+
+                    // Start the upload
+                    __upload.start()
+                })
+            }
+        };
+    })();
+</script>
+{% endblock %}

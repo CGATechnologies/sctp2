@@ -43,23 +43,28 @@ public class TransferAgency {
     private Long id;
     @Column
     private String name;
-    @Column
-    private Boolean active; // 'On or off in the form  0=off, 1=on.',
-    @Column
-    private String website; // 'web site'
-    @Column
-    private String address; // 'Address'
-    @Column
-    private String phone; // 'Address'
-    @Column
-    private String representativeName; // 'Name representative'
-    @Column
-    private String representativeEmail; // 'Email representative'
-    @Column
-    private String representativePhone; // 'Phone representative'
 
     @Column
-    private String branch; // 'Branch'
+    @Enumerated(EnumType.STRING)
+    private TransferMethod transferMethod;
+
+    @Column
+    private Boolean active;
+    @Column
+    private String website;
+    @Column
+    private String address;
+    @Column
+    private String phone;
+    @Column
+    private String representativeName;
+    @Column
+    private String representativeEmail;
+    @Column
+    private String representativePhone;
+
+    @Column
+    private String branch;
 
     @Column
     private Long locationId;
@@ -86,20 +91,20 @@ public class TransferAgency {
         this.name = name;
     }
 
-    public Boolean isActive() {
+    public TransferMethod getTransferMethod() {
+        return transferMethod;
+    }
+
+    public void setTransferMethod(TransferMethod transferMethod) {
+        this.transferMethod = transferMethod;
+    }
+
+    public Boolean getActive() {
         return active;
     }
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getWebsite() {
@@ -116,6 +121,14 @@ public class TransferAgency {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getRepresentativeName() {

@@ -33,6 +33,12 @@
 package org.cga.sctp.transfers.agencies;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface TransferAgenciesRepository extends JpaRepository<TransferAgency, Long> {
+
+    @Query
+    List<TransferAgency> findAllByTransferMethod(TransferMethod transferMethod);
 }

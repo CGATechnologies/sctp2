@@ -32,35 +32,24 @@
 
 package org.cga.sctp.mis.transfers.agencies;
 
-import org.cga.sctp.location.Location;
-import org.cga.sctp.transfers.agencies.TransferAgency;
 import org.cga.sctp.transfers.agencies.TransferMethod;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Links a {@link Location}s with a {@link TransferAgency}.
- */
 public class TransferAgencyAssignmentForm {
-    private Long id;
-
-    @NotNull
-    private Long locationId;
-
-    @NotNull
+    @NotNull(message = "Transfer Agency must be specified")
     private Long transferAgencyId;
-
-    @NotNull
+    @NotNull(message = "Location must be specified")
+    private Long locationId;
+    @NotNull(message = "Transfer method must be specified")
     private TransferMethod transferMethod;
 
-    private int transferFrequency;
-
-    public Long getId() {
-        return id;
+    public Long getTransferAgencyId() {
+        return transferAgencyId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTransferAgencyId(Long transferAgencyId) {
+        this.transferAgencyId = transferAgencyId;
     }
 
     public Long getLocationId() {
@@ -71,14 +60,6 @@ public class TransferAgencyAssignmentForm {
         this.locationId = locationId;
     }
 
-    public Long getTransferAgencyId() {
-        return transferAgencyId;
-    }
-
-    public void setTransferAgencyId(Long transferAgencyId) {
-        this.transferAgencyId = transferAgencyId;
-    }
-
     public TransferMethod getTransferMethod() {
         return transferMethod;
     }
@@ -87,11 +68,12 @@ public class TransferAgencyAssignmentForm {
         this.transferMethod = transferMethod;
     }
 
-    public int getTransferFrequency() {
-        return transferFrequency;
-    }
-
-    public void setTransferFrequency(int transferFrequency) {
-        this.transferFrequency = transferFrequency;
+    @Override
+    public String toString() {
+        return "TransferAgencyAssignmentForm{" +
+                "transferAgencyId=" + transferAgencyId +
+                ", locationId=" + locationId +
+                ", transferMethod=" + transferMethod +
+                '}';
     }
 }

@@ -57,6 +57,11 @@ import java.util.List;
 
 import static org.cga.sctp.mis.location.LocationCodeUtil.toSelectOptions;
 
+/**
+ * This is mostly an MVC controller but also contains some controller actions that
+ * server AJAX requests.
+ *
+ */
 @Controller
 @RequestMapping("/locations")
 public class LocationController extends BaseController {

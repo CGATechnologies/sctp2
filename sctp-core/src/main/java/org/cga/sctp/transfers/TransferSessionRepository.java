@@ -37,18 +37,33 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TransferSessionRepository extends JpaRepository<TransferSession, Long> {
     @Query(nativeQuery = true, value = """
             SELECT 
               pg.name as programName,
-              es.id as enrolmentSessionId,
-              trs.* 
-            FROM transfers_sessions trs
-            INNER JOIN enrollment_sessions es ON es.id = trs.enrollment_session_id
-            INNER JOIN targeting_sessions ts ON ts.id = es.target_session_id
+              ts.* 
+            FROM transfers_sessions ts
             INNER JOIN programs pg ON pg.id = ts.program_id
             LIMIT :page , :pageSize ;
             """)
     List<TransferSessionDetailView> findAllActiveAsView(@Param("page") int page, @Param("pageSize") int pageSize);
+
+    @Query
+    Optional<TransferSession> findOneByDistrictId(Long districtId);
+
+    @Query(nativeQuery = true, value = """
+            SELECT
+              district.id as id,
+              district.id as districtId,
+              district.code as districtCode,
+              district.name as districtName,
+              district.created_at as created_at
+            FROM locations AS district
+            LEFT OUTER JOIN transfer_periods tp ON tp.district_id = district.id
+            WHERE district.location_type = 'SUBNATIONAL1'
+            ORDER BY district.name, tp.end_date
+            """)
+    List<DistrictTransferSummaryView> fetchDistrictSummary();
 }

@@ -36,26 +36,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/*
-TODO: Review the necessity of the fields below
-private int fieldwork_houmemreceivespayment_id;
-private String personauthorized;
-private Long fieldWorkUserID;// fieldwork_use_id;
-private Long arrearsUncollectedAmount;// valuearrearsuncollected;
-private Long arrearsUntransferredAmount;// valuearrearsuntransferred;
-private Long arrearsUpdatedAmount;// valuearrearsupdated;
-private Long valueArrearsTopup;
-private Long valueArrearstopupReceive;
-private Boolean hasChangedGeolocation;
-private Boolean isReplaced; // trarepenr_replaced;
-private Boolean isTransferFieldWork; // istransferfieldwork
-private LocalDateTime datefieldwork; // datefieldwork
-private TransferHouseholdState transferHouseholdState;
-private TransferMethod modality; // modality -- can get the value from the transfer agency assigned at the time?
-private Boolean isNonRecertified; //flagnonrecertified;
-private Long totalTransferAmount;// valuetotaltransfer;
-*/
-
 @Entity
 @Table(name = "transfers")
 public class Transfer {
@@ -74,23 +54,14 @@ public class Transfer {
     private Long transferSessionId;
 
     @Column
-    private Long enrollmentSessionId;
-
-    @Column
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = TransferStatus.Converter.class)
     private TransferStatus transferState;
 
     @Column
     private Long transferAgencyId;
 
     @Column
-    private int transfer_period_start_month;
-    @Column
-    private int transfer_period_start_year;
-    @Column
-    private int transfer_period_end;
-    @Column
-    private int transfer_period_end_year;
+    private Long transferPeriodId;
 
     @Column
     private Long districtId;
@@ -159,7 +130,7 @@ public class Transfer {
 
     /** VARCHAR(50) NULL COMMENT 'Account number assigned for transfer', */
     @Column
-    private Long accountNumber;
+    private String accountNumber;
 
     /** BIGINT DEFAULT 0 COMMENT 'Amount received by the household', */
     @Column
@@ -171,7 +142,7 @@ public class Transfer {
 
     /** DATE COMMENT 'When the amount was disbursed', */
     @Column
-    private Long disbursementDate;
+    private LocalDateTime disbursementDate;
 
     /** BIGINT null COMMENT 'Amount that is pending from this transfer', */
     @Column
@@ -206,10 +177,12 @@ public class Transfer {
     private LocalDateTime modifiedAt;
 
     // BIGINT NOT NULL COMMENT 'The user who created/initiated this transfer record',
-    @Column private Long createdBy;
+    @Column
+    private Long createdBy;
 
     // BIGINT NOT NULL COMMENT 'The user who approved/reviewed the transfer record should not be == created_by',
-    @Column private Long reviewedBy;
+    @Column
+    private Long reviewedBy;
 
     public Long getId() {
         return id;
@@ -243,14 +216,6 @@ public class Transfer {
         this.transferSessionId = transferSessionId;
     }
 
-    public Long getEnrollmentSessionId() {
-        return enrollmentSessionId;
-    }
-
-    public void setEnrollmentSessionId(Long enrollmentSessionId) {
-        this.enrollmentSessionId = enrollmentSessionId;
-    }
-
     public TransferStatus getTransferState() {
         return transferState;
     }
@@ -267,36 +232,12 @@ public class Transfer {
         this.transferAgencyId = transferAgencyId;
     }
 
-    public int getTransfer_period_start_month() {
-        return transfer_period_start_month;
+    public Long getTransferPeriodId() {
+        return transferPeriodId;
     }
 
-    public void setTransfer_period_start_month(int transfer_period_start_month) {
-        this.transfer_period_start_month = transfer_period_start_month;
-    }
-
-    public int getTransfer_period_start_year() {
-        return transfer_period_start_year;
-    }
-
-    public void setTransfer_period_start_year(int transfer_period_start_year) {
-        this.transfer_period_start_year = transfer_period_start_year;
-    }
-
-    public int getTransfer_period_end() {
-        return transfer_period_end;
-    }
-
-    public void setTransfer_period_end(int transfer_period_end) {
-        this.transfer_period_end = transfer_period_end;
-    }
-
-    public int getTransfer_period_end_year() {
-        return transfer_period_end_year;
-    }
-
-    public void setTransfer_period_end_year(int transfer_period_end_year) {
-        this.transfer_period_end_year = transfer_period_end_year;
+    public void setTransferPeriodId(Long transferPeriodId) {
+        this.transferPeriodId = transferPeriodId;
     }
 
     public Long getDistrictId() {
@@ -435,11 +376,11 @@ public class Transfer {
         this.receiverId = receiverId;
     }
 
-    public Long getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -459,11 +400,11 @@ public class Transfer {
         isCollected = collected;
     }
 
-    public Long getDisbursementDate() {
+    public LocalDateTime getDisbursementDate() {
         return disbursementDate;
     }
 
-    public void setDisbursementDate(Long disbursementDate) {
+    public void setDisbursementDate(LocalDateTime disbursementDate) {
         this.disbursementDate = disbursementDate;
     }
 
@@ -553,5 +494,10 @@ public class Transfer {
 
     public void setReviewedBy(Long reviewedBy) {
         this.reviewedBy = reviewedBy;
+    }
+
+    // TODO: Make this a property in the database ? or pre-compute
+    public Long getTotalAmountToTransfer() {
+        return this.basicSubsidyAmount + this.secondaryIncentiveAmount + this.primaryIncentiveAmount;
     }
 }

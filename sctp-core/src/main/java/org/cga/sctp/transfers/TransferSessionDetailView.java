@@ -39,8 +39,6 @@ public interface TransferSessionDetailView {
 
     Long getProgramId();
 
-    Long getEnrolmentSessionId();
-
     String getProgramName();
 
     //Long totalHouseholds();

@@ -1,7 +1,7 @@
     {% import "../../utils/form" %}
         {% extends "../base" %}
         {% block title %}
-        {{ parent() }} - Add New Transfer Agency
+        {{ parent() }} - Transfer Agencies
         {% endblock %}
         {% set canCreate = hasRole("ADMINISTRATOR") %}
         {% set canModify = hasRole("ADMINISTRATOR") %}

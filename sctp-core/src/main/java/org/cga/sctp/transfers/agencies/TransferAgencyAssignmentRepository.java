@@ -33,6 +33,16 @@
 package org.cga.sctp.transfers.agencies;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface TransferAgencyAssignmentRepository extends JpaRepository<TransferAgencyAssignment, Long> {
+
+    @Query(nativeQuery = true, value = """
+            SELECT count(*) FROM transfer_agencies_assignments tra
+            INNER JOIN locations l ON l.id = tra.location_id
+            WHERE l.code = :locationCode
+            """) /* TODO: AND tra.program_id = :programId */
+    // TODO: Change return type to boolean by using COUNT(*) > 0 in the query
+    int locationOrParentHasAssignedAgency(@Param("locationCode") long code);
 }

@@ -32,32 +32,30 @@
 
 package org.cga.sctp.mis.transfers;
 
+import org.cga.sctp.mis.core.SecuredBaseController;
 import org.cga.sctp.transfers.Transfer;
-import org.cga.sctp.transfers.TransferSessionService;
-import org.cga.sctp.user.AdminAccessOnly;
+import org.cga.sctp.transfers.TransferService;
+import org.cga.sctp.user.AdminAndStandardAccessOnly;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-
-import static java.util.Collections.emptyList;
-
-
-@RestController
-@RequestMapping("/transfers/sessions/{session-id}")
-public class TransfersController {
+@Controller
+@RequestMapping("/transfers/index")
+public class TransfersController extends SecuredBaseController {
 
     @Autowired
-    private TransferSessionService transferSessionService;
+    private TransferService transferService;
 
-    @PostMapping("/pre-calculation")
-    @AdminAccessOnly
-    public Object saveTransferCalculations(@PathVariable("session-id") Long transferSessionId,
-                                           @RequestParam("d") Long districtId) {
-        List<Transfer> transfersToCalculate = emptyList();
-//        for(Transfer transfer : transfersToCalculate) {
-//            transfer.setSubsidyAmount(transferSessionService.determineAmountByHouseholdSize(transfer.getTotalMembers()));
-//        }
-        return null;
+    @GetMapping
+    @AdminAndStandardAccessOnly
+    public ModelAndView listTransfers() {
+        Page<Transfer> transferList = transferService.getTransfersRepository().findAll(Pageable.ofSize(10));
+        return view("/transfers/index")
+                .addObject("transfers", transferList);
     }
 }

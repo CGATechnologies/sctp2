@@ -49,21 +49,19 @@ public interface EnrolmentSessionRepository extends JpaRepository<EnrolmentSessi
     );
 
     @Modifying
-    @Query(value = "UPDATE household_enrollment SET status = 4 WHERE household_id = :id", nativeQuery = true)
-    void setEnrolledHouseholdToEnrolled(@Param("id") Long id);
-
-    @Modifying
     @Query(value = "UPDATE household_enrollment SET status = :statusCode WHERE household_id = :householdId", nativeQuery = true)
     void updateHouseholdEnrollmentStatus(@Param("householdId") Long id, @Param("statusCode") int status);
 
     /**
-     * Counts the households in the enrollment session that have not yet been moved to enrolled status (i.e. are
-     * not yet Beneficiaries)
-     *
+     * Counts the households in the enrollment session with the given
      * @param id Enrollment Session ID
-     * @return the number of households that have not been enrolled
+     * @param cbtStatusCode  the status code
+     * @return the number of households that match the criteria
      * @see CbtStatus
      */
-    @Query(nativeQuery=true, value="SELECT count(household_id) FROM household_enrollment WHERE session_id = :id AND status = 1")
-    Long countUnenrolledHouseholds(@Param("id") Long id);
+    @Query(nativeQuery=true, value="SELECT count(household_id) FROM household_enrollment WHERE session_id = :id AND status = :cbtStatusCode")
+    Long countHouseholdsInSessionByStatus(@Param("id") Long id, @Param("cbtStatusCode")int cbtStatusCode);
+
+    @Query(nativeQuery=true, value="SELECT count(household_id) FROM household_enrollment WHERE session_id = :id AND (status = 6 OR status <> 5")
+    int countPreEligibleOrNotEnrolled(@Param("id") Long id);
 }

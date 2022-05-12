@@ -35,17 +35,6 @@
                 <div class="content">
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
-                            <label for="" class="label">Transfer Agency</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="select is-fullwidth">
-                                    {{ selectField('transferAgencyId', transferAgencies, form.transferAgencyId, true) }}
-                            </div>
-                        </div>
-                        {{ printFieldErrors(getFieldErrors('form', 'transferAgency')) }}
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
                             <label for="" class="label">Transfer Method</label>
                         </div>
                         <div class="field-body">
@@ -56,73 +45,44 @@
                         {{ printFieldErrors(getFieldErrors('form', 'transferMethod')) }}
                     </div>
 
-                    <p class="notification is-info">
-                        This option allows you to choose the geographical level. Remember, if you have more than one transfer agency in a District, select the TA level and do not forget to assign a Transfer Agency for each. If you choose a District, this activity is only carried out once and all beneficiaries are automatically assigned to the Transfer Agency selected.
-                    </p>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
-                            <label for="" class="label">Geographical Level</label>
+                            <label for="" class="label">Transfer Agency</label>
                         </div>
                         <div class="field-body">
                             <div class="select is-fullwidth">
-                                    {{ selectField('geolocationLevels', geolocationLevels, form.geolocationLevel, true) }}
+                                    {{ selectField('transferAgencyId', transferAgencies, form.transferAgencyId, true) }}
                             </div>
                         </div>
+                        {{ printFieldErrors(getFieldErrors('form', 'transferAgencyId')) }}
                     </div>
+
+{#                    <p class="notification is-info">#}
+{#                        This option allows you to choose the geographical level. Remember, if you have more than one transfer agency in a District, select the TA level and do not forget to assign a Transfer Agency for each. If you choose a District, this activity is only carried out once and all beneficiaries are automatically assigned to the Transfer Agency selected.#}
+{#                    </p>#}
+{#                    <div class="field is-horizontal">#}
+{#                        <div class="field-label is-normal">#}
+{#                            <label for="" class="label">Geographical Level</label>#}
+{#                        </div>#}
+{#                        <div class="field-body">#}
+{#                            <div class="select is-fullwidth">#}
+{#                                    {{ selectField('geolocationLevels', geolocationLevels, form.geolocationLevel, true) }}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
 
                     <div class="field is-horizontal">
                         <div class="field-label is-normal">
-                            <label class="label is-required">District</label>
+                            <label id="locationTypeLabel" class="label is-required">Geolocation</label>
                         </div>
                         <div class="field-body">
                             <div class="field">
                                 <div class="control">
                                     <div class="select is-fullwidth">
-                                            {{ selectField('locationId', districts, form.district, true) }}
+                                        {{ selectField('locationId', locations, form.locationId, true) }}
                                     </div>
                                 </div>
                                 {{ printFieldErrors(getFieldErrors('form', 'locationId')) }}
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                            {{ selectField('traditionalAuthority', authorities, form.traditionalAuthority, true) }}
-                                    </div>
-                                    {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label is-required">Village T/A</label>
-                        </div>
-
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-multiple is-fullwidth">
-                                            {{ multiSelectField('traditionalAuthority', traditionalAuthority, form.traditionalAuthority, false, 4) }}
-                                    </div>
-                                </div>
-                                {{ printFieldErrors(getFieldErrors('form', 'traditionalAuthority')) }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label is-required">Village Cluster</label>
-                        </div>
-
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-multiple is-fullwidth">
-                                            {{ multiSelectField('clusters', clusters, form.clusters, false, 4) }}
-                                    </div>
-                                </div>
-                                {{ printFieldErrors(getFieldErrors('form', 'clusters')) }}
                             </div>
                         </div>
                     </div>
@@ -135,3 +95,42 @@
     </div>
     </div>
     {% endblock %}
+{% block footerScripts %}
+<script type="text/javascript">
+(function(){
+    let disabledOpt = new Option('Select Option', -1);
+    disabledOpt.disable = true;
+    window.renderOptions = function(list, promise, prepend, useExtraField){
+        list.length = 0;
+        if(prepend){
+            list.options.add(disabledOpt);
+        }
+        promise.json().then(items => items.forEach(item => list
+            .options.add(new Option(item.text, useExtraField ? item.extra : item.id))));
+    };
+    window.getOptions = function(url, onSuccess, onError){
+        var params = { method: 'GET' };
+        try {
+            fetch(url, params)
+            .then(r => onSuccess(r))
+            .catch(e => onError(e));
+        } catch(e) {
+            onError(e);
+        }
+    };
+    window.loadTransferAgencies = function(target, sender, prepend, useExtraField){
+        getOptions(
+            '/transfers/agencies/search?transferMethod=' + sender.selectedOptions[0].value,
+            function(data){
+                renderOptions(target, data, prepend, useExtraField);
+            },
+            function(error){
+                alert('There was an error getting locations from the server.');
+            }
+         );
+    };
+    transferMethod.onchange = function(){ transferAgencyId.length = 0; loadTransferAgencies(transferAgencyId, this, true, false); };
+    // geolocationType.onchange = function() {}
+})();
+</script>
+{% endblock %}

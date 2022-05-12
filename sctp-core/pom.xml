@@ -104,6 +104,22 @@
             <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.creditdatamw.labs</groupId>
+            <artifactId>zerocell-core</artifactId>
+        </dependency>
+        <!-- Apache POI is already pulled-in by Zerocell, above, but adding it here since we also use it for writing -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
         <!-- NOTE: addding this because seems to be needed by the test env -->
         <dependency>
             <groupId>org.hibernate</groupId>

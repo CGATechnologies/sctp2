@@ -1,0 +1,296 @@
+    {% extends "base" %}
+
+        {% block contextMenu %}
+        <div class="container context-nav-container">
+            <div class="buttons is-left">
+                <a href="{{ href('/transfers/sessions') }}" class="button is-danger">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fa fa-chevron-left"></i>
+                        </span>
+                        <span>Back to Sessions</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+        {% endblock %}
+
+{% block content %}
+{# TODO(zikani03) Move the stylesheets to a file #}
+<style type="text/css" rel="stylesheet">
+    .has-80-smaller-font {
+        font-size: 80%;
+    }
+    table.summary-table thead th,
+    table.summary-table tbody th,
+    table.summary-table tbody td {
+        border-top-color: rgba(31, 85, 156, 0.15);
+        border-bottom-color: rgba(31, 85, 156, 0.15);
+    }
+</style>
+    <div id="transfers:CalculateTransfersApp">
+        <div class="card">
+            <div class="card-header">
+                <div class="column">
+                    <h2 class="title">Perform Transfer Calculations</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="columns">
+                    <div class="column is-one-third">
+                        <div class="transfer-agency">
+                            <label class="label">Program</label>
+                            <span  v-text="enrollmentSession.programName"></span>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="district location">
+                            <label class="label">Program Duration</label>
+                            <span>From <strong v-text="enrollmentSession.programName">{{programInfo.startDate}}</strong> to <strong>{{programInfo.endDate}}</strong></span> (24  months)
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="district location">
+                            <label class="label">Select District</label>
+                            <div class="field select">
+                                <select name="district" id="district" class="control">
+                                    <option v-for="district in sessionDistricts" :value="district.id" v-text="district.name"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="district location">
+                            <label class="label">Enrollment Completed On</label>
+                            <span>2022-01-01</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="columns">
+                    <div class="column is-one-third">
+                        <div class="district location">
+                            <div class="period-header">
+                                <label class="label">Transfer Period</label>
+                                <span>From <strong>TODO</strong> to <strong>TODO</strong></span> (7 months)
+                            </div>
+                            <div class="field">
+                                <label for="numberOfMonths" class="label">Duration (in Months)</label>
+                                <div class="control">
+                                    <input type="number" v-model="transferPeriod.numberOfMonths" placeholder="1" class="input is-danger" />
+                                </div>
+                            </div>
+                            <!-- <div class="transfer-period-definition columns">
+                                <div class="field column">
+                                    <label for="start" class="label">Start</label>
+                                    <div class="control"><input type="text" placeholder="Month Year, e.g. Jan-22" v-model="transferPeriod.startDate" class="input"></div>
+                                </div>
+                                <div class="field column">
+                                    <label for="end" class="label">End</label>
+                                    <div class="control"><input type="text" placeholder="Month Year, e.g. Dec-22" v-model="transferPeriod.endDate" class="input"></div>
+                                </div>
+                            </div>
+                            <div class="is-clearfix">
+                                <button class="button is-primary is-small">Update Period</button>
+                            </div> -->
+                            <p>
+                                <a href="" class="is-size-7">Show Visual Preview of Period</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="card is-narrow">
+                            <div class="card-content has-text-centered is-size-7 is-uppercase" style="background: rgba(51, 139, 253, 0.45)">
+                                <table class="summary-table table" style="background: none;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="7">Transfer SUMMARY</th>
+                                            <th>Informative Amounts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>No. Households</th>
+                                        <th>Period Amount</th>
+                                        <th>Uncollected Arrears</th>
+                                        <th>Previous Other Arrears</th>
+                                        <th>HH Outgoing Arrears</th>
+                                        <th>Funds to be Requested</th>
+                                        <th>HH Incoming Arrears</th>
+                                    </tr>
+                                    <tr>
+                                        <td>To Transfer</td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalHouseholds)"></td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalAmountToBeDisbursed)"></td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalUncollectedArrears)"></td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalOtherArrears)"></td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalOutgoingArrears)"></td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalFundsToRequest)"></td>
+                                        <td v-text="numberFormatter.format(transferSessionSummary.totalIncomingArrears)"></td>
+                                        <td>0</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <em><small>This Summary is created / updated after a Calculation has been run.</small></em>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <hr/>
+                <div class="container">
+                    <div class="action-buttons">
+                        <div class="buttons are-default is-right">
+                            <button @click="handlePerformPreCalculation" class="button is-warning">Run Pre-Calculations</button>
+                        <button class="button is-primary" @click="savePrecalculatedAmounts">Save Pre-Calculations</button>
+                        <button class="button is-danger" disabled>Run Final Calculations</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column is-half">
+                        <div class="field">
+                            <label for="" class="label">Search</label>
+                            <p class="control is-expanded">
+                                <input class="input" type="text" placeholder="Search for Household">
+                            </p>
+                            <div class="control is-right">
+                                <button class="button is-default is-small is-right">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-half">
+                        <div class="field">
+                            <div class="control">
+                                <label class="label">Filter Data By</label>
+                                <div class="control">
+                                    <div class="select">
+                                        <select class="input select" name="" id="">
+                                            <option value="">Select an Option</option>
+                                            <option value="">First Time Transfer Households</option>
+                                            <option value="">Households with Transfers Performed</option>
+                                            <option value="">Households without Transfers</option>
+                                            <option value="">Households with Changes on Transfers</option>
+                                            <option>----</option>
+                                            <option value="">Households with Any Arrears</option>
+                                            <option value="">Households with Uncollected Arrears</option>
+                                            <option value="">Households with Other Arrears</option>
+                                            <option>----</option>
+                                            <option value="">Houses that haven't been Reconciled</option>
+                                        </select>
+                                    </div>
+                                    <button class="button is-success">Filter</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form">
+                            <label class="control label" for="">
+                                <input class="control" type="radio" name="showHouseholdsOrAmounts" value="all"> Show Households and Amounts
+                                <input class="control" type="radio" name="showHouseholdsOrAmounts" value="householdsOnly"> Show Only Households
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="action-buttons">
+                            <div class="buttons has-addons are-small is-left">
+                                <button class="button is-default">Export Households to CSV</button>
+                                <button class="button is-default">Export Households to Excel</button>
+                                <button class="button is-default">Export Suspended Households Report</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="columns has-text-centered has-80-smaller-font">
+                    <table class="table is-bordered is-narrow is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>TA</th>
+                            <th>Village Cluster</th>
+                            <th>Zone</th>
+                            <th>HH Code</th>
+                            <th>Receiver Name &amp; Code</th>
+                            <th># of Members</th>
+                            <th>Primary</th>
+                            <th>Primary Incentive</th>
+                            <th>Secondary</th>
+                            <th>Secondary Incentive</th>
+                            <th>Monthly Amount</th>
+                            <th>No. Of Months</th>
+                            <th>Total Monthly Amount</th>
+                            <th rowspan="0.5">Arrears</th>
+                            <th>Total Amount</th>
+                            <th>Is First Transfer</th>
+{#                            <th>To Be Delivered</th>#}
+{#                            <th>Reconciliation</th>#}
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="row in householdRows">
+                            <td v-text="row.taName"></td>
+                            <td v-text="row.clusterName"></td>
+                            <td v-text="row.zoneName"></td>
+                            <td v-text="row.mlCode"></td>
+                            <td v-text="row.receiverName"></td>
+                            <td v-text="row.memberCount"></td>
+                            <td v-text="row.primaryChildren"></td>
+                            <td v-text="numberFormatter.format(row.primaryIncentive)"></td>
+                            <td v-text="row.secondaryChildren"></td>
+                            <td v-text="numberFormatter.format(row.secondaryIncentive)"></td>
+                            <td v-text="numberFormatter.format(row.monthlyAmount)"></td>
+                            <td v-text="row.numberOfMonths"></td>
+                            <td v-text="numberFormatter.format(row.totalMonthlyAmount)"></td>
+                            <td v-text="numberFormatter.format(row.totalArrears)"></td>
+                            <td v-text="numberFormatter.format(row.totalAmount)"></td>
+                            <td v-text="row.isFirstTransfer"></td>
+{#                            <td v-text="row.isDelivered"></td>#}
+{#                            <td v-text="row.isReconciled"></td>#}
+                            <td>
+                                <div class="dropdown is-hoverable">
+                                    <div class="dropdown-trigger">
+                                        <button class="button button is-info is-inverted"
+                                                aria-haspopup="true" aria-controls="dropdown-menu2">
+                                            <span>Options</span>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                        <div class="dropdown-content">
+                                            <a class="dropdown-item">Preview</a>
+                                            <a class="dropdown-item">Add Top Up</a>
+                                            <a class="dropdown-item">Suspend Household</a>
+                                            <a class="dropdown-item">Exit from Transfers</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footerScripts %}
+<script type="text/javascript">
+{# We perform actual calculations of the amounts on the client side using VueJS
+ # to make the process a bit "faster" and safer. Users have to commit to saving
+ # the calculations they have performed in the front-end to the backend...
+ # So in order to get all that going, we need the following data to be present
+ # to the JavaScript that processes the calculations.
+ # We serialize the server data here to avoid extraneous API calls for the same data.
+ #}
+var data = {{ objectMapper.writeValueAsString(pageData) | raw }};
+</script>
+<script src="/assets/js/transfers.calculate.js"></script>
+{% endblock %}

@@ -1,6 +1,6 @@
----
---- Household information
----
+--
+-- Household information
+--
 
 CREATE TABLE if not exists `households` (
   `id` bigint NOT NULL AUTO_INCREMENT,

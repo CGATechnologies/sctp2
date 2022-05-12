@@ -34,13 +34,27 @@ package org.cga.sctp.transfers;
 
 import org.cga.sctp.targeting.importation.parameters.UbrParameterValue;
 
-public enum TransferStatus implements UbrParameterValue {
-    Open(19, "Open"),
-    Preclose(20, "Pre-Close"),
-    Closed(21, "Close");
+import javax.persistence.AttributeConverter;
 
-    private int code;
-    private String name;
+/**
+ * Indicates status of a  Transfer event.
+ */
+public enum TransferStatus implements UbrParameterValue {
+    /**
+     * Transfer has not yet occurred i.e. cash has not been disbursed.
+     */
+    OPEN(19, "Open"),
+    /**
+     * Cash has been disbursed but Transfer is pending reconciliation and scrutiny
+     */
+    PRE_CLOSE(20, "Pre-Close"),
+    /**
+     * Cash disbursed and finances have been reconciled. Transfer cannot be re-opened.
+     */
+    CLOSED(21, "Close");
+
+    private final int code;
+    private final String name;
 
     TransferStatus(int code, String name) {
         this.code = code;
@@ -58,5 +72,33 @@ public enum TransferStatus implements UbrParameterValue {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public static TransferStatus valueOf(int code) {
+        for (TransferStatus status : values()) {
+            if (status.code == code) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Code " + code + " not found in " + TransferStatus.class.getCanonicalName());
+    }
+
+    @javax.persistence.Converter(autoApply = true)
+    public static class Converter implements AttributeConverter<TransferStatus, Integer> {
+        @Override
+        public Integer convertToDatabaseColumn(TransferStatus attribute) {
+            if (attribute == null) {
+                return null;
+            }
+            return attribute.code;
+        }
+
+        @Override
+        public TransferStatus convertToEntityAttribute(Integer dbData) {
+            if (dbData == null) {
+                return null;
+            }
+            return TransferStatus.valueOf(dbData);
+        }
     }
 }

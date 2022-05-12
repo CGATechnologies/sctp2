@@ -1,0 +1,134 @@
+    {% extends "transfers/base" %}
+    {% block contextMenu %}
+        {% set canModify = hasRole("ADMINISTRATOR") and isSessionOpen %}
+        {% set useWideContainer = true %}
+        <div class="context-nav-container">
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <a href="{{ href('/transfers/summary') }}" class="button is-danger">
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa fa-chevron-left"></i>
+                                </span>
+                                <span>Back to Transfer Summary</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                <div class="level-right">
+
+                    <div class="level-item">
+                        <div class="dropdown is-hoverable is-right">
+                            <div class="dropdown-trigger">
+                                <button class="button is-primary" aria-haspopup="true" aria-controls="ibd">
+                                    <span>Export Options</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="ibd" role="menu">
+                                <div class="dropdown-content">
+                                    <a href="/transfers/beneficiaries/export-accounts-template?district={{ districtId }}"
+                                       class="dropdown-item">Export Account Template</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if not sessionHasTransfers %}
+                    {% import "../../utils/form" %}
+                    <div class="level-item">
+                        <a class="button" href="/transfers/assign-accounts">Assign Account Numbers</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+{% block content %}
+
+    <div class="card no-overlap">
+        <div class="card-content">
+            <form>
+                {{ csrf(_csrf) }}
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                    {{ selectField('district', districts, form.district, true) }}
+                            </div>
+                        </div>
+                        {{ printFieldErrors(getFieldErrors('form', 'district')) }}
+                    </div>
+                </div>
+                <button class="button is-primary">Filter</button>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <div class="card no-overlap">
+            <header class="card-header">
+                <p class="card-header-title">Transfers - {{ sessionInfo.programName }} / {{ sessionInfo.districtName }}</p>
+            </header>
+            <div class="card-content">
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                <div class="content">
+                    <table class="table dataTable is-narrow is-striped is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>ML Code</th>
+                            <th># of Members</th>
+                            <th>Head of Household</th>
+                            <th>TA</th>
+                            <th>GVH Name</th>
+                            <th>VG Cluster</th>
+                            <th>Zone</th>
+                            <th>Pre-Printed Num</th>
+                            <th>Status</th>
+                            <th>Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for household in households %}
+                            <tr>
+                                <td>ML-{{ household.mlCode }}</td>
+                                <td>{{ household.memberCount | numberformat("#,###") }}</td>
+                                <td>{{ household.householdHead }}</td>
+                                <td>{{ household.taName }}</td>
+                                <td>{{ household.villageHeadName }}</td>
+                                <td>{{ household.clusterName }}</td>
+                                <td>{{ household.zoneName }}</td>
+                                <td>{{ household.formNumber }}</td>
+                                <td>{{ household.status }}</td>
+                                <td>
+                                    <div class="dropdown is-hoverable is-right">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-info is-inverted is-options"
+                                                    aria-haspopup="true" aria-controls="dropdown-menu2">
+                                                <span>Options</span>
+                                                <span class="icon is-small">
+                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                            <div class="dropdown-content">
+                                                <a href="/transfers/beneficiaries/view?session={{ sessionInfo.id }}&id={{ household.householdId }}"
+                                                   class="dropdown-item">View household </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

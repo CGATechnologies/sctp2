@@ -33,6 +33,16 @@
 package org.cga.sctp.transfers.agencies;
 
 public enum TransferMethod {
-    Manual,
-    EPayment
+    Manual("Manual Transfers"),
+    EPayment("E-Payment Transfers");
+
+    private final String description;
+
+    TransferMethod(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
