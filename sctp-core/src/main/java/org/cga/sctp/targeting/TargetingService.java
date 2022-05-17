@@ -115,7 +115,7 @@ public class TargetingService extends TransactionalService {
         return sessionRepository.findById(sessionId).orElse(null);
     }
 
-    public Slice<CbtRanking> getCbtRanking(TargetingSessionView session, Pageable pageable) {
+    public Slice<CbtRankingResult> getCbtRanking(TargetingSessionView session, Pageable pageable) {
         return cbtRankingRepository.findByCbtSessionId(session.getId(), pageable);
     }
 

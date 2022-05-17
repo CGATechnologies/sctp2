@@ -4,11 +4,9 @@ import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.location.Location;
-import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.location.LocationService;
 import org.cga.sctp.location.LocationType;
 import org.cga.sctp.mis.core.BaseController;
-import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
 import org.cga.sctp.targeting.*;
@@ -19,8 +17,6 @@ import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.cga.sctp.mis.location.LocationCodeUtil.toSelectOptions;
 
@@ -146,7 +140,7 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
         // TODO Add pagination controls to view
-        Slice<CbtRanking> rankedList = targetingService.getCbtRanking(session, pageable);
+        Slice<CbtRankingResult> rankedList = targetingService.getCbtRanking(session, pageable);
         return view("targeting/community/details")
                 .addObject("isSessionOpen", session.isOpen())
                 .addObject("ranks", rankedList)

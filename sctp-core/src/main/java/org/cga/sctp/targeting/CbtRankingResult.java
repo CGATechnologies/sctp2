@@ -32,16 +32,19 @@
 
 package org.cga.sctp.targeting;
 
+import org.hibernate.annotations.Immutable;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
- * Community based targeting record (from view)
+ * <p>Community based targeting record (from view)</p>
+ * <p>Ideally, should be {@link TargetingResult}. The {@link TargetingResult} class came later after refactoring</p>
  */
 @Entity
-@Table(name ="cbt_ranking_results_v")
-public class CbtRanking {
+@Immutable
+@Table(name = "cbt_ranking_results_v")
+public class CbtRankingResult {
     @Id
     @Column
     private Long householdId;
@@ -80,10 +83,8 @@ public class CbtRanking {
     private String districtName;
 
     @Column
-    private Boolean cbtSelection;
-
-    @Column
-    @Convert(converter = CbtStatus.Converter.class)
+    @Convert(disableConversion = true)
+    @Enumerated(EnumType.STRING)
     private CbtStatus status;
 
     @Column
@@ -91,9 +92,6 @@ public class CbtRanking {
 
     @Column
     private String mlCode;
-
-    @Column
-    private String lastRanking;
 
     public Long getHouseholdId() {
         return householdId;
@@ -191,14 +189,6 @@ public class CbtRanking {
         this.districtName = districtName;
     }
 
-    public Boolean getCbtSelection() {
-        return cbtSelection;
-    }
-
-    public void setCbtSelection(Boolean cbtSelection) {
-        this.cbtSelection = cbtSelection;
-    }
-
     public CbtStatus getStatus() {
         return status;
     }
@@ -221,13 +211,5 @@ public class CbtRanking {
 
     public void setMlCode(String mlCode) {
         this.mlCode = mlCode;
-    }
-
-    public String getLastRanking() {
-        return lastRanking;
-    }
-
-    public void setLastRanking(String lastRanking) {
-        this.lastRanking = lastRanking;
     }
 }

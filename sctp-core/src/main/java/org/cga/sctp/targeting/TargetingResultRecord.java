@@ -57,6 +57,7 @@ public class TargetingResultRecord {
 
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @Convert(disableConversion = true)
     private CbtStatus status;
 
     @Column(name = "created_at", nullable = false)

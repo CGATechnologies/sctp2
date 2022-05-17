@@ -38,8 +38,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CbtRankingRepository extends JpaRepository<CbtRanking, Long> {
+public interface CbtRankingRepository extends JpaRepository<CbtRankingResult, Long> {
 
-    Page<CbtRanking> findByCbtSessionId(Long cbtSessionId, Pageable pageable);
+    Page<CbtRankingResult> findByCbtSessionId(Long cbtSessionId, Pageable pageable);
 
 }
