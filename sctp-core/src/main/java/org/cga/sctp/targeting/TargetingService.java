@@ -446,4 +446,12 @@ public class TargetingService extends TransactionalService {
     private boolean isCodeSet(Long code) {
         return code != null && code > 0L;
     }
+
+    public void saveTargetingResult(TargetingResult targetingResult) {
+        targetingResultRepository.save(targetingResult);
+    }
+
+    public TargetingResult findTargetingResultByHouseholdId(Long sessionId, Long household) {
+        return targetingResultRepository.findByTargetingSessionAndHousehold(sessionId, household);
+    }
 }

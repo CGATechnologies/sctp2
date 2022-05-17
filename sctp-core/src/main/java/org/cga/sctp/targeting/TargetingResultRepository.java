@@ -37,4 +37,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 interface TargetingResultRepository extends JpaRepository<TargetingResult, Long> {
+    TargetingResult findByTargetingSessionAndHousehold(Long sessionId, Long household);
 }

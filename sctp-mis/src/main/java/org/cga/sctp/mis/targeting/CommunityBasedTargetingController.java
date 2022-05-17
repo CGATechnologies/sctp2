@@ -219,8 +219,8 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
 
+        TargetingResult targetingResult;
         TargetingSessionView session = targetingService.findSessionViewById(form.getSession());
-        Household household;
 
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);
@@ -232,19 +232,19 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        household = beneficiaryService.findHouseholdByTargetingSessionIdAndHouseholdId(session.getId(),
-                form.getHousehold());
+        targetingResult = targetingService.findTargetingResultByHouseholdId(session.getId(), form.getHousehold());
 
-        if (household == null) {
+        if (targetingResult == null) {
             setDangerFlashMessage("Cannot find selected household.", attributes);
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        household.setCbtStatus(CbtStatus.Ineligible);
+        targetingResult.setStatus(CbtStatus.Ineligible);
 
-        beneficiaryService.saveHousehold(household);
+        targetingService.saveTargetingResult(targetingResult);
 
-        publishGeneralEvent("%s marked household with %d as ineligible.", user.username(), household.getHouseholdId());
+        publishGeneralEvent("%s marked household with %d as ineligible. Session id = %d",
+                user.username(), targetingResult.getHousehold(), session.getId());
 
         setSuccessFlashMessage("Household marked as ineligible.", attributes);
         return redirect("/targeting/community/review?session=" + session.getId());
