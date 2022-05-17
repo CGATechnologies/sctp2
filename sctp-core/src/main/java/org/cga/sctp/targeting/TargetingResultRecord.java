@@ -55,6 +55,9 @@ public class TargetingResultRecord {
     @Column(name = "ranking", nullable = false)
     private Integer ranking;
 
+    @Column(name = "pev_session")
+    private Long pevSession;
+
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @Convert(disableConversion = true)
@@ -92,6 +95,14 @@ public class TargetingResultRecord {
 
     public BigDecimal getPmtScore() {
         return pmtScore;
+    }
+
+    public Long getPevSession() {
+        return pevSession;
+    }
+
+    public void setPevSession(Long pevSession) {
+        this.pevSession = pevSession;
     }
 
     public void setPmtScore(BigDecimal pmtScore) {
