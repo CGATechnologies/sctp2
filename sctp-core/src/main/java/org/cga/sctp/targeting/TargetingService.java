@@ -373,13 +373,14 @@ public class TargetingService extends TransactionalService {
                 case targeting -> {
                     // 1. Create a targeting session
                     TargetingSession targetingSession = new TargetingSession();
+                    targetingSession.setCreatedBy(userId);
+                    targetingSession.setTaCode(session.getTaCode());
+                    targetingSession.setPevSession(session.getId());
                     targetingSession.setCreatedAt(LocalDateTime.now());
                     targetingSession.setClusters(session.getClusters());
+                    targetingSession.setProgramId(session.getProgramId());
                     targetingSession.setDistrictCode(session.getDistrictCode());
                     targetingSession.setStatus(TargetingSessionBase.SessionStatus.Review);
-                    targetingSession.setTaCode(session.getTaCode());
-                    targetingSession.setProgramId(session.getProgramId());
-                    targetingSession.setCreatedBy(userId);
 
                     saveTargetingSession(targetingSession);
 

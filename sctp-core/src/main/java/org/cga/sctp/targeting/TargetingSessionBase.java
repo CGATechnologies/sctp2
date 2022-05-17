@@ -53,6 +53,8 @@ public class TargetingSessionBase {
     private Long districtCode;
     private Long programId;
     private Long taCode;
+    @Column(name = "pev_session")
+    private Long pevSession;
 
     @Enumerated(EnumType.STRING)
     private TargetingSession.SessionStatus status;
@@ -138,6 +140,14 @@ public class TargetingSessionBase {
 
     public void setClusters(Set<Long> clusters) {
         this.clusters = clusters;
+    }
+
+    public Long getPevSession() {
+        return pevSession;
+    }
+
+    public void setPevSession(Long pevSession) {
+        this.pevSession = pevSession;
     }
 
     @Transient
