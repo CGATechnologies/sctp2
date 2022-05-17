@@ -94,6 +94,9 @@ public class TargetingService extends TransactionalService {
     @Autowired
     private EligibleHouseholdDetailsRepository eligibleHouseholdDetailsRepository;
 
+    @Autowired
+    private TargetingResultRepository targetingResultRepository;
+
     public void saveTargetingSession(TargetingSession targetingSession) {
         sessionRepository.save(targetingSession);
     }
