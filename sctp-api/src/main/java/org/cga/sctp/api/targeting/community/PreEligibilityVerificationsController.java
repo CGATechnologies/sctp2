@@ -56,6 +56,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/targeting/pre-eligibility")
+@Deprecated(forRemoval = true)
 public class PreEligibilityVerificationsController extends BaseController {
 
     @Autowired
@@ -146,11 +147,11 @@ public class PreEligibilityVerificationsController extends BaseController {
 
         // FIXME: Make this operation run in a batch op instead of one-by-one like this
         request.getUpdates()
-            .forEach(updateRankRequest -> {
-                publishGeneralEvent("User %s updated rank and status of household %s", apiUserDetails.getUserName(), updateRankRequest.getHouseholdId());
-                CbtStatus status = CbtStatus.valueOf(updateRankRequest.getCbtStatus());
-                beneficiaryService.updateHouseholdRankAndStatus(updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
-            });
+                .forEach(updateRankRequest -> {
+                    publishGeneralEvent("User %s updated rank and status of household %s", apiUserDetails.getUserName(), updateRankRequest.getHouseholdId());
+                    CbtStatus status = CbtStatus.valueOf(updateRankRequest.getCbtStatus());
+                    beneficiaryService.updateHouseholdRankAndStatus(sessionId, updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
+                });
 
         return ResponseEntity.ok().build();
     }

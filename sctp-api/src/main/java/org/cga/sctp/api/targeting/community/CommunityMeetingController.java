@@ -151,7 +151,7 @@ public class CommunityMeetingController extends BaseController {
                 .forEach(updateRankRequest -> {
                     publishGeneralEvent("User %s updated rank and status of household %s", apiUserDetails.getUserName(), updateRankRequest.getHouseholdId());
                     CbtStatus status = CbtStatus.valueOf(updateRankRequest.getCbtStatus());
-                    beneficiaryService.updateHouseholdRankAndStatus(updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
+                    beneficiaryService.updateHouseholdRankAndStatus(sessionId, updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
                 });
 
         return ResponseEntity.ok().build();

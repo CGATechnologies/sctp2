@@ -40,9 +40,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 interface HouseholdRepository extends JpaRepository<Household, Long> {
-    Household findByCbtSessionIdAndHouseholdId(Long cbtSessionId, Long household);
+
+    @Query(value = "select * from targeted_households_view WHERE household_id = :hhid AND targeting_session = :tsid", nativeQuery = true)
+    Household findByCbtSessionIdAndHouseholdId(@Param("tsid") Long cbtSessionId, @Param("hhid") Long household);
 
     @Modifying
-    @Query(value = "UPDATE households SET cbt_status = :statusCode, cbt_rank = :rank WHERE household_id = :householdId", nativeQuery = true)
-    void updateHouseholdRankAndStatus(@Param("householdId") Long id, @Param("rank") Long rank, @Param("statusCode") int status);
+    @Query(value = "UPDATE targeting_results SET status = :status, ranking = :rank WHERE household_id = :householdId AND targeting_session = :tsid", nativeQuery = true)
+    void updateHouseholdRankAndStatus(
+            @Param("tsid") Long sessionId
+            , @Param("householdId") Long id
+            , @Param("rank") Long rank
+            , @Param("status") String status
+    );
 }

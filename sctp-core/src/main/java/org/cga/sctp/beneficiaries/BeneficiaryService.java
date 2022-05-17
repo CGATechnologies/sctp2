@@ -66,15 +66,15 @@ public class BeneficiaryService extends TransactionalService {
         return individualRepository.findByHouseholdId(householdId, pageable);
     }
 
-    public Individual getIndividual(Long individualId){
+    public Individual getIndividual(Long individualId) {
         return individualRepository.findById(individualId).orElse(null);
     }
 
-    public List<Individual> findSchoolChildren(Long householdId){
-        return  individualRepository.findSchoolChildren(householdId);
+    public List<Individual> findSchoolChildren(Long householdId) {
+        return individualRepository.findSchoolChildren(householdId);
     }
 
-    public List<Individual> getEligibleRecipients(Long householdId){
+    public List<Individual> getEligibleRecipients(Long householdId) {
         return individualRepository.getEligibleRecipients(householdId);
     }
 
@@ -86,7 +86,7 @@ public class BeneficiaryService extends TransactionalService {
         return individualRepository.findByHouseholdId(householdId);
     }
 
-    public void updateHouseholdRankAndStatus(Long householdId, Long rank, CbtStatus status) {
-        householdRepository.updateHouseholdRankAndStatus(householdId, rank, status.code);
+    public void updateHouseholdRankAndStatus(Long sessionId, Long householdId, Long rank, CbtStatus status) {
+        householdRepository.updateHouseholdRankAndStatus(sessionId, householdId, rank, status.name());
     }
 }
