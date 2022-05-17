@@ -64,6 +64,7 @@
                 <p class="card-header-title">Community-Based Targeting - {{ targetingSession.programName }} / {{ targetingSession.districtName }}</p>
             </header>
             <div class="card-content">
+                {{ showMessages(null, message("targeting.cbt.review.info"), null, null) }}
                 {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
                 <div class="content">
                     <table class="table dataTable is-narrow is-striped is-hoverable">

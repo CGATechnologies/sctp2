@@ -265,8 +265,8 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
 
+        TargetingResult targetingResult;
         TargetingSessionView session = targetingService.findSessionViewById(form.getSession());
-        Household household;
 
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);
@@ -283,21 +283,20 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        household = beneficiaryService.findHouseholdByTargetingSessionIdAndHouseholdId(session.getId(),
-                form.getHousehold());
+        targetingResult = targetingService.findTargetingResultByHouseholdId(session.getId(), form.getHousehold());
 
-        if (household == null) {
+        if (targetingResult == null) {
             setDangerFlashMessage("Cannot find selected household.", attributes);
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        oldRank = household.getCbtRank();
+        oldRank = targetingResult.getRanking();
 
-        household.setCbtRank(form.getRank());
-        beneficiaryService.saveHousehold(household);
+        targetingResult.setRanking(form.getRank());
+        targetingService.saveTargetingResult(targetingResult);
 
         publishGeneralEvent("%s changed household(%d) rank from %d to %d.",
-                user.username(), household.getHouseholdId(), oldRank, form.getRank());
+                user.username(), targetingResult.getHousehold(), oldRank, form.getRank());
 
         setSuccessFlashMessage("Household rank changed.", attributes);
         return redirect("/targeting/community/review?session=" + session.getId());
