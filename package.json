@@ -1,0 +1,30 @@
+{
+  "name": "sctp2",
+  "version": "1.4.10",
+  "description": "SCTP MIS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CharlieGoldsmithAssociates/sctp2.git"
+  },
+  "keywords": [
+    "sctp",
+    "mis",
+    "social-cash"
+  ],
+  "author": "CGA Technologies",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CharlieGoldsmithAssociates/sctp2/issues"
+  },
+  "homepage": "https://github.com/CharlieGoldsmithAssociates/sctp2#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "react": "^18.1.0",
+    "react-bulma-components": "^4.1.0",
+    "react-dom": "^18.1.0"
+  }
+}
