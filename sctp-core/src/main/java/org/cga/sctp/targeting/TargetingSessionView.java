@@ -34,6 +34,7 @@ package org.cga.sctp.targeting;
 
 import org.hibernate.annotations.Immutable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -41,12 +42,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "target_sessions_view")
 public class TargetingSessionView extends TargetingSessionBase {
-    private Long householdCount;
-    private String creatorName;
+    private String taName;
     private String closerName;
     private String programName;
+    private String creatorName;
     private String districtName;
-    private String taName;
+    private Long householdCount;
+
+    @Column(name = "app_scm")
+    private boolean appCommunityMeeting;
+
+    @Column(name = "app_dm")
+    private boolean appDistrictMeeting;
 
     public String getCreatorName() {
         return creatorName;
@@ -94,5 +101,21 @@ public class TargetingSessionView extends TargetingSessionBase {
 
     public void setHouseholdCount(Long householdCount) {
         this.householdCount = householdCount;
+    }
+
+    public boolean isAppCommunityMeeting() {
+        return appCommunityMeeting;
+    }
+
+    public void setAppCommunityMeeting(boolean appCommunityMeeting) {
+        this.appCommunityMeeting = appCommunityMeeting;
+    }
+
+    public boolean isAppDistrictMeeting() {
+        return appDistrictMeeting;
+    }
+
+    public void setAppDistrictMeeting(boolean appDistrictMeeting) {
+        this.appDistrictMeeting = appDistrictMeeting;
     }
 }
