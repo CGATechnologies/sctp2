@@ -83,7 +83,7 @@ public class EnrollmentService extends TransactionalService {
         return sessionViewRepository.findAll();
     }
 
-    public Slice<CbtRanking> getEnrolledHouseholds(EnrollmentSessionView session, Pageable pageable) {
+    public Slice<CbtRankingResult> getEnrolledHouseholds(EnrollmentSessionView session, Pageable pageable) {
         return cbtRankingRepository.findByCbtSessionId(session.getId(), pageable);
     }
 

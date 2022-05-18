@@ -32,14 +32,10 @@
 
 package org.cga.sctp.targeting;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Repository
-public interface CbtRankingRepository extends JpaRepository<CbtRankingResult, Long> {
-
-    Page<CbtRankingResult> findByCbtSessionId(Long cbtSessionId, Pageable pageable);
-
+@Entity
+@Table(name = "targeting_results")
+public class TargetingResult extends TargetingResultRecord {
 }

@@ -4,11 +4,9 @@ import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.beneficiaries.Household;
 import org.cga.sctp.beneficiaries.Individual;
 import org.cga.sctp.location.Location;
-import org.cga.sctp.location.LocationCode;
 import org.cga.sctp.location.LocationService;
 import org.cga.sctp.location.LocationType;
 import org.cga.sctp.mis.core.BaseController;
-import org.cga.sctp.mis.core.templating.SelectOptionItem;
 import org.cga.sctp.program.Program;
 import org.cga.sctp.program.ProgramService;
 import org.cga.sctp.targeting.*;
@@ -19,8 +17,6 @@ import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.cga.sctp.mis.location.LocationCodeUtil.toSelectOptions;
 
@@ -146,7 +140,7 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
         // TODO Add pagination controls to view
-        Slice<CbtRanking> rankedList = targetingService.getCbtRanking(session, pageable);
+        Slice<CbtRankingResult> rankedList = targetingService.getCbtRanking(session, pageable);
         return view("targeting/community/details")
                 .addObject("isSessionOpen", session.isOpen())
                 .addObject("ranks", rankedList)
@@ -225,8 +219,8 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
 
+        TargetingResult targetingResult;
         TargetingSessionView session = targetingService.findSessionViewById(form.getSession());
-        Household household;
 
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);
@@ -238,19 +232,19 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        household = beneficiaryService.findHouseholdByTargetingSessionIdAndHouseholdId(session.getId(),
-                form.getHousehold());
+        targetingResult = targetingService.findTargetingResultByHouseholdId(session.getId(), form.getHousehold());
 
-        if (household == null) {
+        if (targetingResult == null) {
             setDangerFlashMessage("Cannot find selected household.", attributes);
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        household.setCbtStatus(CbtStatus.Ineligible);
+        targetingResult.setStatus(CbtStatus.Ineligible);
 
-        beneficiaryService.saveHousehold(household);
+        targetingService.saveTargetingResult(targetingResult);
 
-        publishGeneralEvent("%s marked household with %d as ineligible.", user.username(), household.getHouseholdId());
+        publishGeneralEvent("%s marked household with %d as ineligible. Session id = %d",
+                user.username(), targetingResult.getHousehold(), session.getId());
 
         setSuccessFlashMessage("Household marked as ineligible.", attributes);
         return redirect("/targeting/community/review?session=" + session.getId());
@@ -271,8 +265,8 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
 
+        TargetingResult targetingResult;
         TargetingSessionView session = targetingService.findSessionViewById(form.getSession());
-        Household household;
 
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);
@@ -289,21 +283,20 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        household = beneficiaryService.findHouseholdByTargetingSessionIdAndHouseholdId(session.getId(),
-                form.getHousehold());
+        targetingResult = targetingService.findTargetingResultByHouseholdId(session.getId(), form.getHousehold());
 
-        if (household == null) {
+        if (targetingResult == null) {
             setDangerFlashMessage("Cannot find selected household.", attributes);
             return redirect("/targeting/community/review?session=" + session.getId());
         }
 
-        oldRank = household.getCbtRank();
+        oldRank = targetingResult.getRanking();
 
-        household.setCbtRank(form.getRank());
-        beneficiaryService.saveHousehold(household);
+        targetingResult.setRanking(form.getRank());
+        targetingService.saveTargetingResult(targetingResult);
 
         publishGeneralEvent("%s changed household(%d) rank from %d to %d.",
-                user.username(), household.getHouseholdId(), oldRank, form.getRank());
+                user.username(), targetingResult.getHousehold(), oldRank, form.getRank());
 
         setSuccessFlashMessage("Household rank changed.", attributes);
         return redirect("/targeting/community/review?session=" + session.getId());

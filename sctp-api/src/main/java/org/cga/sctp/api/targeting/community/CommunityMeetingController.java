@@ -37,6 +37,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.cga.sctp.api.core.BaseController;
 import org.cga.sctp.api.core.IncludeGeneralResponses;
 import org.cga.sctp.api.user.ApiUserDetails;
@@ -55,9 +56,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/targeting/pre-eligibility")
-@Deprecated(forRemoval = true)
-public class PreEligibilityVerificationsController extends BaseController {
+@RequestMapping("/targeting/community-based-targeting")
+@Tag(name = "CommunityMeeting", description = "Endpoint for managing second community and district meetings")
+public class CommunityMeetingController extends BaseController {
 
     @Autowired
     private TargetingService targetingService;
@@ -65,8 +66,8 @@ public class PreEligibilityVerificationsController extends BaseController {
     @Autowired
     private BeneficiaryService beneficiaryService;
 
-    @GetMapping("/sessions")
-    @Operation(description = "Fetches open pre-eligibility verification sessions.")
+    @GetMapping("/district")
+    @Operation(description = "Fetches open sessions from the community based targeting that have households in the eligib")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PreEligibilityVerificationSessionResponse.class)))
     })

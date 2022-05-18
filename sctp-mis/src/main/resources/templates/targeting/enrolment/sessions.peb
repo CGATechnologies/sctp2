@@ -16,7 +16,7 @@
                 <p class="card-header-title">Enrolment</p>
             </header>
             <div class="card-content">
-                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+                {{ showMessages(successMessage, message("targeting.enrolment.info"), dangerMessage, warningMessage) }}
                 <div class="content">
                     <table class="table dataTable is-narrow is-striped is-hoverable">
                         <thead>

@@ -64,6 +64,7 @@
                 <p class="card-header-title">Community-Based Targeting - {{ targetingSession.programName }} / {{ targetingSession.districtName }}</p>
             </header>
             <div class="card-content">
+                {{ showMessages(null, message("targeting.cbt.review.info"), null, null) }}
                 {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
                 <div class="content">
                     <table class="table dataTable is-narrow is-striped is-hoverable">
@@ -113,6 +114,8 @@
                                                 <a href="/targeting/community/composition?session={{ ranking.cbtSessionId }}&amp;id={{ ranking.householdId }}"
                                                    class="dropdown-item">View Composition</a>
                                                 {% if canModify %}
+                                                    {% set showIneligibleOption = ranking.status != 'Ineligible' %}
+                                                    {% if showIneligibleOption %}
                                                     <form method="post"
                                                           id="rhfrm{{ ranking.householdId }}"
                                                           action="/targeting/community/remove-household"
@@ -121,6 +124,7 @@
                                                             {{ hiddenField('session', targetingSession.id) }}
                                                             {{ hiddenField('household', ranking.householdId) }}
                                                     </form>
+                                                    {% endif %}
                                                     <form method="post"
                                                           id="edit{{ ranking.householdId }}"
                                                           action="/targeting/community/change-rank"
@@ -132,9 +136,11 @@
                                                     </form>
                                                     <a onclick="changeRank({{ ranking.householdId }}, {{ ranking.rank }})"
                                                        class="dropdown-item">Edit Rank</a>
+                                                    {% if showIneligibleOption %}
                                                     <hr class="dropdown-divider" />
                                                     <a onclick="removeHH(rhfrm{{ ranking.householdId }})"
                                                        class="dropdown-item">Mark As Ineligible</a>
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
                                         </div>

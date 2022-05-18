@@ -91,7 +91,7 @@ public class EnrolmentController extends SecuredBaseController {
             return redirect("/targeting/enrolment");
         }
 
-        Slice<CbtRanking> rankedList = enrollmentService.getEnrolledHouseholds(sessionView, pageable);
+        Slice<CbtRankingResult> rankedList = enrollmentService.getEnrolledHouseholds(sessionView, pageable);
         return view("targeting/enrolment/households")
                 .addObject("sessionInfo", sessionView)
                 .addObject("ranks", rankedList);
