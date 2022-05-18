@@ -7,3 +7,4 @@ application-dev.yaml
 application-dev.properties
 target/
 staging/
+src/main/javascript

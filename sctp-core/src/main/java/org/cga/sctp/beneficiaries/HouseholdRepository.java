@@ -38,6 +38,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -47,7 +48,7 @@ interface HouseholdRepository extends JpaRepository<Household, Long> {
     Household findByCbtSessionIdAndHouseholdId(@Param("tsid") Long cbtSessionId, @Param("hhid") Long household);
 
     Optional<Household> findOneByMlCode(String mlCode);
-    
+
     @Modifying
     @Query(value = "UPDATE targeting_results SET status = :status, ranking = :rank WHERE household_id = :householdId AND targeting_session = :tsid", nativeQuery = true)
     void updateHouseholdRankAndStatus(
@@ -56,4 +57,22 @@ interface HouseholdRepository extends JpaRepository<Household, Long> {
             , @Param("rank") Long rank
             , @Param("status") String status
     );
+
+//    @Query(nativeQuery = true, value = """
+//            SELECT `h`.`household_id` AS `household_id`,`h`.`ubr_code` AS `form_number`,`l`.`name` AS `district_name`,`l2`.`name` AS `ta_name`,`l3`.`name` AS `zone_name`,`l4`.`name` AS `cluster_name`,`l5`.`name` AS `village_name`, CONCAT(`i`.`first_name`,' ',`i`.`last_name`) AS `household_head`,`h`.`cbt_rank` AS `rank`,`h`.`cbt_session_id` AS `cbt_session_id`,`h`.`cbt_selection` AS `cbt_selection`,`h`.`cbt_pmt` AS `pmt_score`,`h`.`cbt_status` AS `status`,`h`.`last_cbt_ranking` AS `last_ranking`,(
+//            SELECT COUNT(`i2`.`id`)
+//            FROM `individuals` `i2`
+//            WHERE (`i2`.`household_id` = `h`.`household_id`)) AS `member_count`,`h`.`ml_code` AS `ml_code`,`h`.`group_village_head_name` AS `village_head_name`
+//            FROM ((((((`households` `h`
+//            LEFT JOIN `locations` `l` ON((`l`.`code` = `h`.`location_code`)))
+//            LEFT JOIN `locations` `l2` ON((`l2`.`code` = `h`.`ta_code`)))
+//            LEFT JOIN `locations` `l3` ON((`l3`.`code` = `h`.`zone_code`)))
+//            LEFT JOIN `locations` `l4` ON((`l4`.`code` = `h`.`cluster_code`)))
+//            LEFT JOIN `locations` `l5` ON((`l5`.`code` = `h`.`village_code`)))
+//            LEFT JOIN `individuals` `i` ON(((`i`.`household_id` = `h`.`household_id`) AND (`i`.`relationship_to_head` = 1))))
+//            WHERE l.code = :locationCode
+//            ORDER BY h.household_id
+//    """)
+    @Query
+    List<Household> findAllByLocationCode(@Param("locationCode") String locationCode);
 }

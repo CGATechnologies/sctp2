@@ -32,6 +32,7 @@
 
 package org.cga.sctp.transfers.periods;
 
+import org.cga.sctp.transfers.TransfersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,9 @@ import java.util.List;
 public class TransferPeriodService {
     @Autowired
     private TransferPeriodRepository transferPeriodRepository;
+
+    @Autowired
+    private TransfersRepository transfersRepository;
 
     /**
      * Creates a new transfer period if possible.
@@ -69,6 +73,14 @@ public class TransferPeriodService {
 
         // Check if the households
         return transferPeriodRepository.save(newPeriod);
+    }
+
+    public void closePeriod(TransferPeriod transferPeriod) {
+        // TODO: attempt to close the transfer period here...
+        int pendingTransfers  = 0;// TODO: transfersRepository.countUnreconciledTransfers();
+        if (pendingTransfers > 0) {
+            throw new UnsupportedOperationException("cannot close period when transfers haven't been closed/reconciled");
+        }
     }
 
     public List<TransferPeriod> findAll() {

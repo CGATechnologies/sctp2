@@ -36,7 +36,6 @@ import org.cga.sctp.core.TransactionalService;
 import org.cga.sctp.targeting.CbtStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.lang.NonNull;
@@ -100,5 +99,12 @@ public class BeneficiaryService extends TransactionalService {
 
     public Optional<Household> findHouseholdByMLCode(@NonNull final String mlCode) {
         return householdRepository.findOneByMlCode(mlCode);
+    }
+
+    public List<Household> findAllHouseholdsByDistrictPaged(Long locationCode, Pageable pageable) {
+        if (pageable == null) {
+            pageable = Pageable.ofSize(100);
+        }
+        return householdRepository.findAllByLocationCode(String.valueOf(locationCode));//, pageable);
     }
 }
