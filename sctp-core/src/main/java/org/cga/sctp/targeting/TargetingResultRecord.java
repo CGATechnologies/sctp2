@@ -66,6 +66,62 @@ public class TargetingResultRecord {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
+    /**
+     * Second community meeting user id
+     */
+    @Column(name = "scm_user_id")
+    private Long scmUserId;
+
+    /**
+     * Second community meeting timestamp
+     */
+    @Column(name = "scm_timestamp")
+    private OffsetDateTime scmTimestamp;
+
+    /**
+     * District meeting user id
+     */
+    @Column(name = "dm_user_id")
+    private Long dmUserId;
+
+    /**
+     * District meeting user id
+     */
+    @Column(name = "dm_timestamp")
+    private OffsetDateTime dmTimestamp;
+
+    public Long getScmUserId() {
+        return scmUserId;
+    }
+
+    public void setScmUserId(Long scmUserId) {
+        this.scmUserId = scmUserId;
+    }
+
+    public OffsetDateTime getScmTimestamp() {
+        return scmTimestamp;
+    }
+
+    public void setScmTimestamp(OffsetDateTime scmTimestamp) {
+        this.scmTimestamp = scmTimestamp;
+    }
+
+    public Long getDmUserId() {
+        return dmUserId;
+    }
+
+    public void setDmUserId(Long dmUserId) {
+        this.dmUserId = dmUserId;
+    }
+
+    public OffsetDateTime getDmTimestamp() {
+        return dmTimestamp;
+    }
+
+    public void setDmTimestamp(OffsetDateTime dmTimestamp) {
+        this.dmTimestamp = dmTimestamp;
+    }
+
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }

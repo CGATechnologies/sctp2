@@ -38,6 +38,7 @@ import javax.persistence.AttributeConverter;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LongSetConverter implements AttributeConverter<Set<Long>, String> {
     @Override
@@ -57,8 +58,7 @@ public class LongSetConverter implements AttributeConverter<Set<Long>, String> {
         if (dbData == null) {
             return Set.of();
         }
-        return Set.of(dbData.split(","))
-                .stream()
+        return Stream.of(dbData.split(","))
                 .filter(StringUtils::hasText)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
