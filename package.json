@@ -4,7 +4,8 @@
   "description": "SCTP MIS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild -o src/main/resources/public/js/out.js src/main/javascript/main.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
     "react": "^18.1.0",
     "react-bulma-components": "^4.1.0",
     "react-dom": "^18.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.39"
   }
 }
