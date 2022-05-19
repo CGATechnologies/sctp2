@@ -32,6 +32,7 @@
 
 package org.cga.sctp.targeting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
@@ -50,9 +51,11 @@ public class TargetingSessionView extends TargetingSessionBase {
     private Long householdCount;
 
     @Column(name = "app_scm")
+    @JsonIgnore
     private boolean appCommunityMeeting;
 
     @Column(name = "app_dm")
+    @JsonIgnore
     private boolean appDistrictMeeting;
 
     public String getCreatorName() {
@@ -117,5 +120,17 @@ public class TargetingSessionView extends TargetingSessionBase {
 
     public void setAppDistrictMeeting(boolean appDistrictMeeting) {
         this.appDistrictMeeting = appDistrictMeeting;
+    }
+
+    public boolean isAtDistrictMeeting() {
+        return getStatus() == SessionStatus.Review
+                && appCommunityMeeting
+                && !appDistrictMeeting;
+    }
+
+    public boolean isAtSecondCommunityMeeting() {
+        return getStatus() == SessionStatus.Review
+                && !appCommunityMeeting
+                && !appDistrictMeeting;
     }
 }

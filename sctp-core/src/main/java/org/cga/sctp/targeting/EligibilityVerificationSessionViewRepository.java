@@ -87,4 +87,6 @@ interface EligibilityVerificationSessionViewRepository extends JpaRepository<Eli
             @Param("districtCode") long districtCode,
             Pageable pageable
     );
+
+
 }

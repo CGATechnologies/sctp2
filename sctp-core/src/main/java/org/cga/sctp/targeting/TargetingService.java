@@ -38,6 +38,7 @@ import org.cga.sctp.utils.CollectionUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -96,6 +97,9 @@ public class TargetingService extends TransactionalService {
 
     @Autowired
     private TargetingResultRepository targetingResultRepository;
+
+    @Autowired
+    private TargetingSessionViewRepository targetingSessionViewRepository;
 
     public void saveTargetingSession(TargetingSession targetingSession) {
         sessionRepository.save(targetingSession);
@@ -454,5 +458,55 @@ public class TargetingService extends TransactionalService {
 
     public TargetingResult findTargetingResultByHouseholdId(Long sessionId, Long household) {
         return targetingResultRepository.findByTargetingSessionAndHousehold(sessionId, household);
+    }
+
+    private Page<TargetingSessionView> getOpenTargetingSessionsByLocation(
+            Long districtCode
+            , Long taCode
+            , Long clusterCode
+            , int page
+            , int pageSize
+            , boolean secondCommunityMeetingDone
+            , boolean districtMeetingDone
+    ) {
+        List<TargetingSessionView> slice = targetingSessionViewRepository
+                .getTargetingSessionsByLocation(
+                        districtCode
+                        , taCode
+                        , clusterCode
+                        , page
+                        , Math.max(pageSize, PAGE_SIZE)
+                        , TargetingSessionBase.SessionStatus.Review.name()
+                        , secondCommunityMeetingDone
+                        , districtMeetingDone);
+        // TODO this is necessary for paging on the android front but can be removed to improve performance
+        //  just that the app would have to be changed to use optimistic paging.
+        Long totalResults = targetingSessionViewRepository.countTargetingSessionsByLocation(
+                districtCode
+                , taCode
+                , clusterCode
+                , TargetingSessionBase.SessionStatus.Review.name()
+                , secondCommunityMeetingDone
+                , districtMeetingDone
+        );
+        return new PageImpl<>(slice, Pageable.ofSize(slice.size()).withPage(page), totalResults);
+    }
+
+    public Page<TargetingSessionView> getOpenTargetingSessionsForSecondCommunityMeeting(
+            Long districtCode
+            , Long taCode
+            , Long clusterCode
+            , int page
+            , int pageSize) {
+        return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize, false, false);
+    }
+
+    public Page<TargetingSessionView> getOpenTargetingSessionsForDistrictMeeting(
+            Long districtCode
+            , Long taCode
+            , Long clusterCode
+            , int page
+            , int pageSize) {
+        return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize, true, false);
     }
 }

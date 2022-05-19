@@ -31,7 +31,6 @@
                             <th>T.A</th>
                             <th>Date</th>
                             <th>Done By</th>
-                            <th title="Linked Pre-Eligibility Verification">Pre-Eligibility Verification Session</th>
                             <th>Status</th>
                             <th data-sortable="false" width="5%">Options</th>
                         </tr>
@@ -46,13 +45,6 @@
                             <td>{{ s.taName }}</td>
                             <td>{{ printDate(s.createdAt) }}</td>
                             <td>{{ s.creatorName }}</td>
-                            <td>
-                                {% if s.pevSession != null %}
-                                    <a href="/verification/review?id={{ s.pevSession }}"
-                                       title="Click to view the pre-eligibility verification session linked to this session"
-                                       target="_blank" rel="noopener noreferrer">Click to view</a>
-                                {% endif %}
-                            </td>
                             <td>{{ s.status }}</td>
                             <td>
                                 <div class="dropdown is-hoverable is-right">
@@ -69,6 +61,12 @@
                                         <div class="dropdown-content">
                                             <a href="/targeting/community/review?session={{ s.id }}"
                                                class="dropdown-item">Review</a>
+                                        {% if s.pevSession != null %}
+                                            <a href="/verification/review?id={{ s.pevSession }}"
+                                               target="_blank"
+                                               class="dropdown-item"
+                                               rel="noopener noreferrer">View linked pre-eligibility verification</a>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

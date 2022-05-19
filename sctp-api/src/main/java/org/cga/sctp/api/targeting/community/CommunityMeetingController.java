@@ -41,23 +41,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.cga.sctp.api.core.BaseController;
 import org.cga.sctp.api.core.IncludeGeneralResponses;
 import org.cga.sctp.api.user.ApiUserDetails;
+import org.cga.sctp.api.utils.LangUtils;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
-import org.cga.sctp.targeting.CbtStatus;
-import org.cga.sctp.targeting.EligibilityVerificationSessionView;
-import org.cga.sctp.targeting.EligibleHouseholdDetails;
 import org.cga.sctp.targeting.TargetingService;
+import org.cga.sctp.targeting.TargetingSessionView;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/targeting/community-based-targeting")
-@Tag(name = "CommunityMeeting", description = "Endpoint for managing second community and district meetings")
+@Tag(name = "Second Community & District Meetings", description = "Endpoint for managing second community and district meetings")
 public class CommunityMeetingController extends BaseController {
 
     @Autowired
@@ -66,13 +65,13 @@ public class CommunityMeetingController extends BaseController {
     @Autowired
     private BeneficiaryService beneficiaryService;
 
-    @GetMapping("/district")
-    @Operation(description = "Fetches open sessions from the community based targeting that have households in the eligib")
+    @GetMapping("/second-community-meeting")
+    @Operation(description = "Fetches open sessions from the community based targeting to be reviewed at the second community meeting")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PreEligibilityVerificationSessionResponse.class)))
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CommunityMeetingSessionResponse.class)))
     })
     @IncludeGeneralResponses
-    public ResponseEntity<PreEligibilityVerificationSessionResponse> getSessions(
+    public ResponseEntity<CommunityMeetingSessionResponse> getSessionsForSecondCommunityMeeting(
             @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
@@ -80,80 +79,39 @@ public class CommunityMeetingController extends BaseController {
             @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
             @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
 
-        Page<EligibilityVerificationSessionView> verificationList
-                = targetingService.getOpenVerificationSessionsByLocation(
-                apiUserDetails.getAccessTokenClaims().getDistrictCode().longValue(),
-                taCode,
-                villageCluster,
-                zone,
-                village,
-                page
-        );
-        return ResponseEntity.ok(new PreEligibilityVerificationSessionResponse(verificationList));
+        Page<TargetingSessionView> sessions = targetingService
+                .getOpenTargetingSessionsForSecondCommunityMeeting(
+                        apiUserDetails.getAccessTokenClaims().getDistrictCode().longValue(),
+                        LangUtils.nullIfZeroOrLess(taCode),
+                        LangUtils.nullIfZeroOrLess(villageCluster),
+                        page,
+                        200
+                );
+        return ResponseEntity.ok(new CommunityMeetingSessionResponse(sessions));
     }
 
-    @GetMapping("/sessions/{session-id}/households")
+    @GetMapping("/district-meeting")
+    @Operation(description = "Fetches open sessions from the community based targeting to be reviewed at the district meeting")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(anyOf = HouseholdDetailsResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Session not found")
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CommunityMeetingSessionResponse.class)))
     })
     @IncludeGeneralResponses
-    public ResponseEntity<HouseholdDetailsResponse> fetchHouseholdsBySessionId(
-            @PathVariable("session-id") Long sessionId,
-            @RequestParam(value = "page", defaultValue = "0") int page) {
-        EligibilityVerificationSessionView verificationSessionView = targetingService.findVerificationViewById(sessionId);
+    public ResponseEntity<CommunityMeetingSessionResponse> getSessionsForDistrictMeeting(
+            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
+            @RequestParam(value = "village-cluster-code", required = false, defaultValue = "0") Long villageCluster,
+            @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
+            @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
 
-        if (verificationSessionView == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (!verificationSessionView.isOpen()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Page<EligibleHouseholdDetails> households = targetingService.getEligibleHouseholdsDetails(
-                verificationSessionView.getId(), page);
-
-        List<HouseholdData> householdDataList =
-                households.stream()
-                        .map(HouseholdData::of).toList();
-
-        return ResponseEntity.ok(new HouseholdDetailsResponse(
-                households.getNumber(),
-                households.getTotalElements(),
-                households.getTotalPages(),
-                householdDataList
-        ));
-        //return ResponseEntity.ok(new HouseholdDetailsResponse(households));
-    }
-
-    @PostMapping("/sessions/{session-id}/households/update-ranks")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201"),
-            @ApiResponse(responseCode = "400", description = "Invalid request")
-    })
-    @IncludeGeneralResponses
-    public ResponseEntity<?> updateHouseholdRank(@AuthenticatedUserDetails ApiUserDetails apiUserDetails,
-                                                 @PathVariable("session-id") Long sessionId,
-                                                 @Validated @RequestBody UpdateHouseholdRankRequest request) {
-
-        EligibilityVerificationSessionView verificationSessionView = targetingService.findVerificationViewById(sessionId);
-        if (verificationSessionView == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        if (request == null || !verificationSessionView.isOpen()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        // FIXME: Make this operation run in a batch op instead of one-by-one like this
-        request.getUpdates()
-                .forEach(updateRankRequest -> {
-                    publishGeneralEvent("User %s updated rank and status of household %s", apiUserDetails.getUserName(), updateRankRequest.getHouseholdId());
-                    CbtStatus status = CbtStatus.valueOf(updateRankRequest.getCbtStatus());
-                    beneficiaryService.updateHouseholdRankAndStatus(sessionId, updateRankRequest.getHouseholdId(), updateRankRequest.getRank(), status);
-                });
-
-        return ResponseEntity.ok().build();
+        Page<TargetingSessionView> sessions = targetingService
+                .getOpenTargetingSessionsForDistrictMeeting(
+                        apiUserDetails.getAccessTokenClaims().getDistrictCode().longValue(),
+                        LangUtils.nullIfZeroOrLess(taCode),
+                        LangUtils.nullIfZeroOrLess(villageCluster),
+                        page,
+                        200
+                );
+        return ResponseEntity.ok(new CommunityMeetingSessionResponse(sessions));
     }
 }

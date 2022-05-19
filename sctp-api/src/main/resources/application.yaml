@@ -5,7 +5,13 @@ spring:
 # Overriding imports only works when you start a new document
 #
 ---
+
 spring:
+  jpa:
+    properties:
+      hibernate:
+        proc:
+          param_null_passing: true
   application:
     name: "SCTP API"
     version: @project.version@
