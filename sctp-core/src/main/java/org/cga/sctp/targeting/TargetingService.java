@@ -101,6 +101,9 @@ public class TargetingService extends TransactionalService {
     @Autowired
     private TargetingSessionViewRepository targetingSessionViewRepository;
 
+    @Autowired
+    private TargetedHouseholdSummaryRepository targetedHouseholdSummaryRepository;
+
     public void saveTargetingSession(TargetingSession targetingSession) {
         sessionRepository.save(targetingSession);
     }
@@ -508,5 +511,9 @@ public class TargetingService extends TransactionalService {
             , int page
             , int pageSize) {
         return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize, true, false);
+    }
+
+    public Page<TargetedHouseholdSummary> getTargetedHouseholdSummaries(Long sessionId, Pageable pageable) {
+        return targetedHouseholdSummaryRepository.getByTargetingSession(sessionId, pageable);
     }
 }
