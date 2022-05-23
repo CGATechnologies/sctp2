@@ -42,6 +42,7 @@ import org.cga.sctp.api.core.BaseController;
 import org.cga.sctp.api.core.IncludeGeneralResponses;
 import org.cga.sctp.api.user.ApiUserDetails;
 import org.cga.sctp.api.utils.LangUtils;
+import org.cga.sctp.audit.TargetingEvent;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.targeting.TargetedHouseholdSummary;
 import org.cga.sctp.targeting.TargetingService;
@@ -50,11 +51,13 @@ import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/targeting/meetings")
@@ -171,5 +174,49 @@ public class CommunityMeetingController extends BaseController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "pageSize", defaultValue = "500") int pageSize) {
         return getHouseholds(sessionId, page, pageSize, false);
+    }
+
+    @PostMapping("/second-community-meeting-households-update")
+    @Operation(description = "Returns households under the given targeting session id. The session must be at the second community meeting stage.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Targeting session not found. Session may not exist or be at the second community meeting stage.")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> updateSecondCommunityMeetingHouseholds(
+            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+            @RequestParam(value = "targeting-session-id") Long sessionId,
+            @Valid @RequestBody TargetedHouseholdUpdateRequest request,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        TargetingSessionView session = targetingService.findSessionViewById(sessionId);
+
+        if (session == null || !session.isAppCommunityMeeting()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (request.getStatuses().isEmpty()) {
+            LOG.warn("Attempt to update with empty data");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!targetingService.updateTargetedHouseholds(session, request.getStatuses(), apiUserDetails.getUserId())) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        TargetingEvent.Builder b = TargetingEvent.builder();
+        publishEvent(TargetingEvent.builder()
+                .message("%s updated targeted %,d households under session %d")
+                .field(apiUserDetails.getUserName())
+                .field(request.getStatuses().toString())
+                .field(session.getId().toString())
+                .build()
+        );
+
+        return ResponseEntity.ok().build();
     }
 }

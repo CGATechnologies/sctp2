@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2021, CGATechnologies
+ * Copyright (c) 2022, CGATechnologies
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,69 +30,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting;
+package org.cga.sctp.audit;
 
-import org.hibernate.annotations.Immutable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-@Immutable
-@Entity
-@Table(name = "target_sessions_view")
-public class TargetingSessionView extends TargetingSessionBase {
-    private String taName;
-    private String closerName;
-    private String programName;
-    private String creatorName;
-    private String districtName;
-    private Long householdCount;
-
-    public String getCreatorName() {
-        return creatorName;
+public class TargetingEvent extends AuditEvent {
+    public TargetingEvent(Object source) {
+        super(EventType.targeting, source);
     }
 
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public String getProgramName() {
-        return programName;
-    }
+    public static class Builder {
+        private String _message;
+        private final List<Object> _parameters = new LinkedList<>();
 
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
+        public Builder message(String message) {
+            this._message = message;
+            return this;
+        }
 
-    public String getDistrictName() {
-        return districtName;
-    }
+        public Builder field(String text) {
+            _parameters.add(text);
+            return this;
+        }
 
-    public void setDistrictName(String districtName) {
-        this.districtName = districtName;
-    }
-
-    public String getTaName() {
-        return taName;
-    }
-
-    public void setTaName(String taName) {
-        this.taName = taName;
-    }
-
-    public String getCloserName() {
-        return closerName;
-    }
-
-    public void setCloserName(String closerName) {
-        this.closerName = closerName;
-    }
-
-    public Long getHouseholdCount() {
-        return householdCount;
-    }
-
-    public void setHouseholdCount(Long householdCount) {
-        this.householdCount = householdCount;
+        public TargetingEvent build() {
+            if (_parameters.isEmpty()) {
+                return new TargetingEvent(_message);
+            }
+            return new TargetingEvent(String.format(Locale.US, _message, _parameters.toArray()));
+        }
     }
 }

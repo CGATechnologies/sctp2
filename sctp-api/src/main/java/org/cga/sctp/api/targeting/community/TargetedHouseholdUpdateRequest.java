@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2021, CGATechnologies
+ * Copyright (c) 2022, CGATechnologies
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,69 +30,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.cga.sctp.targeting;
+package org.cga.sctp.api.targeting.community;
 
-import org.hibernate.annotations.Immutable;
+import org.cga.sctp.targeting.TargetedHouseholdStatus;
+import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
-@Immutable
-@Entity
-@Table(name = "target_sessions_view")
-public class TargetingSessionView extends TargetingSessionBase {
-    private String taName;
-    private String closerName;
-    private String programName;
-    private String creatorName;
-    private String districtName;
-    private Long householdCount;
+public class TargetedHouseholdUpdateRequest {
 
-    public String getCreatorName() {
-        return creatorName;
+    @NotNull(message = "List is required")
+    @Length(min = 1, max = 100, message = "List must not exceed {max} items")
+    private List<@NotNull @Valid TargetedHouseholdStatus> statuses;
+
+    public List<TargetedHouseholdStatus> getStatuses() {
+        return statuses;
     }
 
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
-    }
-
-    public String getProgramName() {
-        return programName;
-    }
-
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
-
-    public String getDistrictName() {
-        return districtName;
-    }
-
-    public void setDistrictName(String districtName) {
-        this.districtName = districtName;
-    }
-
-    public String getTaName() {
-        return taName;
-    }
-
-    public void setTaName(String taName) {
-        this.taName = taName;
-    }
-
-    public String getCloserName() {
-        return closerName;
-    }
-
-    public void setCloserName(String closerName) {
-        this.closerName = closerName;
-    }
-
-    public Long getHouseholdCount() {
-        return householdCount;
-    }
-
-    public void setHouseholdCount(Long householdCount) {
-        this.householdCount = householdCount;
+    public void setStatuses(List<TargetedHouseholdStatus> statuses) {
+        this.statuses = statuses;
     }
 }

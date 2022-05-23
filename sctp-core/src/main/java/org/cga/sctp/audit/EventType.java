@@ -37,6 +37,7 @@ package org.cga.sctp.audit;
 
 public enum EventType {
     authentication,
+    targeting,
     general,
     security,
     user

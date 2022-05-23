@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2021, CGATechnologies
+ * Copyright (c) 2022, CGATechnologies
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,67 +32,52 @@
 
 package org.cga.sctp.targeting;
 
-import org.hibernate.annotations.Immutable;
+import javax.validation.constraints.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+/**
+ * Used when updating {@link TargetingResult}
+ */
+public class TargetedHouseholdStatus {
 
-@Immutable
-@Entity
-@Table(name = "target_sessions_view")
-public class TargetingSessionView extends TargetingSessionBase {
-    private String taName;
-    private String closerName;
-    private String programName;
-    private String creatorName;
-    private String districtName;
-    private Long householdCount;
-
-    public String getCreatorName() {
-        return creatorName;
+    /**
+     * @see CbtStatus
+     */
+    public enum EligibilityStatus {
+        Eligible,
+        Ineligible,
+        PreEligible
     }
 
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
+    @NotNull(message = "Status is required")
+    private TargetedHouseholdStatus.EligibilityStatus status;
+
+    @NotNull(message = "Household id is required")
+    private Long householdId;
+
+    @NotNull(message = "rank is required")
+    private Integer rank;
+
+    public EligibilityStatus getStatus() {
+        return status;
     }
 
-    public String getProgramName() {
-        return programName;
+    public void setStatus(EligibilityStatus status) {
+        this.status = status;
     }
 
-    public void setProgramName(String programName) {
-        this.programName = programName;
+    public Long getHouseholdId() {
+        return householdId;
     }
 
-    public String getDistrictName() {
-        return districtName;
+    public void setHouseholdId(Long householdId) {
+        this.householdId = householdId;
     }
 
-    public void setDistrictName(String districtName) {
-        this.districtName = districtName;
+    public Integer getRank() {
+        return rank;
     }
 
-    public String getTaName() {
-        return taName;
-    }
-
-    public void setTaName(String taName) {
-        this.taName = taName;
-    }
-
-    public String getCloserName() {
-        return closerName;
-    }
-
-    public void setCloserName(String closerName) {
-        this.closerName = closerName;
-    }
-
-    public Long getHouseholdCount() {
-        return householdCount;
-    }
-
-    public void setHouseholdCount(Long householdCount) {
-        this.householdCount = householdCount;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 }

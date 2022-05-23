@@ -41,11 +41,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -515,5 +518,65 @@ public class TargetingService extends TransactionalService {
 
     public Page<TargetedHouseholdSummary> getTargetedHouseholdSummaries(Long sessionId, Pageable pageable) {
         return targetedHouseholdSummaryRepository.getByTargetingSession(sessionId, pageable);
+    }
+
+    public boolean updateTargetedHouseholds(TargetingSessionView session, List<TargetedHouseholdStatus> statuses, @Nullable Long updatedBy) {
+        var sql = """
+                update targeting_results tr
+                JOIN targeting_sessions ts ON ts.id = tr.targeting_session
+                set tr.status = :newStatus
+                    , tr.ranking = COALESCE(:newRank, tr.ranking)
+                	, tr.updated_at = :timestamp
+                	, tr.scm_user_id = COALESCE(tr.scm_user_id, :scmUserId)
+                	, tr.scm_user_timestamp = COALESCE (tr.scm_user_timestamp, :scmTimestamp)
+                	, tr.dm_user_id = COALESCE(tr.dm_user_id, :dmUserId)
+                	, tr.dm_user_timestamp  = COALESCE (tr.dm_user_timestamp, :dmTimestamp)
+                WHERE ts.id = :sessionId AND ts.status = :sessionStatus AND tr.household_id = :householdId
+                """;
+        boolean updated = false;
+
+        if (statuses.isEmpty()) {
+            return false;
+        }
+
+        EntityTransaction transaction;
+        OffsetDateTime updatedAt = OffsetDateTime.now();
+        Query query = entityManager.createNativeQuery(sql);
+
+        transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+            for (TargetedHouseholdStatus status : statuses) {
+                query.setParameter("timestamp", updatedAt);
+                query.setParameter("sessionId", session.getId());
+                query.setParameter("newStatus", status.getStatus().name());
+                query.setParameter("householdId", status.getHouseholdId());
+                query.setParameter("sessionStatus", TargetingSessionBase.SessionStatus.Review.name());
+
+                if (session.isAtDistrictMeeting()) {
+                    query.setParameter("newRank", null);
+                    query.setParameter("scmUserId", null);
+                    query.setParameter("scmTimestamp", null);
+                    query.setParameter("dmUserId", updatedBy);
+                    query.setParameter("dmTimestamp", updatedAt);
+                } else if (session.isAtSecondCommunityMeeting()) {
+                    query.setParameter("dmUserId", null);
+                    query.setParameter("dmTimestamp", null);
+                    query.setParameter("scmUserId", updatedBy);
+                    query.setParameter("scmTimestamp", updatedAt);
+                    query.setParameter("newRank", status.getRank());
+                }
+            }
+            query.executeUpdate();
+
+            transaction.commit();
+            updated = true;
+        } catch (Exception e) {
+            LOG.error("Error during household updates", e);
+            transaction.rollback();
+        }
+
+        return updated;
     }
 }

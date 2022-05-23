@@ -32,8 +32,11 @@
 
 package org.cga.sctp.targeting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @MappedSuperclass
@@ -55,6 +58,26 @@ public class TargetingSessionBase {
     private Long taCode;
     @Column(name = "pev_session")
     private Long pevSession;
+
+    @Column(name = "scm")
+    @JsonIgnore
+    private boolean appCommunityMeeting;
+
+    @Column(name = "dm")
+    @JsonIgnore
+    private boolean appDistrictMeeting;
+
+    @Column(name = "scm_timestamp")
+    private OffsetDateTime communityMeetingTimestamp;
+
+    @Column(name = "dm_timestamp")
+    private OffsetDateTime districtMeetingTimestamp;
+
+    @Column(name = "dm_user_id")
+    private Long districtMeetingUserId;
+
+    @Column(name = "scm_user_id")
+    private Long communityMeetingUserId;
 
     @Enumerated(EnumType.STRING)
     private TargetingSession.SessionStatus status;
@@ -158,5 +181,65 @@ public class TargetingSessionBase {
     @Transient
     public boolean isOpen() {
         return status == SessionStatus.Review;
+    }
+
+    public boolean isAppCommunityMeeting() {
+        return appCommunityMeeting;
+    }
+
+    public void setAppCommunityMeeting(boolean appCommunityMeeting) {
+        this.appCommunityMeeting = appCommunityMeeting;
+    }
+
+    public boolean isAppDistrictMeeting() {
+        return appDistrictMeeting;
+    }
+
+    public void setAppDistrictMeeting(boolean appDistrictMeeting) {
+        this.appDistrictMeeting = appDistrictMeeting;
+    }
+
+    public OffsetDateTime getCommunityMeetingTimestamp() {
+        return communityMeetingTimestamp;
+    }
+
+    public void setCommunityMeetingTimestamp(OffsetDateTime communityMeetingTimestamp) {
+        this.communityMeetingTimestamp = communityMeetingTimestamp;
+    }
+
+    public OffsetDateTime getDistrictMeetingTimestamp() {
+        return districtMeetingTimestamp;
+    }
+
+    public void setDistrictMeetingTimestamp(OffsetDateTime districtMeetingTimestamp) {
+        this.districtMeetingTimestamp = districtMeetingTimestamp;
+    }
+
+    public Long getDistrictMeetingUserId() {
+        return districtMeetingUserId;
+    }
+
+    public void setDistrictMeetingUserId(Long districtMeetingUserId) {
+        this.districtMeetingUserId = districtMeetingUserId;
+    }
+
+    public Long getCommunityMeetingUserId() {
+        return communityMeetingUserId;
+    }
+
+    public void setCommunityMeetingUserId(Long communityMeetingUserId) {
+        this.communityMeetingUserId = communityMeetingUserId;
+    }
+
+    public boolean isAtDistrictMeeting() {
+        return getStatus() == SessionStatus.Review
+                && appCommunityMeeting
+                && !appDistrictMeeting;
+    }
+
+    public boolean isAtSecondCommunityMeeting() {
+        return getStatus() == SessionStatus.Review
+                && !appCommunityMeeting
+                && !appDistrictMeeting;
     }
 }
