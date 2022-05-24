@@ -51,9 +51,9 @@ public class CaptchaService extends BaseComponent {
 
     private static final int WIDTH = 200, HEIGHT = 50;
 
+    private final long ttlSeconds;
     private final NoiseProducer noiseProducer;
     private final BackgroundProducer backgroundProducer;
-    private final long ttlSeconds;
 
     public CaptchaService() {
         ttlSeconds = TimeUnit.MINUTES.toSeconds(2);

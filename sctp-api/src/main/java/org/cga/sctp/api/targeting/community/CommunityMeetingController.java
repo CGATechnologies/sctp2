@@ -46,11 +46,12 @@ import org.cga.sctp.audit.TargetingEvent;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
 import org.cga.sctp.targeting.TargetedHouseholdSummary;
 import org.cga.sctp.targeting.TargetingService;
+import org.cga.sctp.targeting.TargetingSession;
 import org.cga.sctp.targeting.TargetingSessionView;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -58,6 +59,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping("/targeting/meetings")
@@ -78,11 +82,12 @@ public class CommunityMeetingController extends BaseController {
     @IncludeGeneralResponses
     public ResponseEntity<CommunityMeetingSessionResponse> getSessionsForSecondCommunityMeeting(
             @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
-            @RequestParam(value = "village-cluster-code", required = false, defaultValue = "0") Long villageCluster,
-            @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
-            @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
+            @Valid @Min(0) @RequestParam(value = "page", defaultValue = "0") int page,
+            @Valid @Min(100) @Max(1000) @RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
+            @RequestParam(value = "traditional-authority-code", required = false) Long taCode,
+            @RequestParam(value = "village-cluster-code", required = false) Long villageCluster,
+            @RequestParam(value = "zone-code", required = false) Long zone,
+            @RequestParam(value = "village-code", required = false) Long village) {
 
         Page<TargetingSessionView> sessions = targetingService
                 .getOpenTargetingSessionsForSecondCommunityMeeting(
@@ -90,7 +95,7 @@ public class CommunityMeetingController extends BaseController {
                         LangUtils.nullIfZeroOrLess(taCode),
                         LangUtils.nullIfZeroOrLess(villageCluster),
                         page,
-                        200
+                        pageSize
                 );
         return ResponseEntity.ok(new CommunityMeetingSessionResponse(sessions));
     }
@@ -103,11 +108,12 @@ public class CommunityMeetingController extends BaseController {
     @IncludeGeneralResponses
     public ResponseEntity<CommunityMeetingSessionResponse> getSessionsForDistrictMeeting(
             @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "traditional-authority-code", required = false, defaultValue = "0") Long taCode,
-            @RequestParam(value = "village-cluster-code", required = false, defaultValue = "0") Long villageCluster,
-            @RequestParam(value = "zone-code", required = false, defaultValue = "0") Long zone,
-            @RequestParam(value = "village-code", required = false, defaultValue = "0") Long village) {
+            @Valid @Min(0) @RequestParam(value = "page", defaultValue = "0") int page,
+            @Valid @Min(100) @Max(1000) @RequestParam(value = "pageSize", defaultValue = "1000") int pageSize,
+            @RequestParam(value = "traditional-authority-code", required = false) Long taCode,
+            @RequestParam(value = "village-cluster-code", required = false) Long villageCluster,
+            @RequestParam(value = "zone-code", required = false) Long zone,
+            @RequestParam(value = "village-code", required = false) Long village) {
 
         Page<TargetingSessionView> sessions = targetingService
                 .getOpenTargetingSessionsForDistrictMeeting(
@@ -115,14 +121,14 @@ public class CommunityMeetingController extends BaseController {
                         LangUtils.nullIfZeroOrLess(taCode),
                         LangUtils.nullIfZeroOrLess(villageCluster),
                         page,
-                        200
+                        pageSize
                 );
         return ResponseEntity.ok(new CommunityMeetingSessionResponse(sessions));
     }
 
     private ResponseEntity<TargetedHouseholdsResponse> getHouseholds(Long sessionId, int page, int pageSize, boolean scm) {
 
-        TargetingSessionView sessionView = targetingService.findSessionViewById(sessionId);
+        TargetingSessionView sessionView = targetingService.findTargetingSessionViewById(sessionId);
 
         if (sessionView == null) {
             return ResponseEntity.notFound().build();
@@ -140,7 +146,7 @@ public class CommunityMeetingController extends BaseController {
 
         Page<TargetedHouseholdSummary> summaries = targetingService.getTargetedHouseholdSummaries(
                 sessionView.getId(),
-                Pageable.ofSize(Math.max(pageSize, 500)).withPage(page)
+                PageRequest.of(page - 1, pageSize)
         );
 
         return ResponseEntity.ok(new TargetedHouseholdsResponse(summaries));
@@ -156,8 +162,8 @@ public class CommunityMeetingController extends BaseController {
     public ResponseEntity<TargetedHouseholdsResponse> getTargetedHouseholdsForSecondCommunityMeetingReview(
             @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
             @RequestParam(value = "targeting-session-id") Long sessionId,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "pageSize", defaultValue = "500") int pageSize) {
+            @Valid @Min(0) @RequestParam(value = "page", defaultValue = "0") int page,
+            @Valid @Min(100) @Max(1000) @RequestParam(value = "pageSize", defaultValue = "1000") int pageSize) {
         return getHouseholds(sessionId, page, pageSize, true);
     }
 
@@ -171,8 +177,8 @@ public class CommunityMeetingController extends BaseController {
     public ResponseEntity<TargetedHouseholdsResponse> getTargetedHouseholdsForDistrictMeetingReview(
             @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
             @RequestParam(value = "targeting-session-id") Long sessionId,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "pageSize", defaultValue = "500") int pageSize) {
+            @Valid @Min(0) @RequestParam(value = "page", defaultValue = "0") int page,
+            @Valid @Min(100) @Max(1000) @RequestParam(value = "pageSize", defaultValue = "1000") int pageSize) {
         return getHouseholds(sessionId, page, pageSize, false);
     }
 
@@ -193,7 +199,7 @@ public class CommunityMeetingController extends BaseController {
             return ResponseEntity.badRequest().build();
         }
 
-        TargetingSessionView session = targetingService.findSessionViewById(sessionId);
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(sessionId);
 
         if (session == null || !session.isAppCommunityMeeting()) {
             return ResponseEntity.notFound().build();
@@ -213,6 +219,45 @@ public class CommunityMeetingController extends BaseController {
                 .message("%s updated targeted %,d households under session %d")
                 .field(apiUserDetails.getUserName())
                 .field(request.getStatuses().toString())
+                .field(session.getId().toString())
+                .build()
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/second-community-meeting-done")
+    @Operation(description = "Marks this session as having gone past the second community meeting stage. Second community meetings can no longer be done after this.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Targeting session not found. Session may not exist or be at the second community meeting stage.")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> markCommunityMeetingAsDone(
+            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+            @RequestParam(value = "targeting-session-id") Long sessionId,
+            @Valid @RequestBody TargetedHouseholdUpdateRequest request,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        TargetingSession session = targetingService.findTargetingSessionById(sessionId);
+
+        if (session == null || !session.isAppCommunityMeeting()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        session.setAppCommunityMeeting(true);
+        session.setCommunityMeetingTimestamp(OffsetDateTime.now());
+        session.setCommunityMeetingUserId(apiUserDetails.getUserId());
+
+        targetingService.saveTargetingSession(session);
+
+        publishEvent(TargetingEvent.builder()
+                .message("%s closed second community targeting for session with %d.")
+                .field(apiUserDetails.getUserName())
                 .field(session.getId().toString())
                 .build()
         );

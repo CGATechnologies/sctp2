@@ -134,7 +134,7 @@ public class CommunityBasedTargetingController extends BaseController {
     @GetMapping("/review")
     @AdminAndStandardAccessOnly
     ModelAndView details(@RequestParam("session") Long sessionId, RedirectAttributes attributes, Pageable pageable) {
-        TargetingSessionView session = targetingService.findSessionViewById(sessionId);
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(sessionId);
         if (session == null) {
             setDangerFlashMessage("Community based targeting session not found.", attributes);
             return redirect("/targeting/community");
@@ -155,7 +155,7 @@ public class CommunityBasedTargetingController extends BaseController {
             RedirectAttributes attributes,
             Pageable pageable) {
 
-        TargetingSessionView session = targetingService.findSessionViewById(sessionId);
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(sessionId);
         if (session == null) {
             setDangerFlashMessage("Community based targeting session not found.", attributes);
             return redirect("/targeting/community");
@@ -187,7 +187,7 @@ public class CommunityBasedTargetingController extends BaseController {
             return redirect("/targeting/community");
         }
 
-        TargetingSessionView session = targetingService.findSessionViewById(form.getId());
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(form.getId());
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);
             return redirect("/targeting/community");
@@ -220,7 +220,7 @@ public class CommunityBasedTargetingController extends BaseController {
         }
 
         TargetingResult targetingResult;
-        TargetingSessionView session = targetingService.findSessionViewById(form.getSession());
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(form.getSession());
 
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);
@@ -266,7 +266,7 @@ public class CommunityBasedTargetingController extends BaseController {
         }
 
         TargetingResult targetingResult;
-        TargetingSessionView session = targetingService.findSessionViewById(form.getSession());
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(form.getSession());
 
         if (session == null) {
             setDangerFlashMessage("Cannot find session", attributes);

@@ -232,9 +232,9 @@ public class TargetingSessionBase {
     }
 
     public boolean isAtDistrictMeeting() {
-        return getStatus() == SessionStatus.Review
-                && appCommunityMeeting
-                && !appDistrictMeeting;
+        return getStatus() == SessionStatus.Review // in review (open session)
+                && appCommunityMeeting // 2nd community meeting has already been been done
+                && appDistrictMeeting; // district meeting has not been done
     }
 
     public boolean isAtSecondCommunityMeeting() {

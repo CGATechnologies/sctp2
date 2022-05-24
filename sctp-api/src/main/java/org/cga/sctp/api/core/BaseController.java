@@ -38,12 +38,18 @@ package org.cga.sctp.api.core;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Validated
 public class BaseController extends BaseComponent {
 
     /**
@@ -67,5 +73,25 @@ public class BaseController extends BaseComponent {
         }
 
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public final Map<String, String> handleValidationExceptions(
+            ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations()
+                .forEach(violation -> {
+                    errors.put(getFieldName(violation.getPropertyPath()), violation.getMessage());
+                });
+        return errors;
+    }
+
+    private String getFieldName(Path path) {
+        Path.Node node = null;
+        for (Path.Node pathNode : path) {
+            node = pathNode;
+        }
+        return node != null ? node.getName() : path.toString();
     }
 }

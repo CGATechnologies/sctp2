@@ -37,10 +37,7 @@ import org.cga.sctp.targeting.criteria.*;
 import org.cga.sctp.utils.CollectionUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -54,16 +51,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class TargetingService extends TransactionalService {
-    private static final int PAGE_SIZE = 200;
+    private static final int PAGE_SIZE = 1000;
 
     @Autowired
     private CbtRankingRepository cbtRankingRepository;
 
     @Autowired
-    private TargetingSessionRepository sessionRepository;
+    private TargetingSessionRepository targetingSessionRepository;
 
-    @Autowired
-    private TargetingSessionViewRepository viewRepository;
+    /*@Autowired
+    private TargetingSessionViewRepository viewRepository;*/
 
     @Autowired
     private CriterionRepository criterionRepository;
@@ -108,37 +105,40 @@ public class TargetingService extends TransactionalService {
     private TargetedHouseholdSummaryRepository targetedHouseholdSummaryRepository;
 
     public void saveTargetingSession(TargetingSession targetingSession) {
-        sessionRepository.save(targetingSession);
+        targetingSessionRepository.save(targetingSession);
     }
 
     public void performCommunityBasedTargetingRanking(TargetingSession session) {
         if (session.isOpen()) {
-            sessionRepository.runCommunityBasedTargetingRanking(session.getId());
+            targetingSessionRepository.runCommunityBasedTargetingRanking(session.getId());
         }
     }
 
     public List<TargetingSessionView> targetingSessionViewList() {
-        return viewRepository.findAll();
+        return targetingSessionViewRepository.findAll();
     }
 
     public TargetingSession findSessionById(Long sessionId) {
-        return sessionRepository.findById(sessionId).orElse(null);
+        return targetingSessionRepository.findById(sessionId).orElse(null);
     }
 
     public Slice<CbtRankingResult> getCbtRanking(TargetingSessionView session, Pageable pageable) {
         return cbtRankingRepository.findByCbtSessionId(session.getId(), pageable);
     }
 
-    public TargetingSessionView findSessionViewById(Long sessionId) {
-        return viewRepository.findById(sessionId).orElse(null);
+    public TargetingSessionView findTargetingSessionViewById(Long sessionId) {
+        return targetingSessionViewRepository.findById(sessionId).orElse(null);
+    }
+
+    public TargetingSession findTargetingSessionById(Long sessionId) {
+        return targetingSessionRepository.findById(sessionId).orElse(null);
     }
 
     public void closeTargetingSession(TargetingSessionView session, Long userId) {
-        sessionRepository.closeSession(session.getId(), userId, LocalDateTime.now(),
+        targetingSessionRepository.closeSession(session.getId(), userId, LocalDateTime.now(),
                 TargetingSessionBase.SessionStatus.Closed.name());
 
         enrolmentRepository.sendToEnrolment(session.getId(), (long) 0, userId);
-
     }
 
     public void saveTargetingCriterion(Criterion criterion) {
@@ -395,7 +395,7 @@ public class TargetingService extends TransactionalService {
                     saveTargetingSession(targetingSession);
 
                     // 2. Run CBT on the households selected
-                    sessionRepository.runCommunityBasedTargetingRankingOnEligibleHouseholds(targetingSession.getId(), session.getId());
+                    targetingSessionRepository.runCommunityBasedTargetingRankingOnEligibleHouseholds(targetingSession.getId(), session.getId());
                 }
             }
         } else {
@@ -419,10 +419,11 @@ public class TargetingService extends TransactionalService {
     public Page<EligibleHouseholdDetails> getEligibleHouseholdsDetails(Long sessionId, int page) {
         return eligibleHouseholdDetailsRepository.getBySessionId(
                 sessionId,
-                Pageable.ofSize(PAGE_SIZE).withPage(page)
+                PageRequest.of(page, PAGE_SIZE)
         );
     }
 
+    @Deprecated(forRemoval = true)
     public Page<EligibilityVerificationSessionView> getOpenVerificationSessionsByLocation(
             long districtCode
             , Long taCode
@@ -436,7 +437,7 @@ public class TargetingService extends TransactionalService {
                     , districtCode
                     , taCode
                     , villageClusterCode
-                    , Pageable.ofSize(PAGE_SIZE).withPage(page)
+                    , PageRequest.of(page, PAGE_SIZE)
             );
         }
         if (isCodeSet(taCode) && !isCodeSet(villageClusterCode)) {
@@ -444,13 +445,13 @@ public class TargetingService extends TransactionalService {
                     EligibilityVerificationSessionBase.Status.Review.name()
                     , districtCode
                     , taCode
-                    , Pageable.ofSize(PAGE_SIZE).withPage(page)
+                    , PageRequest.of(page, PAGE_SIZE)
             );
         }
         return verificationSessionViewRepository.findByOpenByLocation(
                 EligibilityVerificationSessionBase.Status.Review.name()
                 , districtCode
-                , Pageable.ofSize(PAGE_SIZE).withPage(page)
+                , PageRequest.of(page, PAGE_SIZE)
         );
     }
 
@@ -495,7 +496,7 @@ public class TargetingService extends TransactionalService {
                 , secondCommunityMeetingDone
                 , districtMeetingDone
         );
-        return new PageImpl<>(slice, Pageable.ofSize(slice.size()).withPage(page), totalResults);
+        return new PageImpl<>(slice, PageRequest.of(page, pageSize), totalResults);
     }
 
     public Page<TargetingSessionView> getOpenTargetingSessionsForSecondCommunityMeeting(
