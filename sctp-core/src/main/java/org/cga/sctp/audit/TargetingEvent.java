@@ -35,10 +35,11 @@ package org.cga.sctp.audit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TargetingEvent extends AuditEvent {
-    public TargetingEvent(Object source) {
-        super(EventType.targeting, source);
+    public TargetingEvent(String message) {
+        super(EventType.targeting, Map.of("what", message));
     }
 
     public static Builder builder() {
@@ -54,8 +55,8 @@ public class TargetingEvent extends AuditEvent {
             return this;
         }
 
-        public Builder field(String text) {
-            _parameters.add(text);
+        public Builder field(Object value) {
+            _parameters.add(value);
             return this;
         }
 

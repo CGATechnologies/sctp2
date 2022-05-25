@@ -51,8 +51,7 @@ interface TargetingSessionViewRepository extends JpaRepository<TargetingSessionV
             @Param("page") int page,
             @Param("pageSize") int pageSize,
             @Param("status") String status,
-            @Param("appSmc") boolean appScm,
-            @Param("appDm") boolean appDm
+            @Param("meetingPhase") String meetingPhase
     );
 
     @Query(
@@ -62,8 +61,7 @@ interface TargetingSessionViewRepository extends JpaRepository<TargetingSessionV
                        ,:_taCode
                        ,:_clusterCode
                        ,:_statusHint
-                       ,:_appScm
-                       ,:_appDm)
+                       ,:_meetingPhase)
                     """
             , nativeQuery = true
     )
@@ -72,7 +70,6 @@ interface TargetingSessionViewRepository extends JpaRepository<TargetingSessionV
             @Param("_taCode") Long taCode,
             @Param("_clusterCode") Long clusterCode,
             @Param("_statusHint") String status,
-            @Param("_appScm") boolean appScm,
-            @Param("_appDm") boolean appDm
+            @Param("_meetingPhase") String meetingPhase
     );
 }

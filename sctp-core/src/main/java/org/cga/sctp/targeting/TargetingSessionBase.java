@@ -46,6 +46,12 @@ public class TargetingSessionBase {
         Closed
     }
 
+    public enum MeetingPhase {
+        completed,
+        district_meeting,
+        second_community_meeting
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,13 +65,8 @@ public class TargetingSessionBase {
     @Column(name = "pev_session")
     private Long pevSession;
 
-    @Column(name = "scm")
-    @JsonIgnore
-    private boolean appCommunityMeeting;
-
-    @Column(name = "dm")
-    @JsonIgnore
-    private boolean appDistrictMeeting;
+    @Enumerated(EnumType.STRING)
+    private MeetingPhase meetingPhase;
 
     @Column(name = "scm_timestamp")
     private OffsetDateTime communityMeetingTimestamp;
@@ -174,29 +175,15 @@ public class TargetingSessionBase {
     }
 
     @Transient
+    @JsonIgnore
     public boolean isClosed() {
         return status == SessionStatus.Closed;
     }
 
     @Transient
+    @JsonIgnore
     public boolean isOpen() {
         return status == SessionStatus.Review;
-    }
-
-    public boolean isAppCommunityMeeting() {
-        return appCommunityMeeting;
-    }
-
-    public void setAppCommunityMeeting(boolean appCommunityMeeting) {
-        this.appCommunityMeeting = appCommunityMeeting;
-    }
-
-    public boolean isAppDistrictMeeting() {
-        return appDistrictMeeting;
-    }
-
-    public void setAppDistrictMeeting(boolean appDistrictMeeting) {
-        this.appDistrictMeeting = appDistrictMeeting;
     }
 
     public OffsetDateTime getCommunityMeetingTimestamp() {
@@ -231,15 +218,25 @@ public class TargetingSessionBase {
         this.communityMeetingUserId = communityMeetingUserId;
     }
 
-    public boolean isAtDistrictMeeting() {
-        return getStatus() == SessionStatus.Review // in review (open session)
-                && appCommunityMeeting // 2nd community meeting has already been been done
-                && appDistrictMeeting; // district meeting has not been done
+    public MeetingPhase getMeetingPhase() {
+        return meetingPhase;
     }
 
+    public void setMeetingPhase(MeetingPhase meetingPhase) {
+        this.meetingPhase = meetingPhase;
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean isAtDistrictMeeting() {
+        return getStatus() == SessionStatus.Review
+                && meetingPhase == MeetingPhase.district_meeting;
+    }
+
+    @Transient
+    @JsonIgnore
     public boolean isAtSecondCommunityMeeting() {
         return getStatus() == SessionStatus.Review
-                && !appCommunityMeeting
-                && !appDistrictMeeting;
+                && meetingPhase == MeetingPhase.second_community_meeting;
     }
 }

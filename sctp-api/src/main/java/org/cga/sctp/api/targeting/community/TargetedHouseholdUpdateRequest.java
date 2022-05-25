@@ -33,16 +33,16 @@
 package org.cga.sctp.api.targeting.community;
 
 import org.cga.sctp.targeting.TargetedHouseholdStatus;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 public class TargetedHouseholdUpdateRequest {
 
     @NotNull(message = "List is required")
-    @Length(min = 1, max = 100, message = "List must not exceed {max} items")
+    @Size(min = 1, max = 100, message = "List must not exceed {max} items")
     private List<@NotNull @Valid TargetedHouseholdStatus> statuses;
 
     public List<TargetedHouseholdStatus> getStatuses() {

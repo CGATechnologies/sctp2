@@ -42,8 +42,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -473,8 +473,7 @@ public class TargetingService extends TransactionalService {
             , Long clusterCode
             , int page
             , int pageSize
-            , boolean secondCommunityMeetingDone
-            , boolean districtMeetingDone
+            , TargetingSessionBase.MeetingPhase meetingPhase
     ) {
         List<TargetingSessionView> slice = targetingSessionViewRepository
                 .getTargetingSessionsByLocation(
@@ -484,8 +483,8 @@ public class TargetingService extends TransactionalService {
                         , page
                         , Math.max(pageSize, PAGE_SIZE)
                         , TargetingSessionBase.SessionStatus.Review.name()
-                        , secondCommunityMeetingDone
-                        , districtMeetingDone);
+                        , meetingPhase.name()
+                );
         // TODO this is necessary for paging on the android front but can be removed to improve performance
         //  just that the app would have to be changed to use optimistic paging.
         Long totalResults = targetingSessionViewRepository.countTargetingSessionsByLocation(
@@ -493,8 +492,7 @@ public class TargetingService extends TransactionalService {
                 , taCode
                 , clusterCode
                 , TargetingSessionBase.SessionStatus.Review.name()
-                , secondCommunityMeetingDone
-                , districtMeetingDone
+                , meetingPhase.name()
         );
         return new PageImpl<>(slice, PageRequest.of(page, pageSize), totalResults);
     }
@@ -505,7 +503,8 @@ public class TargetingService extends TransactionalService {
             , Long clusterCode
             , int page
             , int pageSize) {
-        return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize, false, false);
+        return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize,
+                TargetingSessionBase.MeetingPhase.second_community_meeting);
     }
 
     public Page<TargetingSessionView> getOpenTargetingSessionsForDistrictMeeting(
@@ -514,13 +513,15 @@ public class TargetingService extends TransactionalService {
             , Long clusterCode
             , int page
             , int pageSize) {
-        return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize, true, false);
+        return getOpenTargetingSessionsByLocation(districtCode, taCode, clusterCode, page, pageSize,
+                TargetingSessionBase.MeetingPhase.district_meeting);
     }
 
     public Page<TargetedHouseholdSummary> getTargetedHouseholdSummaries(Long sessionId, Pageable pageable) {
         return targetedHouseholdSummaryRepository.getByTargetingSession(sessionId, pageable);
     }
 
+    @Transactional
     public boolean updateTargetedHouseholds(TargetingSessionView session, List<TargetedHouseholdStatus> statuses, @Nullable Long updatedBy) {
         var sql = """
                 update targeting_results tr
@@ -540,14 +541,10 @@ public class TargetingService extends TransactionalService {
             return false;
         }
 
-        EntityTransaction transaction;
         OffsetDateTime updatedAt = OffsetDateTime.now();
         Query query = entityManager.createNativeQuery(sql);
 
-        transaction = entityManager.getTransaction();
-
         try {
-            transaction.begin();
             for (TargetedHouseholdStatus status : statuses) {
                 query.setParameter("timestamp", updatedAt);
                 query.setParameter("sessionId", session.getId());
@@ -570,12 +567,9 @@ public class TargetingService extends TransactionalService {
                 }
             }
             query.executeUpdate();
-
-            transaction.commit();
             updated = true;
         } catch (Exception e) {
             LOG.error("Error during household updates", e);
-            transaction.rollback();
         }
 
         return updated;

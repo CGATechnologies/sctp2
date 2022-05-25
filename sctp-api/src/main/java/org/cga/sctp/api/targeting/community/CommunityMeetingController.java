@@ -44,10 +44,7 @@ import org.cga.sctp.api.user.ApiUserDetails;
 import org.cga.sctp.api.utils.LangUtils;
 import org.cga.sctp.audit.TargetingEvent;
 import org.cga.sctp.beneficiaries.BeneficiaryService;
-import org.cga.sctp.targeting.TargetedHouseholdSummary;
-import org.cga.sctp.targeting.TargetingService;
-import org.cga.sctp.targeting.TargetingSession;
-import org.cga.sctp.targeting.TargetingSessionView;
+import org.cga.sctp.targeting.*;
 import org.cga.sctp.user.AuthenticatedUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,7 +53,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -146,7 +142,7 @@ public class CommunityMeetingController extends BaseController {
 
         Page<TargetedHouseholdSummary> summaries = targetingService.getTargetedHouseholdSummaries(
                 sessionView.getId(),
-                PageRequest.of(page - 1, pageSize)
+                PageRequest.of(page, pageSize)
         );
 
         return ResponseEntity.ok(new TargetedHouseholdsResponse(summaries));
@@ -182,28 +178,10 @@ public class CommunityMeetingController extends BaseController {
         return getHouseholds(sessionId, page, pageSize, false);
     }
 
-    @PostMapping("/second-community-meeting-households-update")
-    @Operation(description = "Returns households under the given targeting session id. The session must be at the second community meeting stage.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "404", description = "Targeting session not found. Session may not exist or be at the second community meeting stage.")
-    })
-    @IncludeGeneralResponses
-    public ResponseEntity<?> updateSecondCommunityMeetingHouseholds(
-            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
-            @RequestParam(value = "targeting-session-id") Long sessionId,
-            @Valid @RequestBody TargetedHouseholdUpdateRequest request,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        TargetingSessionView session = targetingService.findTargetingSessionViewById(sessionId);
-
-        if (session == null || !session.isAppCommunityMeeting()) {
-            return ResponseEntity.notFound().build();
-        }
+    private ResponseEntity<?> updateHouseholds(
+            ApiUserDetails apiUserDetails,
+            TargetingSessionView session,
+            TargetedHouseholdUpdateRequest request) {
 
         if (request.getStatuses().isEmpty()) {
             LOG.warn("Attempt to update with empty data");
@@ -214,12 +192,98 @@ public class CommunityMeetingController extends BaseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        TargetingEvent.Builder b = TargetingEvent.builder();
         publishEvent(TargetingEvent.builder()
                 .message("%s updated targeted %,d households under session %d")
                 .field(apiUserDetails.getUserName())
-                .field(request.getStatuses().toString())
-                .field(session.getId().toString())
+                .field(request.getStatuses().size())
+                .field(session.getId())
+                .build()
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/second-community-meeting-households-update")
+    @Operation(description = "Updates households under the given targeting session id. The session must be at the second community meeting stage.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Targeting session not found. Session may not exist or be at the second community meeting stage.")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> updateSecondCommunityMeetingHouseholds(
+            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+            @RequestParam(value = "targeting-session-id") Long sessionId,
+            @Valid @RequestBody TargetedHouseholdUpdateRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(sessionId);
+
+        if (session == null || !session.isAtSecondCommunityMeeting()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return updateHouseholds(apiUserDetails, session, request);
+    }
+
+    @PostMapping("/district-meeting-households-update")
+    @Operation(description = "Updates households under the given targeting session id. The session must be at the second community meeting stage.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Targeting session not found. Session may not exist or be at the second community meeting stage.")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> updateDistrictMeetingHouseholds(
+            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+            @RequestParam(value = "targeting-session-id") Long sessionId,
+            @Valid @RequestBody TargetedHouseholdUpdateRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        TargetingSessionView session = targetingService.findTargetingSessionViewById(sessionId);
+
+        if (session == null || !session.isAtDistrictMeeting()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return updateHouseholds(apiUserDetails, session, request);
+    }
+
+    private ResponseEntity<?> markMeetingAsDone(
+            ApiUserDetails apiUserDetails,
+            Long sessionId,
+            TargetingSessionBase.MeetingPhase expectedPhase) {
+
+        TargetingSession session = targetingService.findTargetingSessionById(sessionId);
+
+        if (session == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        final boolean isExpectedPhase = switch (expectedPhase) {
+            case district_meeting -> session.isAtDistrictMeeting();
+            case second_community_meeting -> session.isAtSecondCommunityMeeting();
+            default -> false;
+        };
+
+        if (!isExpectedPhase) {
+            return ResponseEntity.notFound().build();
+        }
+
+        session.setCommunityMeetingTimestamp(OffsetDateTime.now());
+        session.setCommunityMeetingUserId(apiUserDetails.getUserId());
+        session.setMeetingPhase(TargetingSessionBase.MeetingPhase.district_meeting);
+
+        targetingService.saveTargetingSession(session);
+
+        publishEvent(TargetingEvent.builder()
+                .message("%s closed second community targeting for session with %d.")
+                .field(apiUserDetails.getUserName())
+                .field(session.getId())
                 .build()
         );
 
@@ -234,34 +298,19 @@ public class CommunityMeetingController extends BaseController {
     @IncludeGeneralResponses
     public ResponseEntity<?> markCommunityMeetingAsDone(
             @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
-            @RequestParam(value = "targeting-session-id") Long sessionId,
-            @Valid @RequestBody TargetedHouseholdUpdateRequest request,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            @RequestParam(value = "targeting-session-id") Long sessionId) {
+        return markMeetingAsDone(apiUserDetails, sessionId, TargetingSessionBase.MeetingPhase.second_community_meeting);
+    }
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        TargetingSession session = targetingService.findTargetingSessionById(sessionId);
-
-        if (session == null || !session.isAppCommunityMeeting()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        session.setAppCommunityMeeting(true);
-        session.setCommunityMeetingTimestamp(OffsetDateTime.now());
-        session.setCommunityMeetingUserId(apiUserDetails.getUserId());
-
-        targetingService.saveTargetingSession(session);
-
-        publishEvent(TargetingEvent.builder()
-                .message("%s closed second community targeting for session with %d.")
-                .field(apiUserDetails.getUserName())
-                .field(session.getId().toString())
-                .build()
-        );
-
-        return ResponseEntity.ok().build();
+    @PostMapping("/district-meeting-done")
+    @Operation(description = "Marks this session as having gone past the district meeting stage. District meetings can no longer be done after this.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Targeting session not found. Session may not exist or be at the district meeting stage.")
+    })
+    @IncludeGeneralResponses
+    public ResponseEntity<?> markDistrictMeetingAsDone(
+            @AuthenticatedUserDetails ApiUserDetails apiUserDetails,
+            @RequestParam(value = "targeting-session-id") Long sessionId) {
+        return markMeetingAsDone(apiUserDetails, sessionId, TargetingSessionBase.MeetingPhase.district_meeting);
     }
 }
