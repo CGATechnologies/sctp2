@@ -128,7 +128,7 @@ public class TransferCalculator {
      * Calculates transfers for all the households in the transfer period for a given location..
      * @param transferPeriod
      */
-    public void calculateTransfersUpdate(Location location, TransferPeriod transferPeriod, List<Transfer> transferList) {
+     public void calculateTransfersUpdate(TransferPeriod transferPeriod, List<Transfer> transferList) {
         long monthlyAmount = 0;
         long basicAmount, secondaryBonus, primaryBonus, primaryIncentive;
         for(var transfer: transferList) {

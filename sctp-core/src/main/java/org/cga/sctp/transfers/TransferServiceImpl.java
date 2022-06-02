@@ -39,6 +39,7 @@ import org.cga.sctp.targeting.CbtStatus;
 import org.cga.sctp.transfers.accounts.BeneficiaryAccountService;
 import org.cga.sctp.transfers.agencies.TransferAgenciesRepository;
 import org.cga.sctp.transfers.accounts.TransferAccountNumberList;
+import org.cga.sctp.transfers.parameters.*;
 import org.cga.sctp.transfers.periods.TransferPeriod;
 import org.cga.sctp.transfers.reconciliation.TransferReconciliationRequest;
 import org.cga.sctp.user.User;
@@ -72,6 +73,23 @@ public class TransferServiceImpl implements TransferService {
 
     @Autowired
     private BeneficiaryAccountService beneficiaryAccountService;
+
+    @Autowired
+    private HouseholdTransferParametersRepository householdTransferParametersRepository;
+
+    @Autowired
+    private LocationTransferParametersRepository locationTransferParametersRepository;
+
+    @Autowired
+    private EducationTransferParameterRepository educationTransferParameterRepository;
+
+    public List<HouseholdTransferParameter> findAllActiveHouseholdParameters() {
+        return householdTransferParametersRepository.findAll();
+    }
+
+    public List<EducationTransferParameter> findAllEducationTransferParameters() {
+        return educationTransferParameterRepository.findAll();
+    }
 
     public TransferSessionRepository getTranferSessionRepository() {
         return transferSessionRepository;
@@ -235,5 +253,22 @@ public class TransferServiceImpl implements TransferService {
     public int countUnreconciledTransfers(TransferPeriod transferPeriod) {
         // TODO: count unreconciled transfers
         return 0;
+    }
+
+    /**
+     * Calculates the transfer amounts for all transfers in the given transfer period.
+     * @param period
+     */
+    public void calculateTransfersInPeriod(TransferPeriod period) {
+        Objects.requireNonNull(period, "period");
+        List<Transfer> transferList = transfersRepository.findAllByTransferPeriodId(period.getId());
+        TransferCalculator transferCalculator = new TransferCalculator(
+                this.findAllEducationTransferParameters(),
+                this.findAllActiveHouseholdParameters()
+        );
+
+        transferCalculator.calculateTransfersUpdate(period, transferList);
+
+        transfersRepository.saveAll(transferList);
     }
 }

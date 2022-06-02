@@ -100,7 +100,7 @@ class TransferCalculatorTest {
         transfer.setSecondaryChildrenCount(1L);
 
         TransferCalculator transferCalculator = new TransferCalculator(educationTransferParameters, householdTransferParameters);
-        transferCalculator.calculateTransfersUpdate(location, transferPeriod, Collections.singletonList(transfer));
+        transferCalculator.calculateTransfersUpdate(transferPeriod, Collections.singletonList(transfer));
 
         assertEquals(3000L + 2000L + 1000L, transfer.getTotalAmountToTransfer());
     }

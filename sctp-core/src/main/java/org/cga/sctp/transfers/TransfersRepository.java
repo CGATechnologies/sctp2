@@ -254,4 +254,7 @@ public interface TransfersRepository extends JpaRepository<Transfer, Long> {
 
     @Query
     Optional<Transfer> findByHouseholdId(Long householdId);
+
+    @Query
+    List<Transfer> findAllByTransferPeriodId(long id);
 }
