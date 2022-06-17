@@ -1,0 +1,30 @@
+{
+  "name": "sctp2",
+  "version": "1.6.0",
+  "description": "This is a multi-mode maven project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CGATechnologies/sctp2.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/CGATechnologies/sctp2/issues"
+  },
+  "homepage": "https://github.com/CGATechnologies/sctp2#readme",
+  "devDependencies": {
+    "laravel-mix": "^6.0.49",
+    "vue-loader": "^16.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bulma": "^0.9.4",
+    "vue": "^3.2.37",
+    "vue-router": "^4.0.16",
+    "vuex": "^4.0.2"
+  }
+}
