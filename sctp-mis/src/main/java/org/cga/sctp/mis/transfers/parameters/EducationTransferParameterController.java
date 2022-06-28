@@ -37,6 +37,8 @@ import org.cga.sctp.mis.core.templating.Booleans;
 import org.cga.sctp.targeting.importation.parameters.EducationLevel;
 import org.cga.sctp.transfers.parameters.EducationTransferParameter;
 import org.cga.sctp.transfers.parameters.EducationTransferParameterRepository;
+import org.cga.sctp.transfers.parameters.TransferParameter;
+import org.cga.sctp.transfers.parameters.TransferParametersRepository;
 import org.cga.sctp.user.AdminAccessOnly;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,9 @@ public class EducationTransferParameterController extends BaseController {
     @Autowired
     private EducationTransferParameterRepository educationTransferParameterRepository;
 
+    @Autowired
+    private TransferParametersRepository transferParametersRepository;
+
     @GetMapping
     public ModelAndView viewIndex() {
         List<EducationTransferParameter> educationParameterList = educationTransferParameterRepository.findAll();
@@ -69,9 +74,11 @@ public class EducationTransferParameterController extends BaseController {
     @GetMapping("/new")
     @AdminAccessOnly
     public ModelAndView viewAdd() {
+        List<TransferParameter> transferParameters = transferParametersRepository.findAllActive();
         return view("/transfers/parameters/education/new")
                 .addObject("booleans", Booleans.VALUES)
-                .addObject("educationLevels", EducationLevel.values());
+                .addObject("educationLevels", EducationLevel.values())
+                .addObject("transferParameters", transferParameters);
     }
 
     @PostMapping("/new")
@@ -96,6 +103,7 @@ public class EducationTransferParameterController extends BaseController {
         }
 
         EducationTransferParameter educationParameter = new EducationTransferParameter();
+        educationParameter.setTransferParameterId(form.getTransferParameterId());
         educationParameter.setEducationLevel(form.getEducationLevel());
         educationParameter.setActive(form.isActive().value);
         educationParameter.setAmount(form.getAmount());

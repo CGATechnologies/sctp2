@@ -42,6 +42,8 @@ import javax.validation.constraints.NotNull;
 public class EducationTransferParameterForm {
     private Long id;
 
+    private Long transferParameterId;
+
     @NotNull
     private EducationLevel educationLevel;
 
@@ -58,6 +60,14 @@ public class EducationTransferParameterForm {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTransferParameterId() {
+        return transferParameterId;
+    }
+
+    public void setTransferParameterId(Long transferParameterId) {
+        this.transferParameterId = transferParameterId;
     }
 
     public EducationLevel getEducationLevel() {

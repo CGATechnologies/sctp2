@@ -47,6 +47,7 @@ import org.cga.sctp.targeting.importation.parameters.Gender;
 import org.cga.sctp.transfers.agencies.TransferAgency;
 import org.cga.sctp.transfers.agencies.TransferMethod;
 import org.cga.sctp.transfers.parameters.HouseholdParameterCondition;
+import org.cga.sctp.transfers.parameters.TransferParameter;
 import org.cga.sctp.user.AccessLevel;
 import org.cga.sctp.user.Permission;
 import org.cga.sctp.user.SystemRole;
@@ -150,5 +151,10 @@ public class SelectOptionConfigs {
     @Bean
     public SelectOptionEntry transferMethodSelectOption() {
         return new SelectOptionEntry(TransferMethod.class, "name()", "name()");
+    }
+
+    @Bean
+    public SelectOptionEntry transferParameterOption() {
+        return new SelectOptionEntry(TransferParameter.class, "getId()", "getTitle()");
     }
 }

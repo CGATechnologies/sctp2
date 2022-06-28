@@ -34,6 +34,8 @@ package org.cga.sctp.mis.transfers.parameters;
 
 import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.Booleans;
+import org.cga.sctp.transfers.parameters.EducationTransferParameterRepository;
+import org.cga.sctp.transfers.parameters.HouseholdTransferParametersRepository;
 import org.cga.sctp.transfers.parameters.TransferParameter;
 import org.cga.sctp.transfers.parameters.TransferParametersRepository;
 import org.cga.sctp.user.AdminAndStandardAccessOnly;
@@ -58,6 +60,12 @@ public class TransferParametersController extends BaseController {
     @Autowired
     private TransferParametersRepository transferParameterRepository;
 
+    @Autowired
+    private EducationTransferParameterRepository educationTransferParameterRepository;
+
+    @Autowired
+    private HouseholdTransferParametersRepository householdTransferParametersRepository;
+
     @GetMapping
     @AdminAndStandardAccessOnly
     public ModelAndView getParametersList() {
@@ -75,7 +83,9 @@ public class TransferParametersController extends BaseController {
         }
 
         return view("transfers/parameters/view")
-                .addObject("transferParameter", transferParameterOptional.get());
+                .addObject("transferParameter", transferParameterOptional.get())
+                .addObject("householdParameters", householdTransferParametersRepository.findByTransferParameterId(parameterId))
+                .addObject("educationBonuses", educationTransferParameterRepository.findByTransferParameterId(parameterId));
     }
 
     @GetMapping("/new")

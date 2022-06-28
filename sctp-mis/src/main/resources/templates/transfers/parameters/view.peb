@@ -26,10 +26,90 @@
         <div class="household-subsidy-parameters">
             <p class="notification">This Parameter is not Linked to any Subsidy Calculation Options</p>
             <button>Add Calculation Option</button>
+            <table class="table is-narrow is-striped is-hoverable">
+                <thead>
+                <tr>
+                    <th>Number Of Members</th>
+                    <th>Amount</th>
+                    <th>Active</th>
+                    <th width="20%">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                        {% for transferParameter in householdParameters %}
+                    <tr>
+                        {# TODO(zikani03): Fix how we present the condition here #}
+                        <td>{{ transferParameter.numberOfMembers }} ({{ transferParameter.condition }})</td>
+                        <td>MWK {{ transferParameter.amount | numberformat("#,###.##") }}</td>
+                        <td>{{ yesOrNo(transferParameter.active) }}</td>
+                        <td>
+                                {% if canModify %}
+                                <div class="dropdown is-hoverable">
+                                    <div class="dropdown-trigger">
+                                        <button class="button button is-info is-inverted is-options"
+                                                aria-haspopup="true" aria-controls="dropdown-menu2">
+                                            <span>Options</span>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                        <div class="dropdown-content">
+                                            <a href="/transfers/parameters/households/{{ transferParameter.id }}/edit" class="dropdown-item">Edit</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                        </td>
+                    </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
         </div>
         <div class="education-bonus-parameters">
+
             <p class="notification">This Parameter is not Linked to any Education Bonus options</p>
             <button>Add Education Bonuses</button>
+            <table class="table is-narrow is-striped is-hoverable">
+                <thead>
+                <tr>
+                    <th>Education Level</th>
+                    <th>Amount</th>
+                    <th>Active</th>
+                    <th width="20%">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                        {% for transferParameter in educationBonuses %}
+                    <tr>
+                        <td>{{ transferParameter.educationLevel }} </td>
+                        <td>MWK {{ transferParameter.amount | numberformat("#,###.##") }}</td>
+                        <td>{{ yesOrNo(transferParameter.active) }}</td>
+                        <td>
+                                {% if canModify %}
+                                <div class="dropdown is-hoverable">
+                                    <div class="dropdown-trigger">
+                                        <button class="button button is-info is-inverted is-options"
+                                                aria-haspopup="true" aria-controls="dropdown-menu2">
+                                            <span>Options</span>
+                                            <span class="icon is-small">
+                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                        <div class="dropdown-content">
+                                            <a href="/transfers/parameters/education/{{ transferParameter.id }}/edit" class="dropdown-item">Edit</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                        </td>
+                    </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

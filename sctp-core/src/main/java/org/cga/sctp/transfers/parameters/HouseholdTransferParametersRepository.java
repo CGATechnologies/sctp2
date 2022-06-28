@@ -34,5 +34,8 @@ package org.cga.sctp.transfers.parameters;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface HouseholdTransferParametersRepository extends JpaRepository<HouseholdTransferParameter, Long> {
+    List<HouseholdTransferParameter> findByTransferParameterId(Long transferParameterId);
 }

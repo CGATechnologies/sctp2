@@ -43,6 +43,8 @@ public class HouseholdTransferParameterForm {
 
     private Long id;
 
+    private Long transferParameterId;
+
     @Min(1)
     @Max(99)
     private int numberOfMembers;
@@ -96,5 +98,13 @@ public class HouseholdTransferParameterForm {
 
     public void setActive(Booleans active) {
         this.active = active;
+    }
+
+    public Long getTransferParameterId() {
+        return transferParameterId;
+    }
+
+    public void setTransferParameterId(Long transferParameterId) {
+        this.transferParameterId = transferParameterId;
     }
 }

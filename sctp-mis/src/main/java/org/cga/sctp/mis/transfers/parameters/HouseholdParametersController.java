@@ -34,9 +34,7 @@ package org.cga.sctp.mis.transfers.parameters;
 
 import org.cga.sctp.mis.core.BaseController;
 import org.cga.sctp.mis.core.templating.Booleans;
-import org.cga.sctp.transfers.parameters.HouseholdParameterCondition;
-import org.cga.sctp.transfers.parameters.HouseholdTransferParameter;
-import org.cga.sctp.transfers.parameters.HouseholdTransferParametersRepository;
+import org.cga.sctp.transfers.parameters.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -57,6 +55,9 @@ public class HouseholdParametersController extends BaseController {
     @Autowired
     private HouseholdTransferParametersRepository householdTransferParametersRepository;
 
+    @Autowired
+    private TransferParametersRepository transferParametersRepository;
+
     @GetMapping
     public ModelAndView viewIndex() {
         List<HouseholdTransferParameter> householdParameterList = householdTransferParametersRepository.findAll();
@@ -66,9 +67,11 @@ public class HouseholdParametersController extends BaseController {
 
     @GetMapping("/new")
     public ModelAndView viewAdd() {
+        List<TransferParameter> transferParameters = transferParametersRepository.findAllActive();
         return view("/transfers/parameters/households/new")
                 .addObject("booleans", Booleans.VALUES)
-                .addObject("conditions", HouseholdParameterCondition.values());
+                .addObject("conditions", HouseholdParameterCondition.values())
+                .addObject("transferParameters", transferParameters);
     }
 
     @PostMapping("/new")
@@ -86,7 +89,7 @@ public class HouseholdParametersController extends BaseController {
         HouseholdTransferParameter householdParameter = new HouseholdTransferParameter();
 
         // TODO: check if there is a parameter with a condition that's conflicting with the one coming in
-
+        householdParameter.setTransferParameterId(form.getTransferParameterId());
         householdParameter.setNumberOfMembers(form.getNumberOfMembers());
         householdParameter.setActive(form.isActive().value);
         householdParameter.setAmount(form.getAmount());

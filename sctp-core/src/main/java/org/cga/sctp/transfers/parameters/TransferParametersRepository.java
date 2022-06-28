@@ -33,8 +33,13 @@
 package org.cga.sctp.transfers.parameters;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface TransferParametersRepository extends JpaRepository<TransferParameter, Long> {
+    @Query("FROM TransferParameter t where t.active = true")
+    List<TransferParameter> findAllActive();
 }

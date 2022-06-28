@@ -43,6 +43,9 @@ public class HouseholdTransferParameter {
     private Long id;
 
     @Column
+    private Long transferParameterId;
+
+    @Column
     private int numberOfMembers;
 
     @Column(name="condition_type")
@@ -67,6 +70,14 @@ public class HouseholdTransferParameter {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTransferParameterId() {
+        return transferParameterId;
+    }
+
+    public void setTransferParameterId(Long transferParameterId) {
+        this.transferParameterId = transferParameterId;
     }
 
     public int getNumberOfMembers() {

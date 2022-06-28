@@ -35,6 +35,7 @@ package org.cga.sctp.transfers.parameters;
 import org.cga.sctp.targeting.importation.parameters.EducationLevel;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -43,6 +44,10 @@ public class EducationTransferParameter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "Transfer Parameter cannot be null")
+    @Column
+    private Long transferParameterId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -66,6 +71,14 @@ public class EducationTransferParameter {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTransferParameterId() {
+        return transferParameterId;
+    }
+
+    public void setTransferParameterId(Long transferParameterId) {
+        this.transferParameterId = transferParameterId;
     }
 
     public EducationLevel getEducationLevel() {
