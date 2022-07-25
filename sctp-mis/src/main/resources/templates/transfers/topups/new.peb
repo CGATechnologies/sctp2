@@ -1,0 +1,107 @@
+{% extends "../base" %}
+{% block contextMenu %}
+<div class="container context-nav-container">
+    <div class="buttons is-right">
+        <a href="{{ href('/transfers/topups') }}" class="button is-danger">Back to List</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-default">
+    <div class="card-header">
+        <div class="card-header-title">New Top Up</div>
+    </div>
+    <div class="card-content">
+        {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
+        <form action="" method="post" enctype="application/x-www-form-urlencoded">
+            {{ csrf(_csrf) }}
+            <div class="field">
+                <label for="name" class="label">Name</label>
+                <div class="control"><input type="text" name="name" id="" class="input"></div>
+            </div>
+
+            <div class="geolocation-level field">
+                <label for="geolocationType" class="label">Geolocation Type</label>
+                <div class="control select">
+                    <select name="geolocationType" id="">
+                        <option value="">Please Select a Geolocation Level</option>
+                    </select>
+                </div>
+                <label for="partialAreas" class="label">
+                    <input type="checkbox" name="" id=""> Only for Partial Areas</label>
+            </div>
+
+            <div class="field">
+                <label for="district" class="label">District</label>
+                <div class="control">
+                    <ApiLocationSelector />
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="transferPeriod" class="label">Transfer Period</label>
+                <div class="control select">
+                    <select name="" id="">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="NumberOfMonths" class="label">Number of Months</label>
+                <div class="control">
+                    <input type="text" name="" id="" class="input" />
+                </div>
+            </div>
+
+            <div class="sourceOfFunds field">
+                <label for="sourceOfFunds" class="label">Source Of Funds</label>
+                <div class="control select">
+                    <select name="" id="">
+                        <option>Please Select a Funding Institution</option>
+                    </select>
+                </div>
+            </div>
+
+            <section class="categorical-targeting-conditions">
+                <div class="field">
+                    <label for="isCategorical" class="label label-checkbox">
+                        <input type="checkbox" name="isCategorical" id="">&nbsp; Categorical TopUp</label>
+                </div>
+
+                <div class="categorical-filters">
+
+                </div>
+            </section>
+
+
+            <section class="recertification">
+                <div class="field">
+                    <label for="householdStatus" class="label">Household Status</label>
+                    <p>Select which Households can receive the TopUp. You can also check both options.</p>
+                    <div class="control">
+                        <label for="householdStatus" class="label label-checkbox"><input type="checkbox"> Recertified</label>
+                        <label for="householdStatus" class="label label-checkbox"><input type="checkbox"> Non-Recertified</label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="preview-amounts">
+                <div class="field">
+                    <label for="totalAmount" class="label">Total Amount</label>
+                    <div class="control"><input type="text" class="input" placeholder="Calculating..." disabled="disabled"></div>
+                </div>
+            </section>
+
+            <div class="action-buttons">
+                <p class="notification is-info">
+                    Please note that created Topups will affect subsequent transfer calculations.
+                </p>
+                <button class="button is-success">Create TopUp</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

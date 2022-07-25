@@ -1,0 +1,64 @@
+    {% extends "../base" %}
+        {% block contextMenu %}
+        <div class="container context-nav-container">
+            <div class="buttons is-right">
+                <a href="{{ href('/transfers/topups/new') }}" class="button is-success">Add New TopUp</a>
+            </div>
+        </div>
+        {% endblock %}
+
+    {% block content %}
+
+    <div class="card card-default">
+        <div class="card-header">
+            <div class="card-header-title">Top Ups</div>
+        </div>
+        <div class="card-content">
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>District</th>
+                        <th>Is Categorical</th>
+                        <th>Amount Projected</th>
+                        <th>Executed?</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for t in topups %}
+                    <tr>
+                    <td>{{ t.name }}</td>
+                    <td>{{ t.topupType }}</td>
+                    <td>{{ t.locationId }}</td>
+                    <td>{{ t.isCategorical }}</td>
+                    <td>{{ t.amountProjected }}</td>
+                    <td>{{ t.isExecuted }}</td>
+                    <td data-sortable="false">
+                        <div class="dropdown is-hoverable is-right">
+                            <div class="dropdown-trigger">
+                                <button class="button button is-info is-inverted is-options"
+                                        aria-haspopup="true" aria-controls="topup-{{ t.id }}">
+                                    <span>Options</span>
+                                    <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="topup-{{ t.id }}" role="menu">
+                                <div class="dropdown-content">
+                                    <a href="/transfers/topups/view/{{ t.id }}" class="dropdown-item">View</a>
+                                    <a href="/transfers/topups/edit/{{ t.id }}" class="dropdown-item">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endblock %}

@@ -49,6 +49,8 @@ import org.cga.sctp.transfers.agencies.TransferAgency;
 import org.cga.sctp.transfers.agencies.TransferMethod;
 import org.cga.sctp.transfers.parameters.HouseholdParameterCondition;
 import org.cga.sctp.transfers.parameters.TransferParameter;
+import org.cga.sctp.transfers.topups.TopUpHouseholdStatus;
+import org.cga.sctp.transfers.topups.TopUpType;
 import org.cga.sctp.user.AccessLevel;
 import org.cga.sctp.user.Permission;
 import org.cga.sctp.user.SystemRole;
@@ -162,5 +164,15 @@ public class SelectOptionConfigs {
     @Bean
     public SelectOptionEntry transferParameterOption() {
         return new SelectOptionEntry(TransferParameter.class, "getId()", "getTitle()");
+    }
+
+    @Bean
+    public SelectOptionEntry topupTypes() {
+        return new SelectOptionEntry(TopUpType.class, "getCode()", "getDescription()");
+    }
+
+    @Bean
+    public SelectOptionEntry topupHouseholdStatuses() {
+        return new SelectOptionEntry(TopUpHouseholdStatus.class, "getCode()", "getDescription()");
     }
 }
