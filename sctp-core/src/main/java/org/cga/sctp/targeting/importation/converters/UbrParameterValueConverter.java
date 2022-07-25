@@ -36,7 +36,7 @@ import org.cga.sctp.targeting.importation.parameters.UbrParameterValue;
 
 import javax.persistence.AttributeConverter;
 
-abstract class UbrParameterValueConverter implements AttributeConverter<UbrParameterValue, Integer> {
+public abstract class UbrParameterValueConverter implements AttributeConverter<UbrParameterValue, Integer> {
     private final UbrParameterValue[] values;
 
     public UbrParameterValueConverter(UbrParameterValue[] values) {
