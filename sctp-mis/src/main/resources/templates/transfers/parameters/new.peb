@@ -16,6 +16,7 @@
                 <p class="card-header-title">New Transfer Parameter</p>
             </header>
             <div class="card-content">
+                {{ showMessages(successMessage, infoMessage, dangerMessage, warningMessage) }}
                 <form method="post"
                       enctype="application/x-www-form-urlencoded"
                       action="/transfers/parameters/new">
